@@ -7,6 +7,9 @@ Rectangle {
     property var action
     //property var ps
 
+    width: button_pic.sourceSize.width
+    height: button_pic.sourceSize.height
+
     border.width: 1
     border.color: "black";
     radius: 10

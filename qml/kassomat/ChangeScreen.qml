@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 Rectangle{
     //property var ps
-    property variant money_back: { 'fifty': 0, 'twenty': 0, 'ten': 0, 'five': 0, 'two': 0, 'one': 0, 'cfifty': 0, 'ctwenty': 0, 'cten': 0 };
+    property variant money_back: { '50e': 0, '20e': 0, '10e': 0, '5e': 0, '2e': 0, '1e': 0, '50c': 0, '20c': 0, '10c': 0, '5c': 0, '2c': 0, '1c': 0 };
 
     id: change_screen
     visible: (opacity == 0.0)? false : true;
@@ -27,10 +27,9 @@ Rectangle{
                 component = Qt.createComponent("BubbleButton.qml");
                 var bla = component.createObject(money_row,{
                                                 "action": [function(){ parent.parent.state = "STANDARD_SCREEN" }],
-                                                "width": 64,
-                                                "height": 64,
                                                 //"ps": ps,
-                                                "img_id.source": "mate.png"
+                                                "img_id.source": prop+".png",
+                                                     "img_id.align": "center"
                                             });
             }
         }
