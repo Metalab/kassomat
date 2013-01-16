@@ -2,7 +2,18 @@ import QtQuick 2.0
 
 Rectangle{
     //property var ps
-    property variant money_back: { '50e': 0, '20e': 0, '10e': 0, '5e': 0, '2e': 0, '1e': 0, '50c': 0, '20c': 0, '10c': 0, '5c': 0, '2c': 0, '1c': 0 };
+    property var money_back: { '50e': 0,
+                               '20e': 0,
+                               '10e': 0,
+                               '5e': 0,
+                               '2e': 0,
+                               '1e': 0,
+                               '50c': 0,
+                               '20c': 0,
+                               '10c': 0,
+                               '5c': 0,
+                               '2c': 0,
+                               '1c': 0 };
 
     id: change_screen
     visible: (opacity == 0.0)? false : true;
@@ -18,21 +29,82 @@ Rectangle{
 
     Row{
         id:money_row
-        spacing: 10
+        spacing: 5
 
         Component.onCompleted: {
-            var component;
-            var sprite;
+            var button = Qt.createComponent("BubbleButton.qml");
+            var selected = Qt.createComponent("ChangeText.qml");
             for (var prop in change_screen.money_back){
-                component = Qt.createComponent("BubbleButton.qml");
-                var bla = component.createObject(money_row,{
-                                                "action": [function(){ parent.parent.state = "STANDARD_SCREEN" }],
+                selected.createObject(money_row,{
+                                          "id": "selected_"+prop,
+                                          "selected": "0"
+                                        });
+                button.createObject(money_row,{
+                                                "id": "button_"+prop,
+                                                //"action": [function(){ selected_50e.selected = 1; }],
                                                 //"ps": ps,
                                                 "img_id.source": prop+".png",
-                                                     "img_id.align": "center"
+                                                "img_id.align": "center",
+                                                "color": "transparent"
                                             });
+//                console.log(prop);
+
             }
         }
+    }
 
+    BubbleButton{
+        id: fill_up_button
+        height: 40
+        width: 200
+
+        color: "#444422";
+
+//        ps:ps
+        anchors.top: money_row.bottom
+
+        action: [function(){
+            //fill up until no credits are left
+            //from biggest to smallest money
+
+        }]
+    }
+
+    BubbleButton{
+        id: accept_button
+        height: 40
+        width: 200
+
+        color: "#444422";
+
+//        ps:ps
+        anchors.top: money_row.bottom
+        anchors.left: fill_up_button.right
+
+        action: [function(){
+
+            //go back
+            parent.parent.state = "STANDARD_SCREEN"
+        }]
+    }
+
+    BubbleButton{
+        id: cancel_button
+        height: 40
+        width: 200
+
+        color: "#444422";
+
+//        ps:ps
+        anchors.top: money_row.bottom
+        anchors.left: accept_button.right
+
+
+        action: [function(){
+            //spit out money
+
+            //go back
+            parent.parent.state = "STANDARD_SCREEN"
+        }]
     }
 }
