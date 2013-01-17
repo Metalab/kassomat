@@ -27,30 +27,43 @@ Rectangle{
 
     anchors.margins: 10
 
+
+
     Row{
         id:money_row
         spacing: 5
+    BubbleButton{
+        id: button_5e
+        action: [function(){ selected_5e.selected += 1; }]
+        img_id.source: "5e.png"
+        color: transparent
+    }
+    ChangeText{
+        id: selected_5e
+    }
+//        Component.onCompleted: {
+//            var button = Qt.createComponent("BubbleButton.qml");
+//            var selected = Qt.createComponent("ChangeText.qml");
+//            var temp;
+//            for (var prop in change_screen.money_back){
+//                temp = selected.createObject(money_row,{
+//                                          "id": "selected_"+prop,
+//                                          "selected": "0"
+//                                        });
 
-        Component.onCompleted: {
-            var button = Qt.createComponent("BubbleButton.qml");
-            var selected = Qt.createComponent("ChangeText.qml");
-            for (var prop in change_screen.money_back){
-                selected.createObject(money_row,{
-                                          "id": "selected_"+prop,
-                                          "selected": "0"
-                                        });
-                button.createObject(money_row,{
-                                                "id": "button_"+prop,
-                                                //"action": [function(){ selected_50e.selected = 1; }],
-                                                //"ps": ps,
-                                                "img_id.source": prop+".png",
-                                                "img_id.align": "center",
-                                                "color": "transparent"
-                                            });
-//                console.log(prop);
+//                temp = button.createObject(money_row,{
+//                                                "id": "button_"+prop,
+//                                                "action": [function(){ eval("parent.selected_"+prop).selected = 1; }],
+//                                                //"ps": ps,
+//                                                "img_id.source": prop+".png",
+//                                                "img_id.align": "center",
+//                                                "color": "transparent"
+//                                            });
+////                console.log("3rd "+JSON.stringify(temp, null, 4));
+////                console.log(prop);
 
-            }
-        }
+//            }
+//        }
     }
 
     BubbleButton{
