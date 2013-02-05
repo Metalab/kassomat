@@ -9,10 +9,13 @@ import QtQuick.Particles 2.0
 
 
 
+
 Rectangle{
     id: app
     width: 800
     height: 600
+
+    property int f: 0;
 
     state: "STANDARD_SCREEN"
 

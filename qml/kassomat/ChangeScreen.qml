@@ -1,24 +1,28 @@
 import QtQuick 2.0
 
 Rectangle{
-    //property var ps
-    property var money_back: { '50e': 0,
-                               '20e': 0,
-                               '10e': 0,
-                               '5e': 0,
-                               '2e': 0,
-                               '1e': 0,
-                               '50c': 0,
-                               '20c': 0,
-                               '10c': 0,
-                               '5c': 0,
-                               '2c': 0,
-                               '1c': 0 };
+    property var money_back: { '5000': 0,
+                               '2000': 0,
+                               '1000': 0,
+                               '500': 0,
+                               '200': 0,
+                               '100': 0,
+                               '50': 0,
+                               '20': 0,
+                               '10': 0,
+                               '5': 0,
+                               '2': 0,
+                               '1': 0 };
 
     id: change_screen
     visible: (opacity == 0.0)? false : true;
     opacity: (parent.state == "CHANGE_SCREEN")
-    Behavior on opacity{ NumberAnimation { easing.type: Easing.InOutExpo; duration:1000; } }
+    Behavior on opacity{
+        NumberAnimation {
+            easing.type: Easing.InOutExpo
+            duration:1000
+        }
+    }
     anchors.fill: parent
 
     color: "#eeeeee"
@@ -32,38 +36,22 @@ Rectangle{
     Row{
         id:money_row
         spacing: 5
-    BubbleButton{
-        id: button_5e
-        action: [function(){ selected_5e.selected += 1; }]
-        img_id.source: "5e.png"
-        color: transparent
-    }
-    ChangeText{
-        id: selected_5e
-    }
-//        Component.onCompleted: {
-//            var button = Qt.createComponent("BubbleButton.qml");
-//            var selected = Qt.createComponent("ChangeText.qml");
-//            var temp;
-//            for (var prop in change_screen.money_back){
-//                temp = selected.createObject(money_row,{
-//                                          "id": "selected_"+prop,
-//                                          "selected": "0"
-//                                        });
 
-//                temp = button.createObject(money_row,{
-//                                                "id": "button_"+prop,
-//                                                "action": [function(){ eval("parent.selected_"+prop).selected = 1; }],
-//                                                //"ps": ps,
-//                                                "img_id.source": prop+".png",
-//                                                "img_id.align": "center",
-//                                                "color": "transparent"
-//                                            });
-////                console.log("3rd "+JSON.stringify(temp, null, 4));
-////                console.log(prop);
+        Component.onCompleted: {
+            var button = Qt.createComponent("ChangeButton.qml");
+            var temp;
+            for (var prop in change_screen.money_back){
+                temp = button.createObject(money_row,{
+                                                "action": [function(){ this.selected += 1; }],
+                                                "img_id.source": prop+".png",
+                                                "img_id.align": "center",
+                                                "color": "transparent",
+                                                "value": prop
+                                            });
 
-//            }
-//        }
+            }
+        }
+
     }
 
     BubbleButton{
@@ -72,8 +60,6 @@ Rectangle{
         width: 200
 
         color: "#444422";
-
-//        ps:ps
         anchors.top: money_row.bottom
 
         action: [function(){
@@ -90,7 +76,6 @@ Rectangle{
 
         color: "#444422";
 
-//        ps:ps
         anchors.top: money_row.bottom
         anchors.left: fill_up_button.right
 
@@ -107,11 +92,8 @@ Rectangle{
         width: 200
 
         color: "#444422";
-
-//        ps:ps
         anchors.top: money_row.bottom
         anchors.left: accept_button.right
-
 
         action: [function(){
             //spit out money
