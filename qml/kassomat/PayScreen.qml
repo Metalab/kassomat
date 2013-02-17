@@ -44,7 +44,7 @@ Rectangle{
         height: 40
         width: 200
 
-        color: "#444422";
+        color: "#444422"
 
 //        ps:ps
 

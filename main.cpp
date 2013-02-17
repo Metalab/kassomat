@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     KassomatController kassomatController;
 
-    kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
+    //kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
 
     QtQuick2ApplicationViewer viewer;
     viewer.setMainQmlFile(QStringLiteral("qml/kassomat/main.qml"));

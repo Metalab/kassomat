@@ -6,10 +6,6 @@ import QtQuick.Particles 2.0
 // oder rest an ein kickstarter-projekt
 // potentieller schotter auf ibutton raufladen wenn schotter gefahr besteht
 
-
-
-
-
 Rectangle{
     id: app
     width: 1280

@@ -27,7 +27,7 @@ typedef enum{
 
 typedef enum{
 	DEAL_MODE_SPLIT = 0xFE,
-	DEAL_MODE_FREE,
+    DEAL_MODE_FREE,
 }DEAL_MODE;
 
 typedef struct{

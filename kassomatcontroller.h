@@ -24,7 +24,7 @@ public:
     const QString& state() const;
 
     void setCredit(unsigned int credit);
-    const void setState(const QString &state);
+    void setState(const QString &state);
 
 signals:
 
