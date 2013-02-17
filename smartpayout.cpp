@@ -3,4 +3,6 @@
 SmartPayout::SmartPayout(QObject *parent) :
     QObject(parent)
 {
+
+
 }
