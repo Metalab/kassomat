@@ -12,8 +12,8 @@ import QtQuick.Particles 2.0
 
 Rectangle{
     id: app
-    width: 800
-    height: 600
+    width: 1280
+    height: 768
 
     property int f: 0;
 
