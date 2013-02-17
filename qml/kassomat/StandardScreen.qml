@@ -15,7 +15,6 @@ Rectangle{
         buttonWidth: 100
         label: "Donate"
         onButtonClick: {
-            smartPayout.testing();
         }
     }
 

@@ -11,7 +11,6 @@ public:
 
 signals:
 public slots:
-    void testing();
 };
 
 #endif // SMARTPAYOUT_H
