@@ -5,7 +5,6 @@ Rectangle{
 
     id: pay_screen
     visible: (opacity == 0.0)? false : true;
-    opacity: (parent.state == "PAY_SCREEN")
     Behavior on opacity{ NumberAnimation { easing.type: Easing.InOutExpo; duration: 1000 } }
     anchors.fill: parent
 

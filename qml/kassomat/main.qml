@@ -36,15 +36,15 @@ Rectangle{
 //    }
 
     StandardScreen{
-//        ps: particles
+        opacity: (parent.state == "STANDARD_SCREEN")
     }
 
     PayScreen{
-//        ps: particles
+        opacity: (parent.state == "PAY_SCREEN")
     }
 
     ChangeScreen{
-//        ps: particles
+        opacity: (parent.state == "CHANGE_SCREEN")
     }
 
 }

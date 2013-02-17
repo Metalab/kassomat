@@ -6,7 +6,6 @@ Rectangle{
 
     id: standard_screen
     visible: (opacity == 0.0)? false : true;
-    opacity: (parent.state == "STANDARD_SCREEN")
     Behavior on opacity{ NumberAnimation { easing.type: Easing.InQuad; duration:500; } }
     anchors.fill: parent
 

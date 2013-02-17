@@ -6,7 +6,6 @@ Rectangle {
 
     id: change_screen
     visible: (opacity == 0.0)? false : true;
-    opacity: (parent.state == "CHANGE_SCREEN")
 
     Behavior on opacity{
         NumberAnimation {
