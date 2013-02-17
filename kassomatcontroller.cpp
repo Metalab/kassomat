@@ -14,3 +14,21 @@ const QString &KassomatController::smartPayoutDevice() const {
 void KassomatController::setSmartPayoutDevice(const QString &dev) {
     m_smartPayout->setDevice(dev);
 }
+
+unsigned int KassomatController::credit() const{
+    return m_credit;
+}
+
+const QString& KassomatController::state() const{
+    return m_state;
+}
+
+void KassomatController::setCredit(unsigned int credit){
+    m_credit = credit;
+    emit creditChanged(credit);
+}
+
+void KassomatController::setState(const QString &state){
+    m_state = state;
+    emit stateChanged(state);
+}
