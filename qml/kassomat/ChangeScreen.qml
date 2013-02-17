@@ -1,22 +1,13 @@
 import QtQuick 2.0
 
-Rectangle{
-    property var money_back: { '5000': 0,
-                               '2000': 0,
-                               '1000': 0,
-                               '500': 0,
-                               '200': 0,
-                               '100': 0,
-                               '50': 0,
-                               '20': 0,
-                               '10': 0,
-                               '5': 0,
-                               '2': 0,
-                               '1': 0 };
+Rectangle {
+    property var money_back: ['5000','2000','1000','500',
+        '200','100','50','20','10','5','2','1'];
 
     id: change_screen
     visible: (opacity == 0.0)? false : true;
     opacity: (parent.state == "CHANGE_SCREEN")
+
     Behavior on opacity{
         NumberAnimation {
             easing.type: Easing.InOutExpo
@@ -37,21 +28,18 @@ Rectangle{
         id:money_row
         spacing: 5
 
-        Component.onCompleted: {
-            var button = Qt.createComponent("ChangeButton.qml");
-            var temp;
-            for (var prop in change_screen.money_back){
-                temp = button.createObject(money_row,{
-                                                "action": [function(){ this.selected += 1; }],
-                                                "img_id.source": prop+".png",
-                                                "img_id.align": "center",
-                                                "color": "transparent",
-                                                "value": prop
-                                            });
+        Repeater {
+            model: money_back
 
+            delegate: ChangeButton {
+                color: "transparent"
+                value: modelData
+                onCountChanged: {
+                    // javascript code
+                    console.log('Die Anzahl von ' + value + ' ist jetzt ' + selected)
+                }
             }
         }
-
     }
 
     BubbleButton{
@@ -95,11 +83,11 @@ Rectangle{
         anchors.top: money_row.bottom
         anchors.left: accept_button.right
 
-        action: [function(){
+        action: {
             //spit out money
 
             //go back
             parent.parent.state = "STANDARD_SCREEN"
-        }]
+        }
     }
 }
