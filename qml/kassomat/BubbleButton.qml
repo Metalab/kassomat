@@ -9,7 +9,7 @@ Rectangle {
 
     width: button_pic.sourceSize.width
     height: button_pic.sourceSize.height
-    color: transparent
+    color: "transparent"
 
     //border.width: 1
     //border.color: "black";

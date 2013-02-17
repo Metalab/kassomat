@@ -12,7 +12,8 @@ QML_IMPORT_PATH =
 # MOBILITY +=
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    smartpayout.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -20,4 +21,8 @@ qtcAddDeployment()
 
 OTHER_FILES += \
     qml/kassomat/BubbleButton.qml \
-    qml/kassomat/ChangeButton.qml
+    qml/kassomat/ChangeButton.qml \
+    qml/kassomat/Button.qml
+
+HEADERS += \
+    smartpayout.h

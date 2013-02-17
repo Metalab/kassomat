@@ -10,6 +10,16 @@ Rectangle{
     Behavior on opacity{ NumberAnimation { easing.type: Easing.InQuad; duration:500; } }
     anchors.fill: parent
 
+    Button {
+        y: 20
+        anchors.horizontalCenter: parent.horizontalCenter
+        buttonWidth: 100
+        label: "Donate"
+        onButtonClick: {
+            smartPayout.testing();
+        }
+    }
+
     BubbleButton{
         id: pay_button
         height: 400
