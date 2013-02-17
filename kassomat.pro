@@ -14,7 +14,14 @@ QML_IMPORT_PATH =
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     smartpayout.cpp \
-    kassomatcontroller.cpp
+    kassomatcontroller.cpp \
+    itlssp/SSPDownload.c \
+    itlssp/SSPComs.c \
+    itlssp/ssp_commands.c \
+    itlssp/serialfunc.c \
+    itlssp/Random.c \
+    itlssp/ITLSSPProc.c \
+    itlssp/Encryption.c
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -27,4 +34,14 @@ OTHER_FILES += \
 
 HEADERS += \
     smartpayout.h \
-    kassomatcontroller.h
+    kassomatcontroller.h \
+    itlssp/serialfunc.h \
+    itlssp/Random.h \
+    itlssp/ITLSSPProc.h \
+    itlssp/Encryption.h \
+    itlssp/defs.h \
+    inc/SSPComs.h \
+    inc/ssp_defines.h \
+    inc/itl_types.h
+
+CONFIG += debug
