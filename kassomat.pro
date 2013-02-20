@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     itlssp/serialfunc.c \
     itlssp/Random.c \
     itlssp/ITLSSPProc.c \
-    itlssp/Encryption.c
+    itlssp/Encryption.c \
+    projectlistmodel.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -42,6 +43,7 @@ HEADERS += \
     itlssp/defs.h \
     inc/SSPComs.h \
     inc/ssp_defines.h \
-    inc/itl_types.h
+    inc/itl_types.h \
+    projectlistmodel.h
 
 CONFIG += debug
