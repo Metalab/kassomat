@@ -20,8 +20,6 @@ class ProjectListModel : public QAbstractListModel{
     public slots:
 
     protected:
-        bool canFetchMore(const QModelIndex &parent) const;
-        void fetchMore(const QModelIndex &parent);
 
     private:
         int fileCount;

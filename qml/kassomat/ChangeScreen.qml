@@ -32,6 +32,7 @@ Rectangle {
 
             delegate: ChangeButton {
                 color: "transparent"
+                // modelData === money_back[i]
                 value: modelData
                 onCountChanged: {
                     // javascript code

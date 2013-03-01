@@ -2,12 +2,14 @@
 #include <QtQml/QQmlContext>
 #include "qtquick2applicationviewer.h"
 #include "kassomatcontroller.h"
+#include "databasecontroller.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
     KassomatController kassomatController;
+    DatabaseController databaseController;
 
     //kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
 

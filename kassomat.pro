@@ -22,7 +22,13 @@ SOURCES += main.cpp \
     itlssp/Random.c \
     itlssp/ITLSSPProc.c \
     itlssp/Encryption.c \
-    projectlistmodel.cpp
+    projectlistmodel.cpp \
+    databasecontroller.cpp \
+    db/QDjangoWhere.cpp \
+    db/QDjangoQuerySet.cpp \
+    db/QDjangoModel.cpp \
+    db/QDjangoMetaModel.cpp \
+    db/QDjango.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -44,6 +50,24 @@ HEADERS += \
     inc/SSPComs.h \
     inc/ssp_defines.h \
     inc/itl_types.h \
-    projectlistmodel.h
+    projectlistmodel.h \
+    databasecontroller.h \
+    db/QDjangoWhere.h \
+    db/QDjangoWhere_p.h \
+    db/QDjangoQuerySet.h \
+    db/QDjangoQuerySet_p.h \
+    db/QDjangoModel.h \
+    db/QDjangoMetaModel.h \
+    db/QDjango.h \
+    db/QDjango_p.h \
+    projects.h \
+    admins.h \
+    products.h \
+    bookings.h \
+    booking_rows.h
 
 CONFIG += debug
+
+QT += sql
+
+
