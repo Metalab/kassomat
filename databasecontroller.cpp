@@ -1,10 +1,12 @@
 #include "databasecontroller.h"
 #include "db/QDjango.h"
-#include "admins.h"
-#include "bookings.h"
-#include "booking_rows.h"
-#include "products.h"
-#include "projects.h"
+#include "user.h"
+#include "mos_user.h"
+#include "admin.h"
+#include "booking.h"
+#include "booking_row.h"
+#include "product.h"
+#include "project.h"
 
 
 DatabaseController::DatabaseController(){
@@ -26,9 +28,11 @@ DatabaseController::DatabaseController(){
         qDebug() << "fuckit";
     }
 
-    QDjango::registerModel<Admins>();
-    QDjango::registerModel<Bookings>();
-    QDjango::registerModel<Booking_Rows>();
-    QDjango::registerModel<Products>();
-    QDjango::registerModel<Projects>();
+    QDjango::registerModel<User>();
+    QDjango::registerModel<MOS_User>();
+    QDjango::registerModel<Admin>();
+    QDjango::registerModel<Booking>();
+    QDjango::registerModel<Booking_Row>();
+    QDjango::registerModel<Product>();
+    QDjango::registerModel<Project>();
 }

@@ -2,10 +2,25 @@ drop database if exists kassomat;
 create database kassomat with encoding='UTF8';
 \c kassomat
 
-create table admins (
+create table users (
     id bigserial primary key,
-    name varchar(100) not null,
+    email varchar(100) not null
+);
+
+create table mos_users (
+    mos_id varchar(100) not null,
+    ibutton_id varchar(20) null
+) inherits(users);
+
+create table admins (
     password varchar(100) not null
+) inherits(mos_users);
+
+
+create table moneycodes (
+    id bigserial primary key,
+    user bigint references users,
+    code varchar(100) not null
 );
 
 create table projects (
@@ -24,6 +39,7 @@ create table products (
     id bigserial primary key,
     project bigint references projects,
     display_name varchar(200) not null,
+--  foreign_id: cliffords meta data damit er seine bauteile matchen kann.
     foreign_id varchar(200) not null,
     barcode varchar(20) null,
     cost integer not null

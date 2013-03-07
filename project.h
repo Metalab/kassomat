@@ -1,8 +1,8 @@
-#ifndef PROJECTS_H
-#define PROJECTS_H
+#ifndef PROJECT_H
+#define PROJECT_H
 #include <QDateTime>
 #include "db/QDjangoModel.h"
-class Projects : public QDjangoModel
+class Project : public QDjangoModel
 {
 
     Q_OBJECT
@@ -17,6 +17,7 @@ class Projects : public QDjangoModel
     Q_PROPERTY(QString notification_email READ notification WRITE setNotification)
     Q_PROPERTY(qint32 sort_order READ sort_order WRITE setSort_order)
 
+    Q_CLASSINFO("__meta__", "db_table=projects")
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("name", "max_length=100")
@@ -62,4 +63,4 @@ class Projects : public QDjangoModel
 };
 
 
-#endif // PROJECTS_H
+#endif // PROJECT_H

@@ -22,7 +22,6 @@ SOURCES += main.cpp \
     itlssp/Random.c \
     itlssp/ITLSSPProc.c \
     itlssp/Encryption.c \
-    projectlistmodel.cpp \
     databasecontroller.cpp \
     db/QDjangoWhere.cpp \
     db/QDjangoQuerySet.cpp \
@@ -50,7 +49,6 @@ HEADERS += \
     inc/SSPComs.h \
     inc/ssp_defines.h \
     inc/itl_types.h \
-    projectlistmodel.h \
     databasecontroller.h \
     db/QDjangoWhere.h \
     db/QDjangoWhere_p.h \
@@ -60,11 +58,13 @@ HEADERS += \
     db/QDjangoMetaModel.h \
     db/QDjango.h \
     db/QDjango_p.h \
-    projects.h \
-    admins.h \
-    products.h \
-    bookings.h \
-    booking_rows.h
+    admin.h \
+    booking_row.h \
+    booking.h \
+    product.h \
+    project.h \
+    mos_user.h \
+    user.h
 
 CONFIG += debug
 

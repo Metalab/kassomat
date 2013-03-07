@@ -1,9 +1,9 @@
-#ifndef BOOKINGS_H
-#define BOOKINGS_H
+#ifndef BOOKING_H
+#define BOOKING_H
 
 #include <QDateTime>
 #include "db/QDjangoModel.h"
-class Bookings : public QDjangoModel
+class Booking : public QDjangoModel
 {
 
     Q_OBJECT
@@ -12,6 +12,8 @@ class Bookings : public QDjangoModel
     Q_PROPERTY(QDateTime booking_time READ booking_time WRITE setBooking_time)
     Q_PROPERTY(qint64 admin_id READ admin_id WRITE setAdmin_id)
     Q_PROPERTY(QString user_email READ user_email WRITE setUser_email)
+
+    Q_CLASSINFO("__meta__", "db_table=bookings")
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("booking_time", " ")
@@ -36,4 +38,4 @@ class Bookings : public QDjangoModel
         QString m_user_email;
 };
 
-#endif // BOOKINGS_H
+#endif // BOOKING_H

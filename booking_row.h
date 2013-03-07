@@ -1,8 +1,8 @@
-#ifndef BOOKING_ROWS_H
-#define BOOKING_ROWS_H
+#ifndef BOOKING_ROW_H
+#define BOOKING_ROW_H
 
 #include "db/QDjangoModel.h"
-class Booking_Rows : public QDjangoModel
+class Booking_Row : public QDjangoModel
 {
     Q_OBJECT
 
@@ -13,6 +13,8 @@ class Booking_Rows : public QDjangoModel
     Q_PROPERTY(qint32 cost_per_item READ cost_per_item WRITE setCost_per_item)
     Q_PROPERTY(qint32 amount READ amount WRITE setAmount)
     Q_PROPERTY(qint64 project READ project WRITE setProject)
+
+    Q_CLASSINFO("__meta__", "db_table=booking_rows")
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("booking", "on_delete=Bookings.id")
@@ -51,4 +53,4 @@ class Booking_Rows : public QDjangoModel
         qint64 m_project;
 };
 
-#endif // BOOKING_ROWS_H
+#endif // BOOKING_ROW_H

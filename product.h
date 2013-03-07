@@ -1,8 +1,8 @@
-#ifndef PRODUCTS_H
-#define PRODUCTS_H
+#ifndef PRODUCT_H
+#define PRODUCT_H
 
 #include "db/QDjangoModel.h"
-class Products : public QDjangoModel
+class Product : public QDjangoModel
 {
 
     Q_OBJECT
@@ -13,6 +13,7 @@ class Products : public QDjangoModel
     Q_PROPERTY(QString barcode READ barcode WRITE setBarcode)
     Q_PROPERTY(qint32 cost READ cost WRITE setCost)
 
+    Q_CLASSINFO("__meta__", "db_table=products")
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("project", "on_delete=Projects.id")
@@ -42,4 +43,4 @@ class Products : public QDjangoModel
         qint32 m_cost;
 };
 
-#endif // PRODUCTS_H
+#endif // PRODUCT_H
