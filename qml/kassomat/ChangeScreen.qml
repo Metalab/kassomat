@@ -21,8 +21,6 @@ Rectangle {
 
     anchors.margins: 10
 
-
-
     Row{
         id:money_row
         spacing: 5
@@ -36,13 +34,14 @@ Rectangle {
                 value: modelData
                 onCountChanged: {
                     // javascript code
+
                     console.log('Die Anzahl von ' + value + ' ist jetzt ' + selected)
                 }
             }
         }
     }
 
-    BubbleButton{
+    Button{
         id: fill_up_button
         height: 40
         width: 200
@@ -50,14 +49,18 @@ Rectangle {
         color: "#444422";
         anchors.top: money_row.bottom
 
-        action: [function(){
-            //fill up until no credits are left
-            //from biggest to smallest money
+        onButtonClick: {
 
-        }]
+        }
+
+//        action: [function(){
+//            //fill up until no credits are left
+//            //from biggest to smallest money
+
+//        }]
     }
 
-    BubbleButton{
+    Button{
         id: accept_button
         height: 40
         width: 200
@@ -67,14 +70,18 @@ Rectangle {
         anchors.top: money_row.bottom
         anchors.left: fill_up_button.right
 
-        action: [function(){
+        onButtonClick: {
 
-            //go back
-            parent.parent.state = "STANDARD_SCREEN"
-        }]
+        }
+
+//        action: [function(){
+
+//            //go back
+//            parent.parent.state = "STANDARD_SCREEN"
+//        }]
     }
 
-    BubbleButton{
+    Button{
         id: cancel_button
         height: 40
         width: 200
@@ -83,11 +90,15 @@ Rectangle {
         anchors.top: money_row.bottom
         anchors.left: accept_button.right
 
-        action: {
-            //spit out money
-
-            //go back
-            parent.parent.state = "STANDARD_SCREEN"
+        onButtonClick: {
+            controller.state = "STANDARD_SCREEN"
         }
+
+//        action: {
+//            //spit out money
+
+//            //go back
+//            parent.parent.state = "STANDARD_SCREEN"
+//        }
     }
 }

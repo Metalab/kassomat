@@ -13,7 +13,7 @@ Rectangle{
 
     property int f: 0;
 
-    state: "STANDARD_SCREEN"
+    state: controller.state
 
     states:[
             State {
@@ -33,10 +33,6 @@ Rectangle{
 
     StandardScreen{
         opacity: (parent.state == "STANDARD_SCREEN")
-    }
-
-    PayScreen{
-        opacity: (parent.state == "PAY_SCREEN")
     }
 
     ChangeScreen{

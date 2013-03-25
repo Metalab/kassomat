@@ -19,12 +19,14 @@ DatabaseController::DatabaseController(){
 
     bool ok = m_db.open();
 
+
     if(ok) {
         QDjango::setDebugEnabled(true);
         QDjango::setDatabase(m_db);
         qDebug() << "yey?" ;
 
     } else {
+        qDebug() << m_db.lastError();
         qDebug() << "fuckit";
     }
 

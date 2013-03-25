@@ -34,7 +34,6 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/kassomat/BubbleButton.qml \
     qml/kassomat/ChangeButton.qml \
     qml/kassomat/Button.qml
 
