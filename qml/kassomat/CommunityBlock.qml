@@ -2,22 +2,8 @@ import QtQuick 2.0
 
 Column{
 
-    Rectangle{
-        width: parent.width
-        height:70
-        color: "#F15A24"
-
-        Text{
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            anchors.verticalCenter: parent.verticalCenter
-            font.bold: true
-            font.pointSize: 28
-
-            smooth:true
-            text: "COMMUNITY"
-            color: "#ffffff"
-        }
+    Title{
+        label: "COMMUNITY"
 
         Row{
             anchors.rightMargin: 10
@@ -25,61 +11,49 @@ Column{
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
 
-            Rectangle{
+            Button{
                 id:list_c
-                border.color: "#ffffff"
+                borderColor: "#ffffff"
                 border.width: 3
-                height:50
-                width: height
-                color: "transparent"
-
-                Text{
-                    anchors.centerIn: parent
-                    font.pointSize: 24
-                    //text: "\ud834\udf6b"
-                    text: "\u2263"
-                    font.bold: true
-                    color:"#ffffff"
-                }
+                buttonHeight:50
+                buttonWidth: height
+                buttonColor: "transparent"
+                onHoverColor: "#ffffff"
+                labelSize: 24
+                label: "\u2263"
             }
-            Rectangle{
+
+            Button{
                 id:backward_c
-                border.color: "#ffffff"
+                borderColor: "#ffffff"
                 border.width: 3
-                height:50
-                width: height
-                color: "transparent"
+                buttonHeight:50
+                buttonWidth: height
+                buttonColor: "transparent"
+                onHoverColor: "#ffffff"
+                labelSize: 24
+                label: "\u25c0"
 
-                Text{
-                    anchors.centerIn: parent
-                    font.pointSize: 24
-                    text: "\u25c0"
-                    color:"#ffffff"
-                }
             }
-            Rectangle{
-                id:forward_c
-                border.color: "#ffffff"
-                border.width: 3
-                height:50
-                width: height
-                color: "transparent"
 
-                Text{
-                    anchors.centerIn: parent
-                    font.pointSize: 24
-                    text: "\u25b6"
-                    color:"#ffffff"
-                }
+            Button{
+                id:forward_c
+                borderColor: "#ffffff"
+                border.width: 3
+                buttonHeight:50
+                buttonWidth: height
+                buttonColor: "transparent"
+                onHoverColor: "#ffffff"
+                labelSize: 24
+                label: "\u25b6"
             }
 
         }
     }
 
     Rectangle{
+        id: content
         color:"#eeeeee"
-        border.color: "#000000"
-        border.width: 1
 
         width: parent.width
         height: 270

@@ -1,104 +1,99 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     property var money_back: ['5000','2000','1000','500',
         '200','100','50','20','10','5','2','1'];
 
-    id: change_screen
-    visible: (opacity == 0.0)? false : true;
-
-    Behavior on opacity{
-        NumberAnimation {
-            easing.type: Easing.InOutExpo
-            duration:1000
-        }
-    }
-    anchors.fill: parent
-
+    id: change_screen_wrapper
     color: "#eeeeee"
-    border.width: 1
-    border.color: "black";
 
-    anchors.margins: 10
+    MouseArea{
+                anchors.fill: parent;
+    }
+    
+    Rectangle{
+        id: change_screen
+        anchors.margins: 15
+        anchors.fill: parent
+        color: "transparent"
 
-    Row{
-        id:money_row
-        spacing: 5
+        Row{
+            id:money_row
+            spacing: 5
 
-        Repeater {
-            model: money_back
+            Repeater {
+                model: money_back
 
-            delegate: ChangeButton {
-                color: "transparent"
-                // modelData === money_back[i]
-                value: modelData
-                onCountChanged: {
-                    // javascript code
-
-                    console.log('Die Anzahl von ' + value + ' ist jetzt ' + selected)
+                delegate: ChangeButton {
+                    color: "transparent"
+                    // modelData === money_back[i]
+                    value: modelData
+                    onCountChanged: {
+                        // javascript code
+                        console.log('Die Anzahl von ' + value + ' ist jetzt ' + selected)
+                    }
                 }
             }
         }
-    }
 
-    Button{
-        id: fill_up_button
-        height: 40
-        width: 200
+        Button{
+            id: fill_up_button
+            height: 40
+            width: 200
 
-        color: "#444422";
-        anchors.top: money_row.bottom
+            color: "#444422";
+            anchors.top: money_row.bottom
 
-        onButtonClick: {
+            onButtonClick: {
 
+            }
         }
 
-//        action: [function(){
-//            //fill up until no credits are left
-//            //from biggest to smallest money
+        Button{
+            id: accept_button
+            height: 40
+            width: 200
 
-//        }]
-    }
+            color: "#444422";
 
-    Button{
-        id: accept_button
-        height: 40
-        width: 200
+            anchors.top: money_row.bottom
+            anchors.left: fill_up_button.right
 
-        color: "#444422";
+            onButtonClick: {
 
-        anchors.top: money_row.bottom
-        anchors.left: fill_up_button.right
-
-        onButtonClick: {
-
+            }
         }
 
-//        action: [function(){
+        Button{
+            id: cancel_button
+            height: 40
+            width: 200
 
-//            //go back
-//            parent.parent.state = "STANDARD_SCREEN"
-//        }]
-    }
+            color: "#444422";
+            anchors.top: money_row.bottom
+            anchors.left: accept_button.right
 
-    Button{
-        id: cancel_button
-        height: 40
-        width: 200
-
-        color: "#444422";
-        anchors.top: money_row.bottom
-        anchors.left: accept_button.right
-
-        onButtonClick: {
-            controller.state = "STANDARD_SCREEN"
+            onButtonClick: {
+                controller.state = "STANDARD_SCREEN"
+            }
         }
+    }    
 
-//        action: {
-//            //spit out money
-
-//            //go back
-//            parent.parent.state = "STANDARD_SCREEN"
-//        }
+    DropShadow {
+            id: windowShadow
+            z: change_screen_wrapper.z-1
+            anchors.fill: change_screen_wrapper
+            cached: true
+            horizontalOffset: 3
+            verticalOffset: 3
+            radius: 16
+            samples: 32
+            color: "#aa000000"
+            transparentBorder: true
+            fast: true
+            source: change_screen_wrapper
     }
 }
+
+

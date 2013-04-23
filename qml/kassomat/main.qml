@@ -27,16 +27,96 @@ Rectangle{
             }
         ]
 
-//    ParticleSystem{
-//        id: particles
-//    }
 
-    StandardScreen{
-        opacity: (parent.state == "STANDARD_SCREEN")
+
+    Rectangle{
+        id: mainframe
+
+        anchors.left: parent.left
+        width: 1050
+        height: parent.height
+
+        StandardScreen{
+            id: screeen
+            visible: true
+            //enabled: (controller.state == "STANDARD_SCREEN")
+            anchors.fill: parent            
+        }
+
+        FastBlur{
+                id: inactive
+                anchors.fill: screeen
+                source: screeen
+                visible: (radius == 0)? false : true;
+                radius: (controller.state == "STANDARD_SCREEN")? 0 : 32;
+                Behavior on radius{
+                    NumberAnimation {
+                        easing.type: Easing.Linear
+                        duration:250
+                    }
+                }
+
+                MouseArea{
+                    enabled: (controller.state == "STANDARD_SCREEN")? false : true;
+                    anchors.fill: parent;
+                    onClicked:{
+                        controller.state = "STANDARD_SCREEN";
+                    }
+                }
+        }
+
+        ChangeScreen{
+            visible: (opacity == 0.0)? false : true;
+            opacity: (controller.state == "CHANGE_SCREEN")
+            anchors.centerIn: parent
+
+            enabled:true
+
+            width: 900
+            height: 300
+
+            Behavior on opacity{
+                NumberAnimation {
+                    easing.type: Easing.Linear
+                    duration:250
+                }
+            }
+
+        }
+
+        PayScreen{
+            visible: (opacity == 0.0)? false : true;
+            opacity: (controller.state == "PAY_SCREEN")
+            anchors.centerIn: parent
+
+            enabled:true
+
+            width: 900
+            height: 200
+
+            Behavior on opacity{
+                NumberAnimation {
+                    easing.type: Easing.Linear
+                    duration:250
+                }
+            }
+
+        }
     }
 
-    ChangeScreen{
-        opacity: (parent.state == "CHANGE_SCREEN")
+    Rectangle{
+        id: actions_col
+        color: "black"
+
+        anchors.right: parent.right
+        width: 230
+        height: parent.height
+
+        ActionBlock{
+                anchors.fill: parent
+                anchors.margins: 10
+        }
+
     }
 
 }

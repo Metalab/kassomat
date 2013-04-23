@@ -22,12 +22,12 @@ class Project : public QDjangoModel
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("name", "max_length=100")
     Q_CLASSINFO("description", "max_length=2000")
-    Q_CLASSINFO("valid_until", " ")
-    Q_CLASSINFO("funding_target_min", " ")
-    Q_CLASSINFO("funding_target_max", " ")
+    //Q_CLASSINFO("valid_until", "")
+    //Q_CLASSINFO("funding_target_min", "")
+    //Q_CLASSINFO("funding_target_max", "")
     Q_CLASSINFO("admin_password", "max_length=100")
     Q_CLASSINFO("notification_email", "max_length=100")
-    Q_CLASSINFO("sort_order", " ")
+    //Q_CLASSINFO("sort_order", " ")
 
     public:
         QString id() const{ return m_id; }

@@ -40,6 +40,7 @@
 
 
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     //identifier of the item
@@ -49,6 +50,8 @@ Rectangle {
     property int buttonHeight: 75
     property int buttonWidth: 150
 
+    property int position: 0
+
     property string label
     property color textColor: buttonLabel.color
 
@@ -57,10 +60,22 @@ Rectangle {
 
     property color buttonColor: "#4F5C7F"
 
-    property real labelSize: 18
+    property real labelSize: 20
 
-    //set appearance properties
-    radius: 6
+    Component.onCompleted: {
+        buttonLabel.anchors.centerIn = undefined;
+
+        switch(position){
+        case 0: buttonLabel.anchors.centerIn = button;
+            break;
+        case 100: buttonLabel.anchors.right = button.right
+            buttonLabel.anchors.bottom = button.bottom
+            buttonLabel.anchors.margins = 10;
+            break;
+        default: buttonLabel.anchors.centerIn = button;
+            break;
+        }
+    }
 
     border { width: 2; color: borderColor }
     width: buttonWidth; height: buttonHeight
@@ -74,6 +89,19 @@ Rectangle {
         font.pointSize: labelSize
     }
 
+    DropShadow{
+            id: buttonLabelShadow;
+            anchors.fill: buttonLabel
+            cached: true;
+            horizontalOffset: 3;
+            verticalOffset: 3;
+            radius: 8.0;
+            samples: 16;
+            color: "#80000000";
+            smooth: true;
+            source: buttonLabel;
+    }
+
     //buttonClick() is callable and a signal handler, onButtonClick is automatically created
     signal buttonClick()
 
@@ -84,7 +112,11 @@ Rectangle {
 
         hoverEnabled: true
 
-
+        onPressed: SequentialAnimation {
+            PropertyAction{ target: button; property: "z"; value: "1000000" }
+            PauseAnimation{ duration: 55 }
+            PropertyAction{ target: button; property: "z"; value: "1" }
+        }
         onEntered: parent.border.color = onHoverColor
         onExited:  parent.border.color = borderColor
     }

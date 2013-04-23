@@ -20,7 +20,7 @@ class Product : public QDjangoModel
     Q_CLASSINFO("display_name", "max_length=200")
     Q_CLASSINFO("foreign_id", "max_length=200")
     Q_CLASSINFO("barcode", "max_length=20")
-    Q_CLASSINFO("cost", " ")
+    //Q_CLASSINFO("cost", " ")
 
     public:
         QString id() const{ return m_id; }

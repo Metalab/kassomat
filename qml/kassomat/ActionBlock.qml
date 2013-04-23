@@ -1,9 +1,7 @@
 import QtQuick 2.0
 
 Column{
-    anchors.margins: 10
-    spacing:5
-    anchors.fill: parent
+    spacing:10
 
     Text{
         id: username_status
@@ -67,7 +65,7 @@ Column{
     Rectangle{
         id:space
         anchors.left: parent.left
-
+        enabled: false;
         height:220
         width:1
         color: "transparent"
@@ -80,7 +78,7 @@ Column{
         label: "return"
 
         onButtonClick: {
-
+            controller.state = "STANDARD_SCREEN";
         }
     }
 }

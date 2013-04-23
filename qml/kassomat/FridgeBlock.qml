@@ -1,43 +1,56 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 
 Column{
-    spacing: 5
+    spacing: 35
 
-    Rectangle{
-        width: parent.width
-        height:70
-
-        color: "#F15A24"
-
-        Text{
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            anchors.verticalCenter: parent.verticalCenter
-            font.pointSize: 28
-
-            smooth: true
-            text: "METAFRIDGE"
-            font.bold: true
-            color: "white"
-        }
+    Title{
+        id: metafridge
+        label: "METAFRIDGE"
     }
 
     Button{
-        width:parent.width
-        height:140
-        border.color: "#000000"
-        border.width: 1
+        id: mate_button
+        buttonWidth:parent.width
+        buttonHeight:80
+        buttonColor:"#eeeeee"
+
+        label: "2€"
+        labelSize: 40
+        position: 100
+
+        clip: false
+
+        Image{
+                width: sourceSize.width/2.5
+                height: sourceSize.height/2.5
+                anchors.verticalCenter: parent.verticalCenter
+                transform: Rotation{
+                    origin {
+                          x: 60
+                          y: parent.width/2
+                    }
+
+                    axis {x: 0; y: 0; z: 1}
+                    angle: 25
+                }
+                source: "./mate.png"
+        }
 
         onButtonClick: {
-
+            
+            controller.state = "PAY_SCREEN";
         }
     }
 
     Button{
-        width:parent.width
-        height:140
-        border.color: "#000000"
-        border.width: 1
+        buttonWidth:parent.width
+        buttonHeight:80
+        buttonColor:"#eeeeee"
+
+        label: "1,50€"
+        labelSize: 40
+        position: 100
 
         onButtonClick: {
 
@@ -46,16 +59,18 @@ Column{
 
     Row{
         width:parent.width
-        height:140
+        height:80
 
         spacing: 5
 
         Button{
-            height:parent.height
-            width: (parent.width/2)-2.5
+            buttonHeight:parent.height
+            buttonWidth: (parent.width/2)-2.5
+            buttonColor: "#eeeeee"
 
-            border.color: "#000000"
-            border.width: 1
+            label: "1€"
+            labelSize: 40
+            position: 100
 
             onButtonClick: {
 
@@ -65,8 +80,11 @@ Column{
         Button{
             height:parent.height
             width:(parent.width/2)-2.5
-            border.color: "#000000"
-            border.width: 1
+            buttonColor: "#eeeeee"
+
+            label: "0,50€"
+            labelSize: 40
+            position: 100
 
             onButtonClick: {
 

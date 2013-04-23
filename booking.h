@@ -16,9 +16,9 @@ class Booking : public QDjangoModel
     Q_CLASSINFO("__meta__", "db_table=bookings")
 
     Q_CLASSINFO("id", "primary_key=true")
-    Q_CLASSINFO("booking_time", " ")
-    Q_CLASSINFO("admin_id", " ")
-    Q_CLASSINFO("user_email", "max_length=200 ")
+    //Q_CLASSINFO("booking_time", "")
+    //Q_CLASSINFO("admin_id", "")
+    Q_CLASSINFO("user_email", "max_length=200")
 
     public:
         QString id() const{ return m_id; }

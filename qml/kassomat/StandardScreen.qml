@@ -4,10 +4,6 @@ import QtQuick 2.0
 
 Rectangle{
     id: standard_screen
-    visible: (opacity == 0.0)? false : true;
-    Behavior on opacity{ NumberAnimation { easing.type: Easing.InQuad; duration:500; } }
-
-    anchors.fill: parent
 
     Row{
         y:0
@@ -43,19 +39,6 @@ Rectangle{
 
             CommunityBlock{
                 width: parent.width
-            }
-
-        }
-
-        Rectangle{
-            id: actions_col
-            color: "black"
-
-            width: 230
-            height: parent.height
-
-            ActionBlock{
-
             }
 
         }

@@ -6,7 +6,8 @@
 #include "product.h"
 #include "user.h"
 
-class DatabaseController {
+class DatabaseController{
+
 
 public:
     DatabaseController();

@@ -18,11 +18,11 @@ class Booking_Row : public QDjangoModel
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("booking", "on_delete=Bookings.id")
-    Q_CLASSINFO("text", "max_length=200 ")
-    Q_CLASSINFO("product_foreign_id", "max_length=200 ")
-    Q_CLASSINFO("cost_per_item", " ")
-    Q_CLASSINFO("amount", " ")
-    Q_CLASSINFO("project", " ")
+    Q_CLASSINFO("text", "max_length=200")
+    Q_CLASSINFO("product_foreign_id", "max_length=200")
+    //Q_CLASSINFO("cost_per_item", " ")
+    //Q_CLASSINFO("amount", " ")
+    //Q_CLASSINFO("project", " ")
 
     public:
 
