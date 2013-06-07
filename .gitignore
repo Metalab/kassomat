@@ -21,3 +21,6 @@ Makefile
 
 # local doku ignore
 doku/*
+
+kassomat.app/**
+kassomat.xcodeproj/**
