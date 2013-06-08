@@ -56,7 +56,7 @@ public:
 	bool terminate() const { return m_terminate; }
 	void setTerminate(bool terminate);
 	
-    Result reset();
+    void reset(std::function<void(const QString&)> callback);
     void disable();
     void datasetVersion(std::function<void(const QString&)> callback);
     Result_Payout payout(uint32_t amount, bool test=false);
