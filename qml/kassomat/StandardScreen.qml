@@ -1,6 +1,5 @@
 import QtQuick 2.0
 
-import QtQuick 2.0
 
 Rectangle{
     id: standard_screen
@@ -14,7 +13,7 @@ Rectangle{
 
         Column{
             id: buystuff_col
-            width:555
+            width:580
 
             spacing:15
 
@@ -35,7 +34,7 @@ Rectangle{
 
         ProjectBlock{
             width: 420
-            height: parent.height
+            height: parent.height-100
         }
 
 //            CommunityBlock{
