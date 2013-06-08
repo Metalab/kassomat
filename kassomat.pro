@@ -53,7 +53,8 @@ HEADERS += \
     product.h \
     project.h \
     mos_user.h \
-    user.h
+    user.h \
+    moneycodes.h
 
 QT += sql serialport
 
