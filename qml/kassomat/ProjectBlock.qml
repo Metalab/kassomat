@@ -22,9 +22,9 @@ Column{
                 labelSize: 24
                 label: "\u2263"
 
-                onButtonClick: function(){
-                    controller.state = "STANDARD_SCREEN";
-            }
+                onButtonClick: {
+                    controller.state = "PROJECT_SCREEN";
+                }
             }
 
             Button{
@@ -61,6 +61,6 @@ Column{
         color:"#eeeeee"
 
         width: parent.width
-        height: 270
+        height: parent.height
     }
 }

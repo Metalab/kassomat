@@ -14,7 +14,7 @@ Rectangle{
 
         Column{
             id: buystuff_col
-            width:425
+            width:555
 
             spacing:15
 
@@ -28,20 +28,21 @@ Rectangle{
 
         }
 
-        Column{
-            id: promote_col
-            width: 550
-            spacing: 10
+//        Column{
+//            id: promote_col
+//            width: 550
+//            spacing: 10
 
-            ProjectBlock{
-                width: parent.width
-            }
-
-            CommunityBlock{
-                width: parent.width
-            }
-
+        ProjectBlock{
+            width: 420
+            height: parent.height
         }
+
+//            CommunityBlock{
+//                width: parent.width
+//            }
+
+//        }
     }
 }
 
