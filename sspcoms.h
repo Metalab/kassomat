@@ -54,7 +54,7 @@ public:
 	void startConnection();
 	
 	bool terminate() const { return m_terminate; }
-	void setTerminate(bool terminate) { m_terminate = terminate; }
+	void setTerminate(bool terminate);
 	
     Result reset();
     void disable();

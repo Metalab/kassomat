@@ -37,6 +37,11 @@ SSPComs::~SSPComs() {
     delete m_port;
 }
 
+void SSPComs::setTerminate(bool terminate) {
+	m_terminate = terminate;
+	m_taskQueueUpdatedCondition.wakeAll();
+}
+
 void SSPComs::run() {
 	if(!open()) {
 		qCritical() << "SSPComs: Failed opening serial port with error " << m_port->error() << ".";
