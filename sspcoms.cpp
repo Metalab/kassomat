@@ -164,12 +164,11 @@ void SSPComs::disable() {
 }
 
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
-	m_taskQueueMutex.lock();
+	QMutexLocker locker(&m_taskQueueMutex);
 	m_taskQueue.enqueue(new SSPComsTask(QByteArray(1, 0x21), [callback](const QByteArray &response) {
 		callback(QString::fromUtf8(response));
 	}));
 	m_taskQueueUpdatedCondition.wakeOne();
-	m_taskQueueMutex.unlock();
 }
 
 SSPComs::Result_Payout SSPComs::payout(uint32_t amount, bool test) {
