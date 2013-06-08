@@ -1,8 +1,5 @@
 #include "smartpayout.h"
 #include <QDebug>
-extern "C" {
-#include "itlssp/serialfunc.h"
-}
 
 SmartPayout::SmartPayout(QObject *parent) :
     QObject(parent), port(0) {
@@ -10,7 +7,7 @@ SmartPayout::SmartPayout(QObject *parent) :
 
 SmartPayout::~SmartPayout() {
     if(port != 0) {
-        CloseSSPPort(port);
+//        CloseSSPPort(port);
     }
 }
 
@@ -23,11 +20,11 @@ void SmartPayout::setDevice(const QString &dev) {
         m_device = dev;
 
         if(port != 0) {
-            CloseSSPPort(port);
+//            CloseSSPPort(port);
         }
 
         if(dev != "") {
-            port = OpenSSPPort(dev.toUtf8());
+//            port = OpenSSPPort(dev.toUtf8());
 
             if(port == -1) {
                 qFatal("Failed opening device");
