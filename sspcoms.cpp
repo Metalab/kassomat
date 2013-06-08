@@ -1,5 +1,5 @@
 #include "sspcoms.h"
-#include <QDebug.h>
+#include <QDebug>
 
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
