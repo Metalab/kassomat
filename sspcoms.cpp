@@ -172,8 +172,10 @@ void SSPComs::reset(std::function<void(const QString&)> callback) {
     });
 }
 
-void SSPComs::disable() {
-
+void SSPComs::disable(std::function<void(const QString&)> callback) {
+	enqueueTask(QByteArray(1, 0x09), [callback](const QByteArray &response) {
+		callback(QString::fromUtf8(response));
+    });
 }
 
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
