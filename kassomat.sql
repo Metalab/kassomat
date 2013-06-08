@@ -10,7 +10,7 @@ CREATE TABLE users (
 
 CREATE TABLE mos_users (
     mos_id varchar(100) NOT NULL,
-    ibutton_id varchar(20) NULL
+    ibutton_id varchar(20) NULL,
     CONSTRAINT mos_users_pkey PRIMARY KEY (id)
 ) inherits(users);
 
