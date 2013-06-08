@@ -113,9 +113,9 @@ Rectangle {
         hoverEnabled: true
 
         onPressed: SequentialAnimation {
-            PropertyAction{ target: button; property: "z"; value: "1000000" }
+            PropertyAction{ target: button; property: "z"; value: "100" }
             PauseAnimation{ duration: 55 }
-            PropertyAction{ target: button; property: "z"; value: "1" }
+            PropertyAction{ target: button; property: "z"; value: "100" }
         }
         onEntered: parent.border.color = onHoverColor
         onExited:  parent.border.color = borderColor

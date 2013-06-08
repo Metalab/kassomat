@@ -24,9 +24,11 @@ Rectangle{
             },
             State {
                 name: "CHANGE_SCREEN"
+            },
+            State {
+                name: "PROJECT_SCREEN"
             }
         ]
-
 
 
     Rectangle{
@@ -36,33 +38,37 @@ Rectangle{
         width: 1050
         height: parent.height
 
-        StandardScreen{
-            id: screeen
-            visible: true
-            //enabled: (controller.state == "STANDARD_SCREEN")
-            anchors.fill: parent            
-        }
+        // inactive blur effect --------------------------------------------
 
         FastBlur{
                 id: inactive
                 anchors.fill: screeen
                 source: screeen
                 visible: (radius == 0)? false : true;
-                radius: (controller.state == "STANDARD_SCREEN")? 0 : 32;
+                radius: (controller.state == "STANDARD_SCREEN")? 0 : 64;
                 Behavior on radius{
                     NumberAnimation {
                         easing.type: Easing.Linear
                         duration:250
                     }
                 }
+        }
 
-                MouseArea{
-                    enabled: (controller.state == "STANDARD_SCREEN")? false : true;
-                    anchors.fill: parent;
-                    onClicked:{
-                        controller.state = "STANDARD_SCREEN";
-                    }
-                }
+        MouseArea{
+            enabled: (controller.state == "STANDARD_SCREEN")? false : true;
+            anchors.fill: parent;
+            onClicked:{
+                controller.state = "STANDARD_SCREEN";
+            }
+        }
+
+        // all the screens ----------------------------------
+
+        StandardScreen{
+            id: screeen
+            visible: true
+            //enabled: (controller.state == "STANDARD_SCREEN")
+            anchors.fill: parent
         }
 
         ChangeScreen{
@@ -70,10 +76,8 @@ Rectangle{
             opacity: (controller.state == "CHANGE_SCREEN")
             anchors.centerIn: parent
 
-            enabled:true
-
             width: 900
-            height: 300
+            height: 400
 
             Behavior on opacity{
                 NumberAnimation {
@@ -89,8 +93,6 @@ Rectangle{
             opacity: (controller.state == "PAY_SCREEN")
             anchors.centerIn: parent
 
-            enabled:true
-
             width: 900
             height: 200
 
@@ -100,8 +102,25 @@ Rectangle{
                     duration:250
                 }
             }
-
         }
+
+        ProjectScreen{
+            visible: (opacity == 0.0)? false : true;
+            opacity: (controller.state == "PROJECT_SCREEN")
+            anchors.fill: parent
+
+            width: parent.width
+            height: parent.height
+
+            Behavior on opacity{
+                NumberAnimation {
+                    easing.type: Easing.Linear
+                    duration:250
+                }
+            }
+        }
+
+
     }
 
     Rectangle{

@@ -29,14 +29,6 @@ SOURCES += main.cpp \
     db/QDjangoMetaModel.cpp \
     db/QDjango.cpp
 
-# Please do not modify the following two lines. Required for deployment.
-include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
-qtcAddDeployment()
-
-OTHER_FILES += \
-    qml/kassomat/ChangeButton.qml \
-    qml/kassomat/Button.qml
-
 HEADERS += \
     smartpayout.h \
     kassomatcontroller.h \
@@ -65,8 +57,11 @@ HEADERS += \
     mos_user.h \
     user.h
 
-CONFIG += debug
-
 QT += sql
 
+# Installation path
+# target.path =
 
+# Please do not modify the following two lines. Required for deployment.
+include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
+qtcAddDeployment()

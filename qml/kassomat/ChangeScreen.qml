@@ -11,6 +11,7 @@ Rectangle {
     MouseArea{
                 anchors.fill: parent;
     }
+
     
     Rectangle{
         id: change_screen
@@ -78,7 +79,7 @@ Rectangle {
                 controller.state = "STANDARD_SCREEN"
             }
         }
-    }    
+    }
 
     DropShadow {
             id: windowShadow

@@ -5,7 +5,7 @@ KassomatController::KassomatController(QObject *parent) :
     QObject(parent), m_smartPayout(new SmartPayout(this))
 {
     QObject::connect(m_smartPayout.data(), &SmartPayout::deviceChanged, this, &KassomatController::smartPayoutDeviceChanged);
-    m_credit=1000;
+    m_credit=1100;
     m_state="STANDARD_SCREEN";
 }
 

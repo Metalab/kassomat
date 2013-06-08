@@ -21,6 +21,10 @@ Column{
                 onHoverColor: "#ffffff"
                 labelSize: 24
                 label: "\u2263"
+
+                onButtonClick: function(){
+                    controller.state = "STANDARD_SCREEN";
+            }
             }
 
             Button{
