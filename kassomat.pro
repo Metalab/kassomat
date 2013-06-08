@@ -14,17 +14,16 @@ QML_IMPORT_PATH =
 LIBS += -lssl -lcrypto
 CONFIG += c++11
 
+mac {
+	QMAKE_CXXFLAGS += -stdlib=libc++
+	QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
+}
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     smartpayout.cpp \
     kassomatcontroller.cpp \
-    itlssp/SSPDownload.c \
-    itlssp/SSPComs.c \
-    itlssp/ssp_commands.c \
-    itlssp/serialfunc.c \
-    itlssp/Random.c \
-    itlssp/ITLSSPProc.c \
-    itlssp/Encryption.c \
+	sspcoms.cpp \
     databasecontroller.cpp \
     db/QDjangoWhere.cpp \
     db/QDjangoQuerySet.cpp \
@@ -35,11 +34,7 @@ SOURCES += main.cpp \
 HEADERS += \
     smartpayout.h \
     kassomatcontroller.h \
-    itlssp/serialfunc.h \
-    itlssp/Random.h \
-    itlssp/ITLSSPProc.h \
-    itlssp/Encryption.h \
-    itlssp/defs.h \
+	sspcoms.h \
     inc/SSPComs.h \
     inc/ssp_defines.h \
     inc/itl_types.h \
@@ -61,7 +56,7 @@ HEADERS += \
     user.h \
     moneycodes.h
 
-QT += sql
+QT += sql serialport
 
 # Installation path
 # target.path =
