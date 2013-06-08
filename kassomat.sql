@@ -1,68 +1,70 @@
-drop database if exists kassomat;
-create database kassomat with encoding='UTF8';
-\c kassomat
+--DROP DATABASE IF EXISTS kassomat;
+--CREATE DATABASE kassomat WITH ENCODING='UTF8';
 
-create table users (
-    id bigserial primary key,
-    email varchar(100) not null
+BEGIN;
+
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+    email varchar(100) NOT NULL
 );
 
-create table mos_users (
-    mos_id varchar(100) not null,
-    ibutton_id varchar(20) null
+CREATE TABLE mos_users (
+    mos_id varchar(100) NOT NULL,
+    ibutton_id varchar(20) NULL
+    CONSTRAINT mos_users_pkey PRIMARY KEY (id)
 ) inherits(users);
 
-create table admins (
-    password varchar(100) not null
+CREATE TABLE admins (
+    password varchar(100) NOT NULL,
+    CONSTRAINT admins_pkey PRIMARY KEY (id)
 ) inherits(mos_users);
 
-
-create table moneycodes (
-    id bigserial primary key,
-    user bigint references users,
-    code varchar(100) not null
+CREATE TABLE moneycodes (
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL REFERENCES users (id),
+    code varchar(100) NOT NULL
 );
 
-create table projects (
-    id bigserial primary key,
-    name varchar(100) not null,
-    description varchar(2000) null,
-    valid_until date null,
-    funding_target_min integer null,
-    funding_target_max integer null,
-    admin_password varchar(100) not null,
-    notification_email varchar(100) null,
-    sort_order integer not null
+CREATE TABLE projects (
+    id serial PRIMARY KEY,
+    name varchar(100) NOT NULL,
+    description text NULL,
+    valid_until date NULL,
+    funding_target_min integer NULL,
+    funding_target_max integer NULL,
+    admin_password varchar(100) NOT NULL,
+    notification_email varchar(100) NULL,
+    sort_order integer NOT NULL
 );
 
-create table products (
-    id bigserial primary key,
-    project bigint references projects,
-    display_name varchar(200) not null,
+CREATE TABLE products (
+    id serial PRIMARY KEY,
+    project_id integer NOT NULL REFERENCES projects(id),
+    display_name varchar(200) NOT NULL,
 --  foreign_id: cliffords meta data damit er seine bauteile matchen kann.
-    foreign_id varchar(200) not null,
-    barcode varchar(20) null,
-    cost integer not null
+    foreign_id varchar(200) NOT NULL,
+    barcode varchar(20) NULL,
+    cost integer NOT NULL
 );
 
 -- a booking consists of some metadata and one or more booking_rows
-create table bookings (
-    id bigserial primary key,
+CREATE TABLE bookings (
+    id serial PRIMARY KEY,
     booking_time timestamp default localtimestamp,
-    admin_id bigint null references admins,
-    user_email varchar(200) null
+    admin_id integer NULL REFERENCES admins (id),
+    user_email varchar(200) NULL
 );
 
 -- booking row that contains description and amount for a booking as well project id
 -- and info to identify the product if the booking is not specifically for the projects
-create table booking_rows (
-    id bigserial primary key,
-    booking bigint not null references bookings on delete cascade,
-    text varchar(200) not null,
-    product_foreign_id varchar(200) null,
-    cost_per_item integer not null,
-    amount integer not null,
-    project bigint not null references projects
+CREATE TABLE booking_rows (
+    id serial PRIMARY KEY,
+    booking_id integer NOT NULL REFERENCES bookings (id) ON DELETE CASCADE,
+    text varchar(200) NOT NULL,
+    product_foreign_id varchar(200) NULL,
+    cost_per_item integer NOT NULL,
+    amount integer NOT NULL,
+    project_id integer NOT NULL REFERENCES projects (id)
 );
 
-
+COMMIT;
