@@ -100,6 +100,7 @@ private:
 
 	bool open();
 
+	void enqueueTask(const QByteArray &data, const std::function<void(const QByteArray&)> &response);
     bool sendCommand(uint8_t slave_id, const QByteArray &cmd);
     uint16_t calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd);
     
