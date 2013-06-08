@@ -11,6 +11,9 @@ QML_IMPORT_PATH =
 # CONFIG += mobility
 # MOBILITY +=
 
+LIBS += -lssl -lcrypto
+QMAKE_CXXFLAGS += -std=c++11
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     smartpayout.cpp \
