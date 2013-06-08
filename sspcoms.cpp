@@ -6,7 +6,7 @@
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
-SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_sequence(false) {
+SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_terminate(false), m_sequence(false) {
 }
 
 void SSPComs::startConnection() {
@@ -43,20 +43,21 @@ void SSPComs::run() {
 		return;
 	}
 	
-	while(true) {
-		QMutexLocker locker(&m_taskQueueMutex);
+	QMutexLocker locker(&m_taskQueueMutex);
+	while(!m_terminate) {
 		while(!m_taskQueue.isEmpty()) {
 			SSPComsTask *task = m_taskQueue.dequeue();
 			// TODO: send request
 			
 			QByteArray response;
 			// TODO: receive response
-			QMetaObject::invokeMethod(task, "responseAvailable", Qt::QueuedConnection, Q_ARG(const QByteArray&, response));
-			delete task;
+			QMetaObject::invokeMethod(task, "responseAvailable", Qt::QueuedConnection, Q_ARG(QByteArray, response));
+			QMetaObject::invokeMethod(task, "deleteLater", Qt::QueuedConnection);
 		}
 		
 		m_taskQueueUpdatedCondition.wait(&m_taskQueueMutex);
 	}
+	emit terminating();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

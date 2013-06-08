@@ -12,7 +12,7 @@ class SSPComsTask : public QObject {
 public:
 	SSPComsTask(const QByteArray &m, const std::function<void(QByteArray)> &r) : message(m), responder(r) {}
 public slots:
-	void responseAvailable(const QByteArray &data);
+	void responseAvailable(QByteArray data);
 };
 
 #endif

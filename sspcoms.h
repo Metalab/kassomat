@@ -16,6 +16,9 @@ class SSPComsTask;
 
 class SSPComs : public QThread {
     Q_OBJECT
+	
+	Q_PROPERTY(bool terminate READ terminate WRITE setTerminate)
+	
     QSerialPort *m_port;
 	QSerialPortInfo m_portInfo;
 
@@ -50,6 +53,9 @@ public:
 	
 	void startConnection();
 	
+	bool terminate() const { return m_terminate; }
+	void setTerminate(bool terminate) { m_terminate = terminate; }
+	
     Result reset();
     void disable();
     void datasetVersion(std::function<void(const QString&)> callback);
@@ -80,10 +86,13 @@ public:
 
 protected:
     void run();
-
+signals:
+	void terminating();
 private slots:
     void SSPResponseAvailable(int socket);
 private:
+	bool m_terminate;
+	
 	QQueue<SSPComsTask*> m_taskQueue;
 	QMutex m_taskQueueMutex;
 	QWaitCondition m_taskQueueUpdatedCondition;

@@ -1,5 +1,5 @@
 #include "sspcomstask.h"
 
-void SSPComsTask::responseAvailable(const QByteArray &data) {
+void SSPComsTask::responseAvailable(QByteArray data) {
 	responder(data);
 }
