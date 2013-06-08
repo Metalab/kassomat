@@ -109,12 +109,12 @@ bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd) {
     uint8_t stuffing = transportBytes.count(0x7f);
 
     QByteArray stuffedTransportBytes(1 + transportBytes.size() + stuffing, 0x7f);
-    int stuffedIndex = 1; // first byte is stx (0x4f)
+    int stuffedIndex = 1; // first byte is stx (0x7f)
 
     for(int i = 0; i < transportBytes.size(); ++i) {
         uint8_t byte = transportBytes.data()[i];
         if(byte == 0x7f) {
-            stuffedIndex += 2; // bytes default to 0x4f anyways
+            stuffedIndex += 2; // bytes default to 0x7f anyways
         } else {
             stuffedTransportBytes.data()[stuffedIndex++] = byte;
         }
