@@ -12,8 +12,9 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-class SSPComs : public QThread
-{
+class SSPComsTask;
+
+class SSPComs : public QThread {
     Q_OBJECT
     QSerialPort *m_port;
 	QSerialPortInfo m_portInfo;
@@ -51,7 +52,7 @@ public:
 	
     Result reset();
     void disable();
-    Result datasetVersion(QString &version);
+    void datasetVersion(std::function<void(const QString&)> callback);
     Result_Payout payout(uint32_t amount, bool test=false);
     uint32_t getDenominationLevel(uint32_t denomination, const QString &currency);
     Result_Route getDenominationRoute(uint32_t denomination, const QString &currency);
@@ -83,12 +84,7 @@ protected:
 private slots:
     void SSPResponseAvailable(int socket);
 private:
-	struct Task {
-		QByteArray message;
-		std::function<void(QByteArray)> responder;
-	};
-	
-	QQueue<Task> m_taskQueue;
+	QQueue<SSPComsTask*> m_taskQueue;
 	QMutex m_taskQueueMutex;
 	QWaitCondition m_taskQueueUpdatedCondition;
     bool m_sequence;

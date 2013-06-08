@@ -24,6 +24,7 @@ SOURCES += main.cpp \
     smartpayout.cpp \
     kassomatcontroller.cpp \
 	sspcoms.cpp \
+	sspcomstask.cpp \
     databasecontroller.cpp \
     db/QDjangoWhere.cpp \
     db/QDjangoQuerySet.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     smartpayout.h \
     kassomatcontroller.h \
 	sspcoms.h \
+	sspcomstask.h \
     inc/SSPComs.h \
     inc/ssp_defines.h \
     inc/itl_types.h \

@@ -1,6 +1,8 @@
 #include "sspcoms.h"
 #include <QDebug>
 
+#include "sspcomstask.h"
+
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
@@ -43,8 +45,14 @@ void SSPComs::run() {
 	
 	while(true) {
 		QMutexLocker locker(&m_taskQueueMutex);
-		if(!m_taskQueue.isEmpty()) {
+		while(!m_taskQueue.isEmpty()) {
+			SSPComsTask *task = m_taskQueue.dequeue();
+			// TODO: send request
 			
+			QByteArray response;
+			// TODO: receive response
+			QMetaObject::invokeMethod(task, "responseAvailable", Qt::QueuedConnection, Q_ARG(const QByteArray&, response));
+			delete task;
 		}
 		
 		m_taskQueueUpdatedCondition.wait(&m_taskQueueMutex);
@@ -154,9 +162,13 @@ void SSPComs::disable() {
 
 }
 
-SSPComs::Result SSPComs::datasetVersion(QString &version) {
-	// 0x21
-	
+void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
+	m_taskQueueMutex.lock();
+	m_taskQueue.enqueue(new SSPComsTask(QByteArray(1, 0x21), [callback](const QByteArray &response) {
+		callback(QString::fromUtf8(response));
+	}));
+	m_taskQueueUpdatedCondition.wakeOne();
+	m_taskQueueMutex.unlock();
 }
 
 SSPComs::Result_Payout SSPComs::payout(uint32_t amount, bool test) {
