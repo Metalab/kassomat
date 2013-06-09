@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "sspcomstask.h"
+#include "sspevents.h"
 
 #include <errno.h>
 
@@ -291,8 +292,14 @@ void SSPComs::smartEmpty() {
 
 }
 
-void SSPComs::poll() {
-
+void SSPComs::poll(std::function<void(QList<SSPEvent>)> callback) {
+	enqueueTask(QByteArray(1, 0x7), [callback](uint8_t, const QByteArray &response) {
+		QList<SSPEvent> events;
+		
+		// TODO parse events
+		
+		callback(events);
+    });
 }
 
 uint32_t SSPComs::getSerialNumber() {

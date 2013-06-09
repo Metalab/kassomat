@@ -37,6 +37,7 @@ HEADERS += \
     kassomatcontroller.h \
 	sspcoms.h \
 	sspcomstask.h \
+	sspevents.h \
     inc/SSPComs.h \
     inc/ssp_defines.h \
     inc/itl_types.h \
