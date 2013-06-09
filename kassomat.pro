@@ -12,7 +12,7 @@ QML_IMPORT_PATH =
 # MOBILITY +=
 
 LIBS += -lssl -lcrypto
-CONFIG += c++11
+CONFIG += c++11 debug
 
 mac {
 	QMAKE_CXXFLAGS += -stdlib=libc++
