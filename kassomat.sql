@@ -19,16 +19,11 @@ CREATE TABLE admins (
     CONSTRAINT admins_pkey PRIMARY KEY (id)
 ) inherits(mos_users);
 
-CREATE TABLE moneycodes (
-    id serial PRIMARY KEY,
-    user_id integer NOT NULL REFERENCES users (id),
-    booking_id integer NOT NULL REFERENCES bookings (id),
-    code varchar(100) NOT NULL
-);
 
 CREATE TABLE projects (
     id serial PRIMARY KEY,
     name varchar(100) NOT NULL,
+    images bytea NULL,
     description text NULL,
     valid_until date NULL,
     funding_target_min integer NULL,
@@ -68,5 +63,18 @@ CREATE TABLE booking_rows (
     amount integer NOT NULL,
     project_id integer NOT NULL REFERENCES projects (id)
 );
+
+CREATE TABLE moneycodes (
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL REFERENCES users (id),
+    booking_id integer NOT NULL REFERENCES bookings (id),
+    code varchar(100) NOT NULL
+);
+
+-- here some test data for projects
+
+-- INSERT INTO projects(name, description, admin_password, sort_order) VALUES ('Getraenkekassa', 'Metalabs offizielle Kassa fuer Getraenke', 'kassomat', '1');
+
+-- INSERT INTO products(project_id, display_name, cost) VALUES (1, 'Club Mate',  200), (1, 'fritz-lImo Apfelschorle', 150), (1, 'Premium Cola', 150);
 
 COMMIT;

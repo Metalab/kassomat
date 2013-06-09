@@ -3,14 +3,14 @@
 
 #include <QObject>
 
-class projectcontroller : public QObject
+class ProjectController : public QObject
 {
     Q_OBJECT
     
     
     
 public:
-    explicit projectcontroller(QObject *parent = 0);
+    explicit ProjectController(QObject *parent = 0);
     
 signals:
     
