@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class SSPComs;
+
 class SmartPayout : public QObject
 {
     Q_OBJECT
@@ -10,7 +12,7 @@ class SmartPayout : public QObject
     QString m_device;
     Q_PROPERTY(QString device READ device WRITE setDevice NOTIFY deviceChanged)
 
-    int port;
+	SSPComs *coms;
 public:
     explicit SmartPayout(QObject *parent = 0);
     ~SmartPayout();
@@ -20,7 +22,6 @@ public:
 
 signals:
     void deviceChanged(const QString &newValue);
-public slots:
 };
 
 #endif // SMARTPAYOUT_H

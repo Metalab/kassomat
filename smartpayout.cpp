@@ -1,13 +1,14 @@
 #include "smartpayout.h"
 #include <QDebug>
+#include "sspcoms.h"
 
 SmartPayout::SmartPayout(QObject *parent) :
-    QObject(parent), port(0) {
+    QObject(parent), coms(nullptr) {
 }
 
 SmartPayout::~SmartPayout() {
-    if(port != 0) {
-//        CloseSSPPort(port);
+    if(coms) {
+		
     }
 }
 
@@ -19,19 +20,22 @@ void SmartPayout::setDevice(const QString &dev) {
     if(m_device != dev) {
         m_device = dev;
 
-        if(port != 0) {
-//            CloseSSPPort(port);
-        }
+        if(coms != nullptr)
+			coms->setTerminate(true);
 
         if(dev != "") {
-//            port = OpenSSPPort(dev.toUtf8());
-
-            if(port == -1) {
-                qFatal("Failed opening device");
-                return;
-            }
+			coms = new SSPComs(QSerialPortInfo(dev));
+			QObject::connect(coms, &SSPComs::terminating, [=]{
+				delete coms;
+			});
+			
+			coms->startConnection();
+			
+			coms->datasetVersion([](const QString &datasetVersion){
+				qDebug() << "datasetVersion =" << datasetVersion;
+			});
         } else {
-            port = 0;
+			coms = nullptr;
         }
         emit deviceChanged(m_device);
     }
