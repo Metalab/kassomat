@@ -30,7 +30,9 @@ SOURCES += main.cpp \
     db/QDjangoQuerySet.cpp \
     db/QDjangoModel.cpp \
     db/QDjangoMetaModel.cpp \
-    db/QDjango.cpp
+    db/QDjango.cpp \
+    projectcontroller.cpp \
+    transactionlogcontroller.cpp
 
 HEADERS += \
     smartpayout.h \
@@ -57,7 +59,9 @@ HEADERS += \
     project.h \
     mos_user.h \
     user.h \
-    moneycodes.h
+    projectcontroller.h \
+    transactionlogcontroller.h \
+    moneycode.h
 
 QT += sql serialport
 

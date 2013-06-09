@@ -22,6 +22,7 @@ CREATE TABLE admins (
 CREATE TABLE moneycodes (
     id serial PRIMARY KEY,
     user_id integer NOT NULL REFERENCES users (id),
+    booking_id integer NOT NULL REFERENCES bookings (id),
     code varchar(100) NOT NULL
 );
 
@@ -42,7 +43,7 @@ CREATE TABLE products (
     project_id integer NOT NULL REFERENCES projects(id),
     display_name varchar(200) NOT NULL,
 --  foreign_id: cliffords meta data damit er seine bauteile matchen kann.
-    foreign_id varchar(200) NOT NULL,
+    foreign_id varchar(200) NULL,
     barcode varchar(20) NULL,
     cost integer NOT NULL
 );
@@ -61,6 +62,7 @@ CREATE TABLE booking_rows (
     id serial PRIMARY KEY,
     booking_id integer NOT NULL REFERENCES bookings (id) ON DELETE CASCADE,
     text varchar(200) NOT NULL,
+--  a copy of products (foreign_id)
     product_foreign_id varchar(200) NULL,
     cost_per_item integer NOT NULL,
     amount integer NOT NULL,

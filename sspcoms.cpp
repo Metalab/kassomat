@@ -246,15 +246,15 @@ void SSPComs::enqueueTask(const QByteArray &data, const std::function<void(uint8
 	m_taskQueueUpdatedCondition.wakeOne();
 }
 
-void SSPComs::reset(std::function<void(const QString&)> callback) {
+void SSPComs::reset(std::function<void()> callback) {
 	enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
-//		callback(QString::fromUtf8(response.right(response.length()-1)));
+		callback();
     });
 }
 
-void SSPComs::disable(std::function<void(const QString&)> callback) {
+void SSPComs::disable(std::function<void()> callback) {
 	enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
-//		callback(QString::fromUtf8(response.right(response.length()-1)));
+		callback();
     });
 }
 

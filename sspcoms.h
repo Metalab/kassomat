@@ -57,8 +57,8 @@ public:
 	bool terminate() const { return m_terminate; }
 	void setTerminate(bool terminate);
 	
-    void reset(std::function<void(const QString&)> callback);
-    void disable(std::function<void(const QString&)> callback);
+    void reset(std::function<void()> callback);
+    void disable(std::function<void()> callback);
     void datasetVersion(std::function<void(const QString&)> callback);
     Result_Payout payout(uint32_t amount, bool test=false);
     uint32_t getDenominationLevel(uint32_t denomination, const QString &currency);

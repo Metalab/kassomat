@@ -23,7 +23,7 @@ DatabaseController::DatabaseController(){
     if(ok) {
         QDjango::setDebugEnabled(true);
         QDjango::setDatabase(m_db);
-        qDebug() << "yey?" ;
+        qDebug() << "yey!" ;
 
     } else {
         qDebug() << m_db.lastError();
@@ -33,6 +33,7 @@ DatabaseController::DatabaseController(){
     QDjango::registerModel<User>();
     QDjango::registerModel<MOS_User>();
     QDjango::registerModel<Admin>();
+    QDjango::registerModel<Moneycode>();
     QDjango::registerModel<Booking>();
     QDjango::registerModel<Booking_Row>();
     QDjango::registerModel<Product>();
