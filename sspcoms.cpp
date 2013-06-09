@@ -292,9 +292,9 @@ void SSPComs::smartEmpty() {
 
 }
 
-void SSPComs::poll(std::function<void(QList<SSPEvent>)> callback) {
+void SSPComs::poll(std::function<void(QList<SSPEvent*>)> callback) {
 	enqueueTask(QByteArray(1, 0x7), [callback](uint8_t, const QByteArray &response) {
-		QList<SSPEvent> events;
+		QList<SSPEvent*> events;
 		
 		// TODO parse events
 		

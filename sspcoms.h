@@ -74,7 +74,7 @@ public:
 
     Result_Payout payoutByDenomination(const QList<PayoutDenomination> &requests);
     void smartEmpty();
-    void poll(std::function<void(QList<SSPEvent>)> callback);
+    void poll(std::function<void(QList<SSPEvent*>)> callback);
     uint32_t getSerialNumber();
     QString getFirmwareVersion();
     const QList<PayoutDenomination> getAllLevels();
