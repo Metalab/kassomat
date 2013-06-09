@@ -3,6 +3,8 @@
 
 #include "sspcomstask.h"
 
+#include <errno.h>
+
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
@@ -45,6 +47,7 @@ void SSPComs::setTerminate(bool terminate) {
 void SSPComs::run() {
 	if(!open()) {
 		qCritical() << "SSPComs: Failed opening serial port with error " << m_port->error() << ".";
+		qCritical() << "errno = " << errno;
 		return;
 	}
 	
@@ -52,10 +55,11 @@ void SSPComs::run() {
 	while(!m_terminate) {
 		while(!m_taskQueue.isEmpty()) {
 			SSPComsTask *task = m_taskQueue.dequeue();
-			// TODO: send request
+			if(!sendCommand(0x00, task->message())) {
+				// OMG OMG OMG
+			}
 			
-			QByteArray response;
-			// TODO: receive response
+			QByteArray response = readResponse();
 			QMetaObject::invokeMethod(task, "responseAvailable", Qt::QueuedConnection, Q_ARG(QByteArray, response));
 			QMetaObject::invokeMethod(task, "deleteLater", Qt::QueuedConnection);
 		}
@@ -75,6 +79,85 @@ struct __attribute__((__packed__)) TransportLayer {
     uint8_t length;
     uint8_t data_crc[];
 };
+
+QByteArray SSPComs::readResponse() {
+	// TODO: verify sequence and slave id
+	QByteArray recv;
+	while(true) {
+		m_port->waitForReadyRead(1000000);
+		recv.append(m_port->readAll());
+		
+		if(recv.length() >= 5) {
+			if(recv.constData()[0] != 0x7f) {
+				qCritical() << "Read response that doesn't start with STX. (got " << (int)*recv.constData() << ")";
+				throw QString("Read response that doesn't start with STX.");
+			}
+			const TransportLayer *transport = reinterpret_cast<const TransportLayer *>(&recv.constData()[1]);
+			uint8_t length = transport->length;
+			QByteArray content;
+			uint8_t recvIndex = 3;
+			for(uint8_t i = 0; i < length; ++i) {
+				if(recv.length() < recvIndex+1) {
+					// not enough data, try to capture more
+					continue;
+				}
+				char date = recv[recvIndex++];
+				content.append(date);
+				if(date == 0x7f) {
+					if(recv.length() < recvIndex+1) {
+						// not enough data, try to capture more
+						continue;
+					}
+					if(recv[recvIndex++] != char(0x7f)) {
+						qCritical() << "Non-stuffed byte received!";
+						throw "Non-stuffed byte received!";
+					}
+				}
+			}
+			if(recv.length() < recvIndex + 2) {
+				// not enough data, try to capture more
+				continue;
+			}
+			uint8_t crc1 = recv[recvIndex++];
+			if(crc1 == 0x7f) {
+				if(recv.length() < recvIndex + 2) {
+					// not enough data, try to capture more
+					continue;
+				}
+				crc1 = recv[recvIndex++];
+				if(crc1 != 0x7f) {
+					qCritical() << "Non-stuffed byte received!";
+					throw "Non-stuffed byte received!";
+				}
+			}
+			if(recv.length() < recvIndex + 1) {
+				// not enough data, try to capture more
+				continue;
+			}
+			uint8_t crc2 = recv[recvIndex++];
+			if(crc2 == 0x7f) {
+				if(recv.length() < recvIndex + 1) {
+					// not enough data, try to capture more
+					continue;
+				}
+				crc2 = recv[recvIndex++];
+				if(crc2 != 0x7f) {
+					qCritical() << "Non-stuffed byte received!";
+					throw "Non-stuffed byte received!";
+				}
+			}
+			
+			uint16_t crc = (crc2 << 8) | crc1;
+			// verify CRC
+			if(crc != calculateCRC(recv.mid(1, sizeof(TransportLayer)) + content, CRC_SSP_SEED, CRC_SSP_POLY)) {
+				qCritical() << "Bad CRC";
+				throw QString("Bad CRC");
+			}
+			
+			return content;
+		}
+	}
+}
 
 uint16_t SSPComs::calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd) {
     int i, j;
@@ -152,34 +235,30 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     return encryptedData;
 }
 
-void SSPComs::SSPResponseAvailable(int socket) {
-	
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // COMMAND GENERATION
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-void SSPComs::enqueueTask(const QByteArray &data, const std::function<void(const QByteArray&)> &response) {
+void SSPComs::enqueueTask(const QByteArray &data, const std::function<void(uint8_t, const QByteArray&)> &response) {
 	QMutexLocker locker(&m_taskQueueMutex);
 	m_taskQueue.enqueue(new SSPComsTask(data, response));
 	m_taskQueueUpdatedCondition.wakeOne();
 }
 
 void SSPComs::reset(std::function<void(const QString&)> callback) {
-	enqueueTask(QByteArray(1, 0x01), [callback](const QByteArray &response) {
-		callback(QString::fromUtf8(response));
+	enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
+//		callback(QString::fromUtf8(response.right(response.length()-1)));
     });
 }
 
 void SSPComs::disable(std::function<void(const QString&)> callback) {
-	enqueueTask(QByteArray(1, 0x09), [callback](const QByteArray &response) {
-		callback(QString::fromUtf8(response));
+	enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
+//		callback(QString::fromUtf8(response.right(response.length()-1)));
     });
 }
 
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
-	enqueueTask(QByteArray(1, 0x21), [callback](const QByteArray &response) {
+	enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
 		callback(QString::fromUtf8(response));
     });
 }

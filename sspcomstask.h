@@ -7,10 +7,12 @@
 
 class SSPComsTask : public QObject {
 	Q_OBJECT
-	QByteArray message;
-	std::function<void(const QByteArray&)> responder;
+	QByteArray m_message;
+	std::function<void(uint8_t status, const QByteArray&)> responder;
 public:
-	SSPComsTask(const QByteArray &m, const std::function<void(QByteArray)> &r) : message(m), responder(r) {}
+	SSPComsTask(const QByteArray &m, const std::function<void(uint8_t, QByteArray)> &r) : m_message(m), responder(r) {}
+	
+	const QByteArray &message() const { return m_message; }
 public slots:
 	void responseAvailable(QByteArray data);
 };
