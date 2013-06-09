@@ -3,4 +3,7 @@
 transactionlogcontroller::transactionlogcontroller(QObject *parent) :
     QObject(parent)
 {
+
+
+
 }

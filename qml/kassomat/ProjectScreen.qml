@@ -8,5 +8,19 @@ Rectangle{
                 anchors.fill: parent;
     }
 
+    ListView {
+        id: list_view
+
+        anchors.fill: parent
+        //model: qmlModel
+        model: projectlist
+        delegate: Rectangle {
+           height: 20
+           width: 200
+           color: colour
+           Text { text: name }
+        }
+    }
+
 
 }

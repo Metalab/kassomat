@@ -1,5 +1,6 @@
 #include "databasecontroller.h"
 #include "db/QDjango.h"
+#include "db/QDjangoQuerySet.h"
 #include "user.h"
 #include "mos_user.h"
 #include "admin.h"
@@ -38,4 +39,13 @@ DatabaseController::DatabaseController(){
     QDjango::registerModel<Booking_Row>();
     QDjango::registerModel<Product>();
     QDjango::registerModel<Project>();
+}
+
+QList<QVariantList> DatabaseController::listProjects(){
+    QDjangoQuerySet<Project> projects;
+//    QDjangoQuerySet<Project> someProjects;
+//    someProjects = projects.filter(QDjangoWhere("name", QDjangoWhere::Equals, "*") &&
+//                                    QDjangoWhere("valid_until", QDjangoWhere::NotEquals, "bla"));
+
+    return projects.valuesList();
 }

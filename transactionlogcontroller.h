@@ -1,13 +1,13 @@
-#ifndef LOGCONTROLLER_H
-#define LOGCONTROLLER_H
+#ifndef TRANSACTIONLOGCONTROLLER_H
+#define TRANSACTIONLOGCONTROLLER_H
 
 #include <QObject>
 
-class logcontroller : public QObject
+class transactionlogcontroller : public QObject
 {
     Q_OBJECT
 public:
-    explicit logcontroller(QObject *parent = 0);
+    explicit transactionlogcontroller(QObject *parent = 0);
     
 signals:
     
@@ -15,4 +15,4 @@ public slots:
     
 };
 
-#endif // LOGCONTROLLER_H
+#endif // TRANSACTIONLOGCONTROLLER_H

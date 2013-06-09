@@ -11,11 +11,15 @@ int main(int argc, char *argv[])
     KassomatController kassomatController;
     DatabaseController databaseController;
 
+    QList<QVariantList> temp;
+
+    temp = databaseController.listProjects();
     //kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
 
     QtQuick2ApplicationViewer viewer;
     //in .qml files eine variable namens "controller" global verfuegbar machen
     viewer.rootContext()->setContextProperty("controller", &kassomatController);
+    viewer.rootContext()->setContextProperty("projectlist", QVariant::fromValue(temp));
     viewer.setMainQmlFile(QStringLiteral("qml/kassomat/main.qml"));
     viewer.showExpanded();
 

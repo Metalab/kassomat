@@ -5,6 +5,7 @@
 #include "project.h"
 #include "product.h"
 #include "user.h"
+#include "moneycode.h"
 
 class DatabaseController{
 
@@ -13,8 +14,8 @@ public:
     DatabaseController();
 
     bool newProject();
-    bool shutdownProject(Project project); // allen usern gutscheine verschicken
-    bool finishProject(Project project); // email an alle, es war ein erfolg
+    bool shutdownProject(Project project); // sends all MOS users their redeem code again, set valid_until to hide the project (if not set)
+    bool finishProject(Project project); // payout the money & email MOS users, success!,  set valid_until to hide the project (if not set)
 
     bool newProduct(Project project);
     bool deleteProduct(Product product); // generate moneycodes and/or send updates
@@ -22,11 +23,11 @@ public:
     bool newUser(QString email);
     bool addMoneycode(User user); //generates and adds a moneycode to a user
     bool sendMoneycode(User user); //sends an email about all the open moneycode for this user
-    bool redeemMoneycode(User user, QString moneycode); //paout that moneycode
+    bool redeemMoneycode(User user, QString code); //payout that moneycode
 
     QList<Project> listProjects(QDateTime from, QDateTime to=QDateTime::currentDateTime());
-    QList<Project> listProjects(User user);
-    QList<Product> listProducts(User user);
+    QList<QVariantList> listProjects();
+    QList<Product> listProducts(Project project);
 
     // new/edit/del projekte
     // (nur leute die member sind duerfen projekte anlegen)

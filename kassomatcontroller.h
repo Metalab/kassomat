@@ -27,7 +27,6 @@ public:
     void setState(const QString &state);
 
 signals:
-
     void smartPayoutDeviceChanged(const QString &newDevice);
     void creditChanged(unsigned int);
     void stateChanged(QString);
