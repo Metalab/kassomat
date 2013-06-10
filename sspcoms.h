@@ -104,7 +104,11 @@ private:
     bool sendCommand(uint8_t slave_id, const QByteArray &cmd);
     uint16_t calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd);
     
+	// encryption
+	
+	QByteArray key;
 	QByteArray encrypt(const QByteArray &cmd);
+	
 	
 	Q_DISABLE_COPY(SSPComs)
 };

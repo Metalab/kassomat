@@ -25,6 +25,7 @@ SOURCES += main.cpp \
     kassomatcontroller.cpp \
 	sspcoms.cpp \
 	sspcomstask.cpp \
+	encryption.cpp \
     databasecontroller.cpp \
     db/QDjangoWhere.cpp \
     db/QDjangoQuerySet.cpp \
@@ -40,9 +41,7 @@ HEADERS += \
 	sspcoms.h \
 	sspcomstask.h \
 	sspevents.h \
-    inc/SSPComs.h \
-    inc/ssp_defines.h \
-    inc/itl_types.h \
+	encryption.h \
     databasecontroller.h \
     db/QDjangoWhere.h \
     db/QDjangoWhere_p.h \
