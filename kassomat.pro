@@ -11,7 +11,6 @@ QML_IMPORT_PATH =
 # CONFIG += mobility
 # MOBILITY +=
 
-LIBS += -lssl -lcrypto
 CONFIG += c++11 debug
 
 mac {
