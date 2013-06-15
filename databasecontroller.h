@@ -6,8 +6,11 @@
 #include "product.h"
 #include "user.h"
 #include "moneycode.h"
+#include "db/QDjango.h"
+#include "db/QDjangoQuerySet.h"
 
-class DatabaseController{
+
+class DatabaseController {
 
 
 public:
@@ -26,7 +29,10 @@ public:
     bool redeemMoneycode(User user, QString code); //payout that moneycode
 
     QList<Project> listProjects(QDateTime from, QDateTime to=QDateTime::currentDateTime());
-    QList<QVariantList> listProjects();
+    //QList<const Product*> listProjects();
+    QList<QVariantMap> listProjects();
+
+    QList<Product> listProducts(); // test function, .. making this work.. damnit
     QList<Product> listProducts(Project project);
 
     // new/edit/del projekte

@@ -32,7 +32,10 @@ SOURCES += main.cpp \
     db/QDjangoMetaModel.cpp \
     db/QDjango.cpp \
     projectcontroller.cpp \
-    transactionlogcontroller.cpp
+    transactionlogcontroller.cpp \
+    genericmodelbase.cpp \
+    genericmodel.cpp \
+    utils.cpp
 
 HEADERS += \
     smartpayout.h \
@@ -61,7 +64,10 @@ HEADERS += \
     user.h \
     projectcontroller.h \
     transactionlogcontroller.h \
-    moneycode.h
+    moneycode.h \
+    genericmodelbase.h \
+    genericmodel.h \
+    utils.h
 
 QT += sql serialport
 
