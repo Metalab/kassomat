@@ -15,7 +15,6 @@ const QString &KassomatController::smartPayoutDevice() const {
 
 void KassomatController::setSmartPayoutDevice(const QString &dev) {
     m_smartPayout->setDevice(dev);
-    this->
 }
 
 unsigned int KassomatController::credit() const{

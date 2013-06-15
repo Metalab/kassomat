@@ -25,8 +25,12 @@ template <class ModelTemplate>
 GenericModel<ModelTemplate>::GenericModel(QObject *parent, bool cleanupPrefix)
     : GenericModelBase(parent), m_cleanup(cleanupPrefix), m_propertyCount(0)
 {
-    const ModelTemplate object;
+    //const ModelTemplate object;
+    QStringList properties;
+    ModelTemplate tmp;
+    Utils::extractObjectProperties(tmp.metaObject(), &properties, m_cleanup);
 
+    m_propertyCount = properties.count();
 
 }
 
@@ -44,46 +48,46 @@ QHash<int, QByteArray> GenericModel<ModelTemplate>::roleNames() const{
     ModelTemplate tmp;
     Utils::extractObjectProperties(tmp.metaObject(), &properties, m_cleanup);
 
-    m_propertyCount = properties.count();
-    for (int i = 0; i < m_propertyCount; ++i) {
+    for (int i = 0; i < properties.count(); ++i) {
         roles[i] = properties[i].toUtf8();
+        //qDebug() << roles[i] << "hello";
     }
 
     return roles;
 }
 
-//template <class ModelTemplate>
-//void GenericModel<ModelTemplate>::addItem(const ModelTemplate &item)
-//{
-//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-//    m_items << item;
-//    endInsertRows();
-//}
-
-//template <class ModelTemplate>
-//void GenericModel<ModelTemplate>::prependItem(const ModelTemplate &item)
-//{
-//    beginInsertRows(QModelIndex(), 0, 0);
-//    m_items.prepend(item);
-//    endInsertRows();
-//}
+template <class ModelTemplate>
+void GenericModel<ModelTemplate>::addItem(const ModelTemplate &item)
+{
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    m_items << item;
+    endInsertRows();
+}
 
 template <class ModelTemplate>
-void GenericModel<ModelTemplate>::addItems(const QList<ModelTemplate> &items)
+void GenericModel<ModelTemplate>::prependItem(const ModelTemplate &item)
+{
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_items.prepend(item);
+    endInsertRows();
+}
+
+template <class ModelTemplate>
+void GenericModel<ModelTemplate>::addItems(const QList<ModelTemplate *> &items)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
     m_items = items;
     endInsertRows();
 }
 
-//template <class ModelTemplate>
-//void GenericModel<ModelTemplate>::removeItem(const ModelTemplate &item)
-//{
-//    const int index = m_items.indexOf(item);
-//    beginRemoveRows(QModelIndex(), index, index);
-//    m_items.removeAt(index);
-//    endRemoveRows();
-//}
+template <class ModelTemplate>
+void GenericModel<ModelTemplate>::removeItem(const ModelTemplate &item)
+{
+    const int index = m_items.indexOf(item);
+    beginRemoveRows(QModelIndex(), index, index);
+    m_items.removeAt(index);
+    endRemoveRows();
+}
 
 template <class ModelTemplate>
 void GenericModel<ModelTemplate>::clear()
@@ -108,14 +112,14 @@ QVariant GenericModel<ModelTemplate>::data(const QModelIndex &index, int role) c
         return QVariant();
 
     QVariant dataValue;
-    const ModelTemplate item = m_items[index.row()];
+    const ModelTemplate *item = m_items[index.row()];
     QMetaProperty metaProperty;
 
     for (int propertyIndex = 0; propertyIndex < m_propertyCount; ++propertyIndex) {
         if (role == propertyIndex) {
-            const QMetaObject *tmp = item.metaObject();
+            const QMetaObject *tmp = item->metaObject();
             metaProperty = tmp->property(propertyIndex + tmp->propertyOffset());
-            dataValue = item.property(metaProperty.name());
+            dataValue = item->property(metaProperty.name());
         }
     }
 
@@ -128,8 +132,8 @@ bool GenericModel<ModelTemplate>::setData(const QModelIndex & index, const QVari
     if (!index.isValid())
         return false;
 
-    ModelTemplate item = m_items.at(index.row());
-    item.setProperty(item.metaObject()->property(role).name(), value);
+    ModelTemplate *item = m_items.at(index.row());
+    item->setProperty(item->metaObject()->property(role).name(), value);
     m_items.replace(index.row(), item);
     emit dataChanged(index, index);
     return true;
@@ -163,7 +167,7 @@ template <class ModelTemplate>
 const QObject *GenericModel<ModelTemplate>::accessDataByIndex(int index)
 {
     //XXX: check if object exists
-    return qobject_cast<const QObject *>(&m_items.at(index));
+    return qobject_cast<const QObject *>(m_items.at(index));
 }
 
 template <class ModelTemplate>

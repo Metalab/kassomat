@@ -32,7 +32,7 @@ public:
     //QList<const Product*> listProjects();
     QList<QVariantMap> listProjects();
 
-    QList<Product> listProducts(); // test function, .. making this work.. damnit
+    QList<Product*> listProducts(); // test function, .. making this work.. damnit
     QList<Product> listProducts(Project project);
 
     // new/edit/del projekte

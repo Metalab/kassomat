@@ -26,7 +26,6 @@
 template <class ModelTemplate>
 class GenericModel : public GenericModelBase
 {
-    Q_OBJECT
 
 public:
     GenericModel(QObject *parent = 0, bool cleanupPrefix = true);
@@ -35,7 +34,7 @@ public:
     QHash<int, QByteArray> roleNames() const;
     void addItem(const ModelTemplate &item);
     void prependItem(const ModelTemplate &item);
-    void addItems(const QList<ModelTemplate> &items);
+    void addItems(const QList<ModelTemplate *> &items);
     void removeItem(const ModelTemplate &item);
     bool updateItem(const ModelTemplate &item);
 
@@ -52,7 +51,7 @@ protected:
     const QObject *accessDataByIndex(int id);
 
 private:
-    QList<ModelTemplate> m_items;
+    QList<ModelTemplate *> m_items;
     bool m_cleanup;
     int m_propertyCount;
 };

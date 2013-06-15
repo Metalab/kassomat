@@ -42,19 +42,16 @@ DatabaseController::DatabaseController(){
     QDjango::registerModel<Project>();
 }
 
-QList<Product> DatabaseController::listProducts(){
+QList<Product*> DatabaseController::listProducts(){
     QDjangoQuerySet<Product> products;
 
 //    QDjangoQuerySet<Project> someProjects;
 //    someProjects = projects.filter(QDjangoWhere("name", QDjangoWhere::Equals, "*") &&
 //                                    QDjangoWhere("valid_until", QDjangoWhere::NotEquals, "bla"));
 
-    QList<Product> result;
-    Product p;
+    QList<Product*> result;
     for (int i = 0; i < products.size(); ++i) {
-        if (products.at(i, &p)) {
-            result.append(p);
-        }
+        result.append(products.at(i));
     }
 
     return result;
