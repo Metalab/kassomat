@@ -52,6 +52,7 @@ protected:
 
 private:
     QList<ModelTemplate *> m_items;
+    QHash<int, QByteArray> m_roles;
     bool m_cleanup;
     int m_propertyCount;
 };

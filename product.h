@@ -42,7 +42,6 @@ class Product : public QDjangoModel
         QString m_barcode;
         qint32 m_cost;
 };
-
-//Q_DECLARE_METATYPE(Product)
+Q_DECLARE_METATYPE(Product*)
 
 #endif // PRODUCT_H

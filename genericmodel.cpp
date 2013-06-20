@@ -25,12 +25,13 @@ template <class ModelTemplate>
 GenericModel<ModelTemplate>::GenericModel(QObject *parent, bool cleanupPrefix)
     : GenericModelBase(parent), m_cleanup(cleanupPrefix), m_propertyCount(0)
 {
-    //const ModelTemplate object;
-    QStringList properties;
     ModelTemplate tmp;
-    Utils::extractObjectProperties(tmp.metaObject(), &properties, m_cleanup);
 
-    m_propertyCount = properties.count();
+    m_propertyCount = tmp.metaObject()->propertyCount();
+    for (int i = 0; i < m_propertyCount; ++i) {
+        QString propertyName = tmp.metaObject()->property(i).name();
+        m_roles[i] = propertyName.toUtf8();
+    }
 
 }
 
@@ -42,18 +43,8 @@ GenericModel<ModelTemplate>::~GenericModel()
 
 template <class ModelTemplate>
 QHash<int, QByteArray> GenericModel<ModelTemplate>::roleNames() const{
-    QHash<int, QByteArray> roles;
 
-    QStringList properties;
-    ModelTemplate tmp;
-    Utils::extractObjectProperties(tmp.metaObject(), &properties, m_cleanup);
-
-    for (int i = 0; i < properties.count(); ++i) {
-        roles[i] = properties[i].toUtf8();
-        //qDebug() << roles[i] << "hello";
-    }
-
-    return roles;
+    return m_roles;
 }
 
 template <class ModelTemplate>
@@ -108,8 +99,10 @@ int GenericModel<ModelTemplate>::rowCount(const QModelIndex &parent) const
 template <class ModelTemplate>
 QVariant GenericModel<ModelTemplate>::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || index.row() > m_items.count())
+    if (index.row() < 0 || index.row() > m_items.count()){
+        qDebug() << "invalid row";
         return QVariant();
+    }
 
     QVariant dataValue;
     const ModelTemplate *item = m_items[index.row()];
@@ -118,11 +111,14 @@ QVariant GenericModel<ModelTemplate>::data(const QModelIndex &index, int role) c
     for (int propertyIndex = 0; propertyIndex < m_propertyCount; ++propertyIndex) {
         if (role == propertyIndex) {
             const QMetaObject *tmp = item->metaObject();
-            metaProperty = tmp->property(propertyIndex + tmp->propertyOffset());
+            metaProperty = tmp->property(propertyIndex);
             dataValue = item->property(metaProperty.name());
+            qDebug() << "successfull role";
+        }else{
+            qDebug() << "invalid role";
         }
     }
-
+    qDebug() << "are you kidding me";
     return dataValue;
 }
 
