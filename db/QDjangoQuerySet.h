@@ -196,7 +196,7 @@ public:
         /** The prefix ++ operator (\c ++it) advances the iterator to the next item in the set
          *  and returns an iterator to the new current item.
          *
-         *  Calling this function on QDjangoQuerySet::end() leads to undefined results.
+         *  C(all)ing this function on QDjangoQuerySet::end() leads to undefined results.
          *
          *  \sa operator--()
          */

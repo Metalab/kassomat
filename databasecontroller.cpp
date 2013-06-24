@@ -8,6 +8,7 @@
 #include "booking_row.h"
 #include "product.h"
 #include "project.h"
+#include "genericmodel.h"
 
 
 DatabaseController::DatabaseController(){
@@ -24,7 +25,7 @@ DatabaseController::DatabaseController(){
     if(ok) {
         QDjango::setDebugEnabled(true);
         QDjango::setDatabase(m_db);
-        qDebug() << "yey!" ;
+        qDebug() << "database connection established" ;
 
     } else {
         qDebug() << m_db.lastError();
@@ -41,11 +42,26 @@ DatabaseController::DatabaseController(){
     QDjango::registerModel<Project>();
 }
 
-QList<QVariantList> DatabaseController::listProjects(){
-    QDjangoQuerySet<Project> projects;
+QDjangoQuerySet<Product> DatabaseController::listProducts(){
+    QDjangoQuerySet<Product> products;
+
 //    QDjangoQuerySet<Project> someProjects;
 //    someProjects = projects.filter(QDjangoWhere("name", QDjangoWhere::Equals, "*") &&
 //                                    QDjangoWhere("valid_until", QDjangoWhere::NotEquals, "bla"));
 
-    return projects.valuesList();
+//    QList<Product*> result;
+//    for (int i = 0; i < products.size(); ++i) {
+//        result.append(products.at(i));
+//    }
+
+
+    return products;
 }
+
+QDjangoQuerySet<Project> DatabaseController::listProjects(){
+    QDjangoQuerySet<Project> projects;
+
+    return projects;
+}
+
+
