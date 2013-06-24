@@ -20,9 +20,11 @@
 #include <QDebug>
 #include <QtCore/QMetaProperty>
 #include <QtCore/QStringList>
+#include "db/QDjangoQuerySet.h"
+#include "db/QDjangoWhere.h"
 
 template <class ModelTemplate>
-GenericModel<ModelTemplate>::GenericModel(QObject *parent, bool cleanupPrefix)
+GenericModel<ModelTemplate>::GenericModel(QDjangoQuerySet<ModelTemplate> items, QObject *parent, bool cleanupPrefix)
     : GenericModelBase(parent), m_cleanup(cleanupPrefix), m_propertyCount(0)
 {
     ModelTemplate tmp;
@@ -33,12 +35,13 @@ GenericModel<ModelTemplate>::GenericModel(QObject *parent, bool cleanupPrefix)
         m_roles[i] = propertyName.toUtf8();
     }
 
+    m_items = items;
 }
 
 template <class ModelTemplate>
 GenericModel<ModelTemplate>::~GenericModel()
 {
-    m_items.clear();
+    m_items = m_items.none();
 }
 
 template <class ModelTemplate>
@@ -47,44 +50,45 @@ QHash<int, QByteArray> GenericModel<ModelTemplate>::roleNames() const{
     return m_roles;
 }
 
-template <class ModelTemplate>
-void GenericModel<ModelTemplate>::addItem(const ModelTemplate &item)
-{
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_items << item;
-    endInsertRows();
-}
+//template <class ModelTemplate>
+//void GenericModel<ModelTemplate>::addItem(const ModelTemplate &item)
+//{
+//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+//    m_items << item;
+//    endInsertRows();
+//}
 
-template <class ModelTemplate>
-void GenericModel<ModelTemplate>::prependItem(const ModelTemplate &item)
-{
-    beginInsertRows(QModelIndex(), 0, 0);
-    m_items.prepend(item);
-    endInsertRows();
-}
+//template <class ModelTemplate>
+//void GenericModel<ModelTemplate>::prependItem(const ModelTemplate &item)
+//{
+//    beginInsertRows(QModelIndex(), 0, 0);
+//    m_items.prepend(item);
+//    endInsertRows();
+//}
 
-template <class ModelTemplate>
-void GenericModel<ModelTemplate>::addItems(const QList<ModelTemplate *> &items)
-{
-    beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
-    m_items = items;
-    endInsertRows();
-}
+//template <class ModelTemplate>
+//void GenericModel<ModelTemplate>::addItems(const QList<ModelTemplate *> &items)
+//{
+//    beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
+//    m_items = items;
+//    endInsertRows();
+//}
 
-template <class ModelTemplate>
-void GenericModel<ModelTemplate>::removeItem(const ModelTemplate &item)
-{
-    const int index = m_items.indexOf(item);
-    beginRemoveRows(QModelIndex(), index, index);
-    m_items.removeAt(index);
-    endRemoveRows();
-}
+//template <class ModelTemplate>
+//void GenericModel<ModelTemplate>::removeItem(const ModelTemplate &item)
+//{
+//    //const int index = m_items.indexOf(item);
+//    beginRemoveRows(QModelIndex(), index, index);
+//    m_items = m_items.exclude( QDjangoWhere("id", QDjangoWhere::Equals, item.id()) );
+//    item.remove();
+//    endRemoveRows();
+//}
 
 template <class ModelTemplate>
 void GenericModel<ModelTemplate>::clear()
 {
     beginRemoveRows(QModelIndex(), 0, rowCount());
-    m_items.clear();
+    m_items = m_items.none();
     endRemoveRows();
 }
 
@@ -105,7 +109,13 @@ QVariant GenericModel<ModelTemplate>::data(const QModelIndex &index, int role) c
     }
 
     QVariant dataValue;
-    const ModelTemplate *item = m_items[index.row()];
+
+    //lieber mit einem const_iterator machen und index als offset verwenden.
+    //daweil funktionierts aber eh auch so
+
+    QDjangoQuerySet<ModelTemplate> c_items = m_items;
+    ModelTemplate *item = c_items.at(index.row());
+
     QMetaProperty metaProperty;
 
     for (int propertyIndex = 0; propertyIndex < m_propertyCount; ++propertyIndex) {
@@ -113,51 +123,53 @@ QVariant GenericModel<ModelTemplate>::data(const QModelIndex &index, int role) c
             const QMetaObject *tmp = item->metaObject();
             metaProperty = tmp->property(propertyIndex);
             dataValue = item->property(metaProperty.name());
-            qDebug() << "successfull role";
-        }else{
-            qDebug() << "invalid role";
         }
     }
-    qDebug() << "are you kidding me";
+
     return dataValue;
 }
 
-template <class ModelTemplate>
-bool GenericModel<ModelTemplate>::setData(const QModelIndex & index, const QVariant & value, int role)
-{
-    if (!index.isValid())
-        return false;
+//template <class ModelTemplate>
+//bool GenericModel<ModelTemplate>::setData(const QModelIndex & index, const QVariant & value, int role)
+//{
+//    if (!index.isValid())
+//        return false;
 
-    ModelTemplate *item = m_items.at(index.row());
-    item->setProperty(item->metaObject()->property(role).name(), value);
-    m_items.replace(index.row(), item);
-    emit dataChanged(index, index);
-    return true;
-}
+//    ModelTemplate *item = m_items.at(index.row());
+//    item->setProperty(item->metaObject()->property(role).name(), value);
+//    if( m_items.update( item->metaObject()->property(role).name() ) ){
+//        emit dataChanged(index, index);
+//        return true;
+//    }else{
+//        //couldnt write to database?
+//        return false;
+//    }
 
-template <class ModelTemplate>
-bool GenericModel<ModelTemplate>::updateItem(const ModelTemplate &item)
-{
-    int pos = m_items.indexOf(item);
-    if (pos == -1)
-        return false;
+//}
 
-    QModelIndex m_index;
-    m_index = index(pos);
-    if (!(m_index.isValid()))
-        return false;
+//template <class ModelTemplate>
+//bool GenericModel<ModelTemplate>::updateItem(const ModelTemplate &item)
+//{
+//    int pos = m_items.indexOf(item);
+//    if (pos == -1)
+//        return false;
 
-    m_items.replace(pos, item);
-    emit dataChanged(m_index, m_index);
-    return true;
-}
+//    QModelIndex m_index;
+//    m_index = index(pos);
+//    if (!(m_index.isValid()))
+//        return false;
 
-template <class ModelTemplate>
-QModelIndex GenericModel<ModelTemplate>::indexOfObject(const ModelTemplate &object)
-{
-    const int indexElement = m_items.indexOf(object);
-    return index(indexElement);
-}
+//    m_items.replace(pos, item);
+//    emit dataChanged(m_index, m_index);
+//    return true;
+//}
+
+//template <class ModelTemplate>
+//QModelIndex GenericModel<ModelTemplate>::indexOfObject(const ModelTemplate &object)
+//{
+//    const int indexElement = m_items.indexOf(object);
+//    return index(indexElement);
+//}
 
 template <class ModelTemplate>
 const QObject *GenericModel<ModelTemplate>::accessDataByIndex(int index)
@@ -169,5 +181,9 @@ const QObject *GenericModel<ModelTemplate>::accessDataByIndex(int index)
 template <class ModelTemplate>
 QList<ModelTemplate>& GenericModel<ModelTemplate>::items()
 {
-    return m_items;
+    QList<ModelTemplate> result;
+    for (int i = 0; i < m_items.size(); ++i) {
+        result.append(m_items.at(i));
+    }
+    return result;
 }

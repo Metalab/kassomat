@@ -22,36 +22,38 @@
 
 #include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
+#include "db/QDjangoQuerySet.h"
 
 template <class ModelTemplate>
 class GenericModel : public GenericModelBase
 {
 
 public:
-    GenericModel(QObject *parent = 0, bool cleanupPrefix = true);
+    GenericModel(QDjangoQuerySet<ModelTemplate> items, QObject *parent = 0, bool cleanupPrefix = true);
     ~GenericModel();
 
     QHash<int, QByteArray> roleNames() const;
-    void addItem(const ModelTemplate &item);
-    void prependItem(const ModelTemplate &item);
-    void addItems(const QList<ModelTemplate *> &items);
-    void removeItem(const ModelTemplate &item);
-    bool updateItem(const ModelTemplate &item);
+//    void addItem(const ModelTemplate &item);
+//    void prependItem(const ModelTemplate &item);
+//    void addItems(const QList<ModelTemplate *> &items);
+//    void removeItem(const ModelTemplate &item);
+//    bool updateItem(const ModelTemplate &item);
 
     QList<ModelTemplate> &items();
 
     void clear();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-    QModelIndex indexOfObject(const ModelTemplate &object);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;    
+    //bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    //QModelIndex indexOfObject(const ModelTemplate &object);
 
 protected:
     const QObject *accessDataByIndex(int id);
 
 private:
-    QList<ModelTemplate *> m_items;
+    //QList<ModelTemplate *> m_items;
+    QDjangoQuerySet<ModelTemplate> m_items;
     QHash<int, QByteArray> m_roles;
     bool m_cleanup;
     int m_propertyCount;

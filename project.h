@@ -9,6 +9,7 @@ class Project : public QDjangoModel
 
     Q_PROPERTY(QString id READ id WRITE setId)
     Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString image_url READ image_url WRITE setImage_url)
     Q_PROPERTY(QString description READ description WRITE setDescription )
     Q_PROPERTY(QDateTime valid_until READ valid_until WRITE setValid_until )
     Q_PROPERTY(qint32 funding_target_min READ funding_target_min WRITE setFunding_target_min )
@@ -21,6 +22,7 @@ class Project : public QDjangoModel
 
     Q_CLASSINFO("id", "primary_key=true")
     Q_CLASSINFO("name", "max_length=100")
+    Q_CLASSINFO("image_url", "max_length=200")
     Q_CLASSINFO("description", "max_length=2000")
     //Q_CLASSINFO("valid_until", "")
     //Q_CLASSINFO("funding_target_min", "")
@@ -32,6 +34,7 @@ class Project : public QDjangoModel
     public:
         QString id() const{ return m_id; }
         QString name() const{ return m_name; }
+        QString image_url() const{ return m_image_url; }
         QString description() const{ return m_description; }
         QDateTime valid_until() const{ return m_valid_until; }
         qint32 funding_target_min() const{ return m_funding_target_min; }
@@ -42,6 +45,7 @@ class Project : public QDjangoModel
 
         void setId(const QString &id){ m_id = id; }
         void setName(const QString &name){ m_name = name; }
+        void setImage_url(const QString &image_url){ m_image_url = image_url; }
         void setDescription(const QString &description){ m_description = description; }
         void setValid_until(const QDateTime &valid_until){ m_valid_until = valid_until; }
         void setFunding_target_min(const qint32 &funding_target_min){ m_funding_target_min = funding_target_min; }
@@ -53,6 +57,7 @@ class Project : public QDjangoModel
     private:
         QString m_id;
         QString m_name;
+        QString m_image_url;
         QString m_description;
         QDateTime m_valid_until;
         qint32 m_funding_target_min;

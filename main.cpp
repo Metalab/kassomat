@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
 
     KassomatController kassomatController;
     DatabaseController databaseController;
-    QList<Product *> p;
-    GenericModel<Product> productlist;
+    //QList<Product *> p;
+    GenericModel<Project> projectlist(databaseController.listProjects());
 
-    p = databaseController.listProducts();
-    productlist.addItems(p);
+    //p = databaseController.listProducts();
+    //productlist.addItems(p);
 
     //kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
 
@@ -28,13 +28,8 @@ int main(int argc, char *argv[])
     QtQuick2ApplicationViewer viewer;
     //in .qml files eine variable namens "controller" global verfuegbar machen
 
-    qDebug() << "cpp: " << productlist.rowCount();
-    for( int i=0; i < productlist.rowCount(); i++){
-        qDebug() << "productlist[" << i << "]: " << productlist.index(i, 0).data();
-    }
-
     viewer.rootContext()->setContextProperty("controller", &kassomatController);
-    viewer.rootContext()->setContextProperty("productlist", &productlist );
+    viewer.rootContext()->setContextProperty("projectlist", &projectlist );
     viewer.setMainQmlFile(QStringLiteral("qml/kassomat/main.qml"));
     viewer.showExpanded();
 
