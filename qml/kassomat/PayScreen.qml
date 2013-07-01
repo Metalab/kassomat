@@ -15,7 +15,7 @@ Rectangle{
             anchors.fill: parent
             Text{
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "WTF?! GIMME MONEHY!"
+                text: "please insert "+controller.debt/100+" Euro"
 
                 color: "black"
                 font.pointSize: 40
@@ -32,8 +32,13 @@ Rectangle{
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 onButtonClick: {
-                    controller.credit -= debit;
-                    controller.state = "STANDARD_SCREEN";
+                    if(controller.debt <= controller.credit){
+                        controller.credit -= controller.debt;
+                        controller.state = "STANDARD_SCREEN";
+                    }else{
+                        console.log('not enough credits');
+                    }
+
                 }
             }
 

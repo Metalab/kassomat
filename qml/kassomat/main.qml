@@ -13,6 +13,28 @@ Rectangle{
 
     property int f: 0;
 
+    focus:true
+    Keys.onLeftPressed: {
+            controller.credit += 50;
+            console.log('50 cent, yo!')
+    }
+    Keys.onUpPressed: {
+            controller.credit += 100;
+            console.log('1 euro, yo!')
+    }
+    Keys.onRightPressed: {
+            controller.credit += 20;
+            console.log('20 cent, yo!')
+    }
+    Keys.onDownPressed: {
+            controller.credit += 10;
+            console.log('10 cent, yo!')
+    }
+    Keys.onEnterPressed: {
+            controller.credit = 0;
+            console.log('10 cent, yo!')
+    }
+
     state: controller.state
 
     states:[

@@ -2,17 +2,37 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
 Rectangle {
-    property var money_back: ['5000','2000','1000','500',
-        '200','100','50','20','10','5','2','1'];
+    property var money_values: ['5000','2000','1000','500',
+        '200','100','50','20','10'];
+    property var money_selected: 0
+    //property var money_selected: {'5000': 0,'2000': 0,'1000': 0,'500':0, '200':0,'100':0,'50':0,'20':0,'10':0};
 
     id: change_screen_wrapper
     color: "#eeeeee"
 
     MouseArea{
-                anchors.fill: parent;
+        anchors.fill: parent;
+    }    
+
+    signal refresh()
+    onRefresh: {
+        var x=0;
+
+        for(var i=0; i < buttons.count; i++){
+            x += buttons.itemAt(i).selected * buttons.itemAt(i).value;
+        }
+
+        console.log('selected value: '+ x);
+        money_selected=x;
     }
 
-    
+    Component.onCompleted: {
+        for(var i=0; i < buttons.count; i++){
+            console.log(buttons.itemAt(i) + " connected") //.countchanged.connect(refresh);
+            buttons.itemAt(i).countChanged.connect(refresh)
+        }
+    }
+
     Rectangle{
         id: change_screen
         anchors.margins: 15
@@ -23,15 +43,30 @@ Rectangle {
             id:money_row
             spacing: 5
 
+            Text{
+                text: controller.credit
+                font.pixelSize: 72
+            }
+
             Repeater {
-                model: money_back
+                id: buttons
+                model: money_values
 
                 delegate: ChangeButton {
+                    nomore: {
+                        //console.log(modelData+' '+value+' <= '+controller.credit+' - '+money_selected)
+                        //console.log((value <= (controller.credit-money_selected))? true : false)
+                        return ((value <= (controller.credit-money_selected)))? true : false
+                    }
+
+                    visible:{
+                        return ((value <= (controller.credit-money_selected)) || selected > 0)? true : false
+
+                    }
+
                     color: "transparent"
-                    // modelData === money_back[i]
                     value: modelData
                     onCountChanged: {
-                        // javascript code
                         console.log('Die Anzahl von ' + value + ' ist jetzt ' + selected)
                     }
                 }
@@ -42,6 +77,8 @@ Rectangle {
             id: fill_up_button
             height: 40
             width: 200
+
+            label: 'fill up'
 
             color: "#444422";
             anchors.top: money_row.bottom
@@ -56,6 +93,8 @@ Rectangle {
             height: 40
             width: 200
 
+            label: 'accept'
+
             color: "#444422";
 
             anchors.top: money_row.bottom
@@ -63,20 +102,12 @@ Rectangle {
 
             onButtonClick: {
 
-            }
-        }
+                for(var i=0; i <= buttons.count; i++){
 
-        Button{
-            id: cancel_button
-            height: 40
-            width: 200
+                }
 
-            color: "#444422";
-            anchors.top: money_row.bottom
-            anchors.left: accept_button.right
+                console.log('hallo: '+ money_selected[5000] );
 
-            onButtonClick: {
-                controller.state = "STANDARD_SCREEN"
             }
         }
     }

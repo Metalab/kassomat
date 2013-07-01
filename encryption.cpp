@@ -320,7 +320,7 @@ static int aes_set_key( /*@out@*/ aes_context *ctx,
 	// break;
 	
 	// set initialization vector
-	if ( IV != NULL )
+    if ( IV != 0 )
 	{
 		mem_copy( ctx->IV, IV );
 	}

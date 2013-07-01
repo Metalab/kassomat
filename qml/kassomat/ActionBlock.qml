@@ -45,6 +45,7 @@ Column{
         label: "donate"
 
         onButtonClick: {
+            //are you sure?
 
         }
     }
@@ -78,6 +79,8 @@ Column{
         label: "return"
 
         onButtonClick: {
+            //todo: give back se monies
+            controller.debt = 0;
             controller.state = "STANDARD_SCREEN";
         }
     }

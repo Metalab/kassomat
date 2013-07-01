@@ -15,7 +15,7 @@ Column{
         buttonHeight:80
         buttonColor:"#eeeeee"
 
-        label: "2€"
+        label: "Mate/Beer 2€"
         labelSize: 40
         position: 100
 
@@ -38,7 +38,7 @@ Column{
         }
 
         onButtonClick: {
-            
+            controller.debt = 200;
             controller.state = "PAY_SCREEN";
         }
     }
@@ -48,12 +48,13 @@ Column{
         buttonHeight:80
         buttonColor:"#eeeeee"
 
-        label: "1,50€"
+        label: "Limo 1,50€"
         labelSize: 40
         position: 100
 
         onButtonClick: {
-
+            controller.debt = 150;
+            controller.state = 'PAY_SCREEN';
         }
     }
 
@@ -68,12 +69,12 @@ Column{
             buttonWidth: (parent.width/2)-2.5
             buttonColor: "#eeeeee"
 
-            label: "1€"
-            labelSize: 40
-            position: 100
+            label: "Mineral 1€"
+            labelSize: 32
 
             onButtonClick: {
-
+                controller.debt = 100
+                controller.state = 'PAY_SCREEN'
             }
         }
 
@@ -82,12 +83,12 @@ Column{
             width:(parent.width/2)-2.5
             buttonColor: "#eeeeee"
 
-            label: "0,50€"
-            labelSize: 40
-            position: 100
+            label: "Kaffee 0,50€"
+            labelSize: 32
 
             onButtonClick: {
-
+                controller.debt = 50
+                controller.state = 'PAY_SCREEN'
             }
         }
     }

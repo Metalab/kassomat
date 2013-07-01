@@ -17,14 +17,8 @@ Column{
             buttonWidth:(parent.width/parent.children.length)-2.5
             buttonColor: "#eeeeee"
 
-            onButtonClick: {
-
-            }
-        }
-        Button{
-            buttonHeight:parent.height
-            buttonWidth:(parent.width/parent.children.length)-2.5
-            buttonColor: "#eeeeee"
+            label:'Laser'
+            labelSize:32
 
             onButtonClick: {
 
@@ -34,6 +28,23 @@ Column{
             buttonHeight:parent.height
             buttonWidth:(parent.width/parent.children.length)-2.5
             buttonColor: "#eeeeee"
+
+            label:'Vinyl'
+            labelSize:32
+
+
+            onButtonClick: {
+
+            }
+        }
+        Button{
+            buttonHeight:parent.height
+            buttonWidth:(parent.width/parent.children.length)-2.5
+            buttonColor: "#eeeeee"
+
+            label:'Drucker'
+            labelSize:32
+
 
             onButtonClick:{
 

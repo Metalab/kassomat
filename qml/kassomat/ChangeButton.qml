@@ -5,7 +5,8 @@ Rectangle {
     id: changeButton
     property int selected: 0; // anzahl der scheine/muenzen
     property int value: 0; // geldwert
-
+    property bool nomore;
+    property bool notless: selected;
     signal countChanged(int value, int selected)
 
     width: button_pic.sourceSize.width
@@ -20,9 +21,12 @@ Rectangle {
         spacing:5
 
         Rectangle{
+            id:button_increase
             width: plus.sourceSize.width
             height: plus.sourceSize.height
             color: "transparent"
+
+            visible: nomore
 
             MouseArea {
                 id: plus_area
@@ -46,9 +50,12 @@ Rectangle {
         }
 
         Rectangle{
+            id:button_decrease
             width: minus.sourceSize.width
             height: minus.sourceSize.height
             color: "transparent"
+
+            visible: notless
 
             MouseArea {
                 id: minus_area
