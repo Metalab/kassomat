@@ -83,6 +83,7 @@ public:
     bool null;
     QVariant::Type type;
     bool unique;
+    bool blank;
     ForeignKeyConstraint deleteConstraint;
 };
 
@@ -92,6 +93,7 @@ QDjangoMetaFieldPrivate::QDjangoMetaFieldPrivate()
     , maxLength(0)
     , null(false)
     , unique(false)
+    , blank(false)
     , deleteConstraint(NoAction)
 {
 }
@@ -153,11 +155,43 @@ bool QDjangoMetaField::isValid() const
 }
 
 /*!
+    Returns true if this field is auto incremented.
+*/
+bool QDjangoMetaField::isAutoIncrement() const
+{
+    return d->autoIncrement;
+}
+
+/*!
+    Returns true if this field is unique.
+*/
+bool QDjangoMetaField::isUnique() const
+{
+    return d->unique;
+}
+
+/*!
+    Returns true if this field can be empty.
+*/
+bool QDjangoMetaField::isBlank() const
+{
+    return d->blank;
+}
+
+/*!
     Returns name of this meta field.
 */
 QString QDjangoMetaField::name() const
 {
     return QString::fromLatin1(d->name);
+}
+
+/*!
+    Returns the max length of this field
+*/
+int QDjangoMetaField::maxLength() const
+{
+    return d->maxLength;
 }
 
 /*!
@@ -245,6 +279,7 @@ QDjangoMetaModel::QDjangoMetaModel(const QMetaObject *meta)
         bool primaryKeyOption = false;
         bool nullOption = false;
         bool uniqueOption = false;
+        bool blankOption = false;
         ForeignKeyConstraint deleteConstraint = NoAction;
         const int infoIndex = meta->indexOfClassInfo(meta->property(i).name());
         if (infoIndex >= 0)
@@ -271,6 +306,8 @@ QDjangoMetaModel::QDjangoMetaModel(const QMetaObject *meta)
                     primaryKeyOption = stringToBool(value);
                 else if (key == QLatin1String("unique"))
                     uniqueOption = stringToBool(value);
+                else if (key == QLatin1String("blank"))
+                    blankOption = stringToBool(value);
                 else if (option.key() == "on_delete") {
                     if (value.toLower() == "cascade")
                         deleteConstraint = Cascade;
@@ -319,6 +356,8 @@ QDjangoMetaModel::QDjangoMetaModel(const QMetaObject *meta)
             d->primaryKey = field.d->name;
         } else if (uniqueOption) {
             field.d->unique = true;
+        } else if (blankOption) {
+            field.d->blank = true;
         } else if (dbIndexOption) {
             field.d->index = true;
         }
@@ -472,9 +511,6 @@ QStringList QDjangoMetaModel::createTableSql() const
                 driver->escapeIdentifier(foreignMeta.d->table, QSqlDriver::TableName),
                 driver->escapeIdentifier(foreignField.column(), QSqlDriver::FieldName));
 
-            if (driverName == QLatin1String("QPSQL"))
-                fieldSql += " DEFERRABLE INITIALLY DEFERRED";
-
             if (field.d->deleteConstraint != NoAction) {
                 fieldSql += " ON DELETE";
                 switch (field.d->deleteConstraint) {
@@ -491,6 +527,9 @@ QStringList QDjangoMetaModel::createTableSql() const
                     break;
                 }
             }
+
+            if (driverName == QLatin1String("QPSQL"))
+                fieldSql += " DEFERRABLE INITIALLY DEFERRED";
         }
         propSql << fieldSql;
     }

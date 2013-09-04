@@ -40,9 +40,13 @@ public:
     QDjangoMetaField& operator=(const QDjangoMetaField &other);
 
     QString column() const;
+    bool isAutoIncrement() const;
+    bool isBlank() const;
     bool isNullable() const;
+    bool isUnique() const;
     bool isValid() const;
     QString name() const;
+    int maxLength() const;
     QVariant toDatabase(const QVariant &value) const;
 
 private:

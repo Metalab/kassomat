@@ -16,7 +16,6 @@
  */
 
 #include "genericmodel.h"
-#include "utils.h"
 #include <QDebug>
 #include <QtCore/QMetaProperty>
 #include <QtCore/QStringList>

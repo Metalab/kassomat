@@ -28,6 +28,7 @@ CREATE TABLE projects (
     valid_until date NULL,
     funding_target_min integer NULL,
     funding_target_max integer NULL,
+    mos_user_id integer NOT NULL REFERENCES mos_users(id),
     admin_password varchar(100) NOT NULL,
     notification_email varchar(100) NULL,
     sort_order integer NOT NULL
@@ -75,7 +76,8 @@ CREATE TABLE moneycodes (
 );
 
 -- here some test data for projects
--- INSERT INTO projects(name, image_url, description, admin_password, sort_order) VALUES ('Metalab', 'Kassa fuer metalabsche Produkte oder Dienstleistungen: Getraenke, Kaffeekassa, Laser, Vinylcutter, etc..', 'kassomat', '1');
+-- INSERT INTO users(
+-- INSERT INTO projects(name, image_url, description, admin_password, sort_order) VALUES ('Metalab', 'img/metalab.png', 'Kassa fuer metalabsche Produkte oder Dienstleistungen: Getraenke, Kaffeekassa, Laser, Vinylcutter, etc..', 'kassomat', '1');
 -- INSERT INTO products(project_id, display_name, cost) VALUES (1, 'Club Mate',  200), (1, 'fritz-lImo Apfelschorle', 150), (1, 'Premium Cola', 150);
 
 COMMIT;

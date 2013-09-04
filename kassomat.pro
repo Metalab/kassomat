@@ -13,10 +13,10 @@ QML_IMPORT_PATH =
 
 CONFIG += c++11 debug
 
-mac {
-	QMAKE_CXXFLAGS += -stdlib=libc++
-	QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
-}
+#mac {
+#	QMAKE_CXXFLAGS += -stdlib=libc++
+#	QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
+#}
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
@@ -35,7 +35,12 @@ SOURCES += main.cpp \
     transactionlogcontroller.cpp \
     genericmodelbase.cpp \
     genericmodel.cpp \
-    utils.cpp
+    http/QDjangoUrlResolver.cpp \
+    http/QDjangoHttpServer.cpp \
+    http/QDjangoHttpResponse.cpp \
+    http/QDjangoHttpRequest.cpp \
+    http/QDjangoHttpController.cpp \
+    http/QDjangoFastCgiServer.cpp
 
 HEADERS += \
     smartpayout.h \
@@ -65,7 +70,17 @@ HEADERS += \
     moneycode.h \
     genericmodelbase.h \
     genericmodel.h \
-    utils.h
+    http/QDjangoUrlResolver.h \
+    http/QDjangoHttpServer_p.h \
+    http/QDjangoHttpServer.h \
+    http/QDjangoHttpResponse_p.h \
+    http/QDjangoHttpResponse.h \
+    http/QDjangoHttpRequest_p.h \
+    http/QDjangoHttpRequest.h \
+    http/QDjangoHttpController.h \
+    http/QDjangoHttp_p.h \
+    http/QDjangoFastCgiServer_p.h \
+    http/QDjangoFastCgiServer.h
 
 QT += sql serialport
 
@@ -75,3 +90,9 @@ QT += sql serialport
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
+
+OTHER_FILES += \
+    http/http.pro \
+    db/db.pro \
+    src.pro \
+    src.pri

@@ -16,7 +16,7 @@ class KassomatController : public QObject
 public:
     explicit KassomatController(QObject *parent = 0);
 
-    const QString &smartPayoutDevice() const;
+    const QString& smartPayoutDevice() const;
     unsigned int credit() const;
     const QString& state() const;
     unsigned int debt() const;
