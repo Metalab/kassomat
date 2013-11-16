@@ -181,29 +181,23 @@ uint16_t SSPComs::calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd) 
 
 bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain) {
     // see GA138 documentation page 9
-    QByteArray *cmd = &cmd_plain;
-    QByteArray encrypted;
-    if(m_encryptionEnabled) {
-        encrypted = encrypt(cmd_plain);
-        cmd = &encrypted;
-    }
-
-    TransportLayer *transport = reinterpret_cast<TransportLayer *>(new uint8_t[sizeof(TransportLayer) + cmd->size() + 2]);
+    QByteArray cmd = encrypt(cmd_plain);
+    TransportLayer *transport = reinterpret_cast<TransportLayer *>(new uint8_t[sizeof(TransportLayer) + cmd.size() + 2]);
 
     transport->sequence = m_sequence;
     transport->slave_id = slave_id;
-    transport->length = cmd->size();
-    memcpy(transport->data_crc, cmd->constData(), cmd->size());
+    transport->length = cmd.size();
+    memcpy(transport->data_crc, cmd.constData(), cmd.size());
 
     // Add CRC
 
-    uint16_t crc = calculateCRC(QByteArray(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd->size()), CRC_SSP_SEED, CRC_SSP_POLY);
+    uint16_t crc = calculateCRC(QByteArray(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd.size()), CRC_SSP_SEED, CRC_SSP_POLY);
     transport->data_crc[cmd.size()] = crc & 0xFF;
     transport->data_crc[cmd.size()+1] = crc >> 8;
 
     // Next up: stuffing
 
-    QByteArray transportBytes(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd->size() + 2);
+    QByteArray transportBytes(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd.size() + 2);
     uint8_t stuffing = transportBytes.count(0x7f);
 
     QByteArray stuffedTransportBytes(1 + transportBytes.size() + stuffing, 0x7f);
@@ -347,16 +341,20 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 }
 
 QByteArray SSPComs::encrypt(const QByteArray &cmd) {
+    if(!m_encryptionEnabled)
+        return cmd;
     // see GA138 documentation page 11
     AES_KEY enc_key;
     AES_set_encrypt_key(m_key.constData(), 128, &enc_key);
 
+    // packet length + packet count
     QByteArray bytesToEncrypt;
     bytesToEncrypt.append(static_cast<uint8_t>(cmd.length()));
     bytesToEncrypt.append(m_encryptionCount);
     for(uint8_t i = 0; i < 4; i++) // byte ordering!
         bytesToEncrypt.append(static_cast<uint8_t>(m_encryptionCount >> (8*i) & 0xFF));
 
+    // padding
     uint8_t packLength = 16 - ((cmd.length()+7) % 16);
     if(packLength > 0) {
         std::random_device rd;
@@ -367,12 +365,14 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
             bytesToEncrypt.append(dist(gen));
     }
 
+    // crc
     uint16_t crc = calculateCRC(bytesToEncrypt, CRC_SSP_SEED, CRC_SSP_POLY);
     bytesToEncrypt.append(static_cast<uint8_t>(crc & 0xFF));
     bytesToEncrypt.append(static_cast<uint8_t>(crc >> 8));
 
-    QByteArray encryptedData(1 + bytesToEncrypt.length(), 0x7e);
+    QByteArray encryptedData(1 + bytesToEncrypt.length(), 0x7e); // STEX
 
+    // encrypt in 16 byte blocks
     for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
         AES_encrypt(bytesToEncrypt.constData() + i * 16, encryptedData.data() + (1 + i * 16), &enc_key);
 
