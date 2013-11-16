@@ -24,7 +24,6 @@ SOURCES += main.cpp \
     kassomatcontroller.cpp \
 	sspcoms.cpp \
 	sspcomstask.cpp \
-	encryption.cpp \
     databasecontroller.cpp \
     db/QDjangoWhere.cpp \
     db/QDjangoQuerySet.cpp \
