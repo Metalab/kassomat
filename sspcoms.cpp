@@ -179,24 +179,31 @@ uint16_t SSPComs::calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd) 
 }
 
 
-bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd) {
+bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain) {
     // see GA138 documentation page 9
-    TransportLayer *transport = reinterpret_cast<TransportLayer *>(new uint8_t[sizeof(TransportLayer) + cmd.size() + 2]);
+    QByteArray *cmd = &cmd_plain;
+    QByteArray encrypted;
+    if(m_encryptionEnabled) {
+        encrypted = encrypt(cmd_plain);
+        cmd = &encrypted;
+    }
+
+    TransportLayer *transport = reinterpret_cast<TransportLayer *>(new uint8_t[sizeof(TransportLayer) + cmd->size() + 2]);
 
     transport->sequence = m_sequence;
     transport->slave_id = slave_id;
-    transport->length = cmd.size();
-    memcpy(transport->data_crc, cmd.constData(), cmd.size());
+    transport->length = cmd->size();
+    memcpy(transport->data_crc, cmd->constData(), cmd->size());
 
     // Add CRC
 
-    uint16_t crc = calculateCRC(QByteArray(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd.size()), CRC_SSP_SEED, CRC_SSP_POLY);
+    uint16_t crc = calculateCRC(QByteArray(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd->size()), CRC_SSP_SEED, CRC_SSP_POLY);
     transport->data_crc[cmd.size()] = crc & 0xFF;
     transport->data_crc[cmd.size()+1] = crc >> 8;
 
     // Next up: stuffing
 
-    QByteArray transportBytes(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd.size() + 2);
+    QByteArray transportBytes(reinterpret_cast<const char*>(transport), sizeof(TransportLayer) + cmd->size() + 2);
     uint8_t stuffing = transportBytes.count(0x7f);
 
     QByteArray stuffedTransportBytes(1 + transportBytes.size() + stuffing, 0x7f);
