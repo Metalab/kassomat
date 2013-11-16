@@ -12,6 +12,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <openssl/aes.h>
+#include <openssl/bn.h>
 
 class SSPComsTask;
 class SSPEvent;
@@ -112,7 +113,8 @@ private:
     uint32_t m_encryptionCount;
 	QByteArray encrypt(const QByteArray &cmd);
     QByteArray decrypt(const QByteArray &cmd);
-    void negotiateEncryption();
+    void negotiateEncryption(uint64_t fixedKey);
+    BN_CTX *m_bn_ctx;
 	
 	Q_DISABLE_COPY(SSPComs)
 };

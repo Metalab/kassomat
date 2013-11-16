@@ -7,11 +7,13 @@
 #include <errno.h>
 #include <random>
 #include <openssl/bn.h>
+#include <openssl/rand.h>
 
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
 SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_terminate(false), m_sequence(false), m_encryptionEnabled(false), m_key(16,0) {
+    m_bn_ctx = BN_CTX_new();
 }
 
 void SSPComs::startConnection() {
@@ -38,6 +40,7 @@ bool SSPComs::open() {
 SSPComs::~SSPComs() {
     m_port->close();
     delete m_port;
+    BN_CTX_free(m_bn_ctx);
 }
 
 void SSPComs::setTerminate(bool terminate) {
@@ -251,7 +254,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     BIGNUMPtr generator, modulus, hostInterKey, hostRandom;
 
     std::random_device rd;
-    uniform_int_distribution<uint8_t> dist;
+    std::uniform_int_distribution<uint8_t> dist;
     uchar rnd_seed[16];
     for(int i=0; i < 16; ++i)
         rnd_seed[i] = dist(rd);
@@ -263,15 +266,15 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     // Doesn't make sense when the generator is larger than the modulus value
     if(BN_cmp(*generator, *modulus) == 1)
-        std::swap(*generator, *modulus);
+        BN_swap(*generator, *modulus);
 
     BN_rand(*hostRandom, 64, -1, 0);
 
     // hostInterKey = generator ^ hostRandom % modulus
-    BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus);
+    BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus, m_bn_ctx);
 
     QByteArray generatorData(BN_num_bytes(*generator), 0);
-    BN_bn2bin(*generator, generatorData.data());
+    BN_bn2bin(*generator, reinterpret_cast<uint8_t*>(generatorData.data()));
 
     QByteArray setGenerator(9, 0);
     setGenerator[0] = 0x4a;
@@ -282,12 +285,12 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     }
 
     QByteArray response = readResponse();
-    if(response[0] != 0xf0) {
+    if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Generator command";
     }
 
     QByteArray modulusData(BN_num_bytes(*modulus), 0);
-    BN_bn2bin(*modulus, modulusData.data());
+    BN_bn2bin(*modulus, reinterpret_cast<uint8_t*>(modulusData.data()));
 
     QByteArray setModulus(9, 0);
     setModulus[0] = 0x4b;
@@ -298,24 +301,24 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     }
 
     response = readResponse();
-    if(response[0] != 0xf0) {
+    if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Modulus command";
     }
 
     QByteArray hostInterKeyData(BN_num_bytes(*hostInterKey), 0);
-    BN_bn2bin(*hostInterKey, hostInterKeyData.data());
+    BN_bn2bin(*hostInterKey, reinterpret_cast<uint8_t*>(hostInterKeyData.data()));
 
     QByteArray requestKeyExchange(9, 0);
     requestKeyExchange[0] = 0x4c;
 
-    std::reverse_copy(hostInterKey->constBegin(), hostInterKey->constEnd(), requestKeyExchange.begin()+1);
+    std::reverse_copy(hostInterKeyData.constBegin(), hostInterKeyData.constEnd(), requestKeyExchange.begin()+1);
 
     if(!sendCommand(0, requestKeyExchange)) {
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
-    if(response[0] != 0xf0 || response.length() != 9) {
+    if(static_cast<uint8_t>(response[0]) != 0xf0 || response.length() != 9) {
         throw "Failed sending Request Key Exchange command";
     }
 
@@ -325,17 +328,17 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(response.constBegin()+1, response.constEnd(), slaveInterKeyData.begin());
 
     BIGNUMPtr slaveInterKey, secretKey;
-    BN_bin2bn(slaveInterKeyData.data(), slaveInterKeyData.length(), *slaveInterKey);
+    BN_bin2bn(reinterpret_cast<uint8_t*>(slaveInterKeyData.data()), slaveInterKeyData.length(), *slaveInterKey);
 
     // key = slaveInterKey ^ hostRandom % modulus
-    BN_mod_exp(*secretKey, *slaveInterKey, *hostRandom, *modulus);
+    BN_mod_exp(*secretKey, *slaveInterKey, *hostRandom, *modulus, m_bn_ctx);
 
     QByteArray secretKeyData(BN_num_bytes(*secretKey), 0);
-    BN_bn2bin(*secretKey, secretKeyData.data());
+    BN_bn2bin(*secretKey, reinterpret_cast<uint8_t*>(secretKeyData.data()));
 
     m_key.fill(0);
-    m_key.replace(0, 8, static_cast<const char*>(&fixedKey), 8);
-    std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), m_key.begin() += 8);
+    m_key.replace(0, 8, reinterpret_cast<const char*>(&fixedKey), 8);
+    std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), m_key.begin() + 8);
     m_encryptionEnabled = true;
     m_encryptionCount = 0;
 }
@@ -345,7 +348,7 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
         return cmd;
     // see GA138 documentation page 11
     AES_KEY enc_key;
-    AES_set_encrypt_key(m_key.constData(), 128, &enc_key);
+    AES_set_encrypt_key(reinterpret_cast<const uint8_t*>(m_key.constData()), 128, &enc_key);
 
     // packet length + packet count
     QByteArray bytesToEncrypt;
@@ -359,7 +362,7 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     if(packLength > 0) {
         std::random_device rd;
         std::mt19937 gen(rd());
-        uniform_int_distribution<uint8_t> dist;
+        std::uniform_int_distribution<uint8_t> dist;
 
         for(uint8_t i = 0; i < packLength; i++)
             bytesToEncrypt.append(dist(gen));
@@ -374,7 +377,7 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
 
     // encrypt in 16 byte blocks
     for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
-        AES_encrypt(bytesToEncrypt.constData() + i * 16, encryptedData.data() + (1 + i * 16), &enc_key);
+        AES_encrypt(reinterpret_cast<const uint8_t*>(bytesToEncrypt.constData()) + i * 16, reinterpret_cast<uint8_t*>(encryptedData.data()) + (1 + i * 16), &enc_key);
 
     // increment packet counter after the packet was encrypted
     m_encryptionCount++;
@@ -386,12 +389,12 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
     if(!m_encryptionEnabled || cmd[0] != 0x7e)
         return cmd;
     AES_KEY dec_key;
-    AES_set_decrypt_key(m_key.constData(), 128, &dec_key);
+    AES_set_decrypt_key(reinterpret_cast<const uint8_t*>(m_key.constData()), 128, &dec_key);
 
     QByteArray decryptedData(cmd.length()-1,0);
 
     for(uint8_t i = 0; i < (cmd.length()-1) / 16; i++)
-        AES_decrypt(&cmd[1+i*16], decryptedData[i*16], &dec_key);
+        AES_decrypt(reinterpret_cast<const uint8_t*>(cmd.constData()) + 1+i*16, reinterpret_cast<uint8_t*>(decryptedData.data()) + i*16, &dec_key);
 
     uint8_t length = decryptedData[0];
     if(length > decryptedData.length() - 7) {
