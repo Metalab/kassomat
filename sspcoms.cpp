@@ -234,10 +234,10 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     BIGNUM *generator, *modulus, *hostInterKey, *hostRandom;
 
     std::random_device rd;
-    uniform_int_distribution<int> dist(0,255);
+    uniform_int_distribution<uint8_t> dist;
     uchar rnd_seed[16];
     for(int i=0; i < 16; ++i)
-        rnd_seed[i] = static_cast<uchar>(dist(rd));
+        rnd_seed[i] = dist(rd);
 
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
@@ -341,6 +341,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     m_key.replace(0, 8, static_cast<const char*>(&fixedKey), 8);
     std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), m_key.begin() += 8);
     m_encryptionEnabled = true;
+    m_encryptionCount = 0;
 
     CLEANUP;
     BN_free(slaveInterKey);
@@ -350,15 +351,36 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
 QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     // see GA138 documentation page 11
-
-
-    QByteArray encryptedData(1, 0x7e);
     AES_KEY enc_key;
     AES_set_encrypt_key(m_key.constData(), 128, &enc_key);
 
-    // enc_out == preallocated memory area of the required size
-    // text == 16 bytes of data to be encrypted
-    AES_encrypt(text, enc_out, &enc_key);
+    QByteArray bytesToEncrypt;
+    bytesToEncrypt.append(static_cast<uint8_t>(cmd.length()));
+    bytesToEncrypt.append(m_encryptionCount);
+    for(uint8_t i = 0; i < 4; i++) // byte ordering!
+        bytesToEncrypt.append(static_cast<uint8_t>(m_encryptionCount >> (8*i) & 0xFF));
+
+    uint8_t packLength = 16 - ((cmd.length()+7) % 16);
+    if(packLength > 0) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        uniform_int_distribution<uint8_t> dist;
+
+        for(uint8_t i = 0; i < packLength; i++)
+            bytesToEncrypt.append(dist(gen));
+    }
+
+    uint16_t crc = calculateCRC(bytesToEncrypt, CRC_SSP_SEED, CRC_SSP_POLY);
+    bytesToEncrypt.append(static_cast<uint8_t>(crc & 0xFF));
+    bytesToEncrypt.append(static_cast<uint8_t>(crc >> 8));
+
+    QByteArray encryptedData(1 + bytesToEncrypt.length(), 0x7e);
+
+    for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
+        AES_encrypt(bytesToEncrypt.constData() + i * 16, encryptedData.data() + (1 + i * 16), &enc_key);
+
+    // increment packet counter after the packet was encrypted
+    m_encryptionCount++;
 
     return encryptedData;
 }

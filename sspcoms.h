@@ -107,9 +107,9 @@ private:
     
 	// encryption
 	
-    AES_KEY m_enc_key, m_dec_key;
-
     bool m_encryptionEnabled;
+    QByteArray m_key;
+    uint32_t m_encryptionCount;
 	QByteArray encrypt(const QByteArray &cmd);
     void negotiateEncryption();
 	
