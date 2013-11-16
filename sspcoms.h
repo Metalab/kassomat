@@ -9,8 +9,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QWaitCondition>
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
+#include <QtSerialPort/QtSerialPort>
 #include <openssl/aes.h>
 #include <openssl/bn.h>
 
