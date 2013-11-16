@@ -5,6 +5,8 @@
 #include "sspevents.h"
 
 #include <errno.h>
+#include <random>
+#include <openssl/bn.h>
 
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
@@ -29,9 +31,7 @@ bool SSPComs::open() {
     bool result = m_port->open(QIODevice::ReadWrite);
 	if(!result)
 		return false;
-	
-	
-	
+		
 	return true;
 }
 
@@ -51,7 +51,9 @@ void SSPComs::run() {
 		qCritical() << "errno = " << errno;
 		return;
 	}
-	
+
+    // ### establish encryption here
+
 	QMutexLocker locker(&m_taskQueueMutex);
 	while(!m_terminate) {
 		while(!m_taskQueue.isEmpty()) {
@@ -227,11 +229,133 @@ bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd) {
     return true;
 }
 
+void SSPComs::negotiateEncryption() {
+    // Diffie-Hellman keyexchange
+    BIGNUM *generator, *modulus, *hostInterKey, *hostRandom;
+
+    std::random_device rd;
+    uniform_int_distribution<int> dist(0,255);
+    uchar rnd_seed[16];
+    for(int i=0; i < 16; ++i)
+        rnd_seed[i] = static_cast<uchar>(dist(rd));
+
+    RAND_seed(rnd_seed, sizeof rnd_seed);
+
+    generator = BN_new();
+    BN_generate_prime_ex(generator, 64, 0, NULL, NULL, NULL);
+    modulus = BN_new();
+    BN_generate_prime_ex(modulus, 64, 0, NULL, NULL, NULL);
+
+    // Doesn't make sense when the generator is larger than the modulus value
+    if(BN_cmp(generator, modulus) == 1)
+        std::swap(generator, modulus);
+
+    hostRandom = BN_new();
+    BN_rand(hostRandom, 64, -1, 0);
+
+#define CLEANUP BN_free(generator); \
+        BN_free(modulus); \
+        BN_free(hostInterKey); \
+        BN_free(hostRandom)
+
+    hostInterKey = BN_new();
+    // hostInterKey = generator ^ hostRandom % modulus
+    BN_mod_exp(hostInterKey, generator, hostRandom, modulus);
+
+    QByteArray generatorData(BN_num_bytes(generator), 0);
+    BN_bn2bin(generator, generatorData.data());
+
+    QByteArray setGenerator(9, 0);
+    setGenerator[0] = 0x4a;
+    std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
+
+    if(!sendCommand(0, setGenerator)) {
+        CLEANUP;
+
+        throw "OMG OMG OMG";
+    }
+
+    QByteArray response = readResponse();
+    if(response[0] != 0xf0) {
+        CLEANUP;
+
+        throw "Failed sending Set Generator command";
+    }
+
+    QByteArray modulusData(BN_num_bytes(modulus), 0);
+    BN_bn2bin(modulus, modulusData.data());
+
+    QByteArray setModulus(9, 0);
+    setModulus[0] = 0x4b;
+    std::reverse_copy(modulusData.constBegin(), modulusData.constEnd(), setModulus.begin()+1);
+
+    if(!sendCommand(0, setModulus)) {
+        CLEANUP;
+
+        throw "OMG OMG OMG";
+    }
+
+    response = readResponse();
+    if(response[0] != 0xf0) {
+        CLEANUP;
+
+        throw "Failed sending Set Modulus command";
+    }
+
+    QByteArray hostInterKeyData(BN_num_bytes(hostInterKey), 0);
+    BN_bn2bin(hostInterKey, hostInterKeyData.data());
+
+    QByteArray requestKeyExchange(9, 0);
+    requestKeyExchange[0] = 0x4c;
+
+    std::reverse_copy(hostInterKey->constBegin(), hostInterKey->constEnd(), requestKeyExchange.begin()+1);
+
+    if(!sendCommand(0, requestKeyExchange)) {
+        CLEANUP;
+
+        throw "OMG OMG OMG";
+    }
+
+    response = readResponse();
+    if(response[0] != 0xf0 || response.length() != 9) {
+        CLEANUP;
+
+        throw "Failed sending Request Key Exchange command";
+    }
+
+    // DOCUMENTATION BUG: Request Key Exchange returns the SlaveInterKey!
+
+    QByteArray slaveInterKeyData(8, 0);
+    std::reverse_copy(response.constBegin()+1, response.constEnd(), slaveInterKeyData.begin());
+
+    BIGNUM *slaveInterKey = BN_new(), *secretKey = BN_new();
+    BN_bin2bn(slaveInterKeyData.data(), slaveInterKeyData.length(), slaveInterKey);
+
+    // key = slaveInterKey ^ hostRandom % modulus
+    BN_mod_exp(secretKey, slaveInterKey, hostRandom, modulus);
+
+    QByteArray secretKeyData(BN_num_bytes(secretKey), 0);
+    BN_bn2bin(secretKey, secretKeyData.data());
+
+    key.fill(0);
+    std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), key.begin());
+
+    CLEANUP;
+    BN_free(slaveInterKey);
+    BN_free(secretKey);
+}
+#undef CLEANUP
+
 QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     // see GA138 documentation page 11
     QByteArray encryptedData(1, 0x7e);
 
+    // init encryption key:
+    // AES_set_encrypt_key(key, 128, &enc_key);
 
+    // enc_out == preallocated memory area of the required size
+    // text == 16 bytes of data to be encrypted
+    AES_encrypt(text, enc_out, &enc_key);
 
     return encryptedData;
 }

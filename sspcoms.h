@@ -11,6 +11,7 @@
 #include <QWaitCondition>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <openssl/aes.h>
 
 class SSPComsTask;
 class SSPEvent;
@@ -22,6 +23,8 @@ class SSPComs : public QThread {
 	
     QSerialPort *m_port;
 	QSerialPortInfo m_portInfo;
+
+    AES_KEY enc_key, dec_key;
 
 public:
     explicit SSPComs(const QSerialPortInfo &info);
@@ -108,7 +111,7 @@ private:
 	
 	QByteArray key;
 	QByteArray encrypt(const QByteArray &cmd);
-	
+    void negotiateEncryption();
 	
 	Q_DISABLE_COPY(SSPComs)
 };
