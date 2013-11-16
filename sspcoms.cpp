@@ -236,9 +236,25 @@ bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain) {
     return true;
 }
 
+struct BIGNUMPtr {
+    BIGNUM *val;
+    BIGNUMPtr() {
+        val = BN_new();
+    }
+    ~BIGNUMPtr() {
+        BN_free(val);
+    }
+    BIGNUM *operator*() {
+        return val;
+    }
+    const BIGNUM *operator*() const {
+        return val;
+    }
+};
+
 void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     // Diffie-Hellman keyexchange
-    BIGNUM *generator, *modulus, *hostInterKey, *hostRandom;
+    BIGNUMPtr generator, modulus, hostInterKey, hostRandom;
 
     std::random_device rd;
     uniform_int_distribution<uint8_t> dist;
@@ -248,69 +264,52 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
-    generator = BN_new();
-    BN_generate_prime_ex(generator, 64, 0, NULL, NULL, NULL);
-    modulus = BN_new();
-    BN_generate_prime_ex(modulus, 64, 0, NULL, NULL, NULL);
+    BN_generate_prime_ex(*generator, 64, 0, NULL, NULL, NULL);
+    BN_generate_prime_ex(*modulus, 64, 0, NULL, NULL, NULL);
 
     // Doesn't make sense when the generator is larger than the modulus value
-    if(BN_cmp(generator, modulus) == 1)
-        std::swap(generator, modulus);
+    if(BN_cmp(*generator, *modulus) == 1)
+        std::swap(*generator, *modulus);
 
-    hostRandom = BN_new();
-    BN_rand(hostRandom, 64, -1, 0);
+    BN_rand(*hostRandom, 64, -1, 0);
 
-#define CLEANUP BN_free(generator); \
-        BN_free(modulus); \
-        BN_free(hostInterKey); \
-        BN_free(hostRandom)
-
-    hostInterKey = BN_new();
     // hostInterKey = generator ^ hostRandom % modulus
-    BN_mod_exp(hostInterKey, generator, hostRandom, modulus);
+    BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus);
 
-    QByteArray generatorData(BN_num_bytes(generator), 0);
-    BN_bn2bin(generator, generatorData.data());
+    QByteArray generatorData(BN_num_bytes(*generator), 0);
+    BN_bn2bin(*generator, generatorData.data());
 
     QByteArray setGenerator(9, 0);
     setGenerator[0] = 0x4a;
     std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
 
     if(!sendCommand(0, setGenerator)) {
-        CLEANUP;
-
         throw "OMG OMG OMG";
     }
 
     QByteArray response = readResponse();
     if(response[0] != 0xf0) {
-        CLEANUP;
-
         throw "Failed sending Set Generator command";
     }
 
-    QByteArray modulusData(BN_num_bytes(modulus), 0);
-    BN_bn2bin(modulus, modulusData.data());
+    QByteArray modulusData(BN_num_bytes(*modulus), 0);
+    BN_bn2bin(*modulus, modulusData.data());
 
     QByteArray setModulus(9, 0);
     setModulus[0] = 0x4b;
     std::reverse_copy(modulusData.constBegin(), modulusData.constEnd(), setModulus.begin()+1);
 
     if(!sendCommand(0, setModulus)) {
-        CLEANUP;
-
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(response[0] != 0xf0) {
-        CLEANUP;
-
         throw "Failed sending Set Modulus command";
     }
 
-    QByteArray hostInterKeyData(BN_num_bytes(hostInterKey), 0);
-    BN_bn2bin(hostInterKey, hostInterKeyData.data());
+    QByteArray hostInterKeyData(BN_num_bytes(*hostInterKey), 0);
+    BN_bn2bin(*hostInterKey, hostInterKeyData.data());
 
     QByteArray requestKeyExchange(9, 0);
     requestKeyExchange[0] = 0x4c;
@@ -318,15 +317,11 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(hostInterKey->constBegin(), hostInterKey->constEnd(), requestKeyExchange.begin()+1);
 
     if(!sendCommand(0, requestKeyExchange)) {
-        CLEANUP;
-
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(response[0] != 0xf0 || response.length() != 9) {
-        CLEANUP;
-
         throw "Failed sending Request Key Exchange command";
     }
 
@@ -335,26 +330,21 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     QByteArray slaveInterKeyData(8, 0);
     std::reverse_copy(response.constBegin()+1, response.constEnd(), slaveInterKeyData.begin());
 
-    BIGNUM *slaveInterKey = BN_new(), *secretKey = BN_new();
-    BN_bin2bn(slaveInterKeyData.data(), slaveInterKeyData.length(), slaveInterKey);
+    BIGNUMPtr slaveInterKey, secretKey;
+    BN_bin2bn(slaveInterKeyData.data(), slaveInterKeyData.length(), *slaveInterKey);
 
     // key = slaveInterKey ^ hostRandom % modulus
-    BN_mod_exp(secretKey, slaveInterKey, hostRandom, modulus);
+    BN_mod_exp(*secretKey, *slaveInterKey, *hostRandom, *modulus);
 
-    QByteArray secretKeyData(BN_num_bytes(secretKey), 0);
-    BN_bn2bin(secretKey, secretKeyData.data());
+    QByteArray secretKeyData(BN_num_bytes(*secretKey), 0);
+    BN_bn2bin(*secretKey, secretKeyData.data());
 
     m_key.fill(0);
     m_key.replace(0, 8, static_cast<const char*>(&fixedKey), 8);
     std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), m_key.begin() += 8);
     m_encryptionEnabled = true;
     m_encryptionCount = 0;
-
-    CLEANUP;
-    BN_free(slaveInterKey);
-    BN_free(secretKey);
 }
-#undef CLEANUP
 
 QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     // see GA138 documentation page 11
