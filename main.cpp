@@ -9,6 +9,8 @@
 #include "db/QDjangoQuerySet.h"
 #include "product.h"
 #include "genericmodel.h"
+#include "log/QsLog.h"
+#include "DestSQL.h"
 #include <QtQml>
 
 int main(int argc, char *argv[])
@@ -17,6 +19,12 @@ int main(int argc, char *argv[])
 
     KassomatController kassomatController;
     DatabaseController databaseController;
+
+    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    //logger.setLoggingLevel(QsLogging::TraceLevel);
+    QsLogging::DestinationPtr destSQL( QsLogging::DestinationPtr(new DestSQL) );
+    logger.addDestination(destSQL);
+
     //QList<Product *> p;
     GenericModel<Project> projectlist(databaseController.listProjects(false));
 

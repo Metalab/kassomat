@@ -14,10 +14,10 @@ QML_IMPORT_PATH =
 CONFIG += c++11 debug
 LIBS += -lssl -lcrypto
 
-#mac {
-#	QMAKE_CXXFLAGS += -stdlib=libc++
-#	QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
-#}
+MAC {
+        QMAKE_CXXFLAGS += -stdlib=libc++
+        QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
+}
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
@@ -32,7 +32,6 @@ SOURCES += main.cpp \
     db/QDjangoMetaModel.cpp \
     db/QDjango.cpp \
     projectcontroller.cpp \
-    transactionlogcontroller.cpp \
     genericmodelbase.cpp \
     genericmodel.cpp \
     http/QDjangoUrlResolver.cpp \
@@ -40,7 +39,11 @@ SOURCES += main.cpp \
     http/QDjangoHttpResponse.cpp \
     http/QDjangoHttpRequest.cpp \
     http/QDjangoHttpController.cpp \
-    http/QDjangoFastCgiServer.cpp
+    http/QDjangoFastCgiServer.cpp \
+    log/QsLogDestFile.cpp \
+    log/QsLogDestConsole.cpp \
+    log/QsLogDest.cpp \
+    log/QsLog.cpp
 
 HEADERS += \
     smartpayout.h \
@@ -66,7 +69,6 @@ HEADERS += \
     mos_user.h \
     user.h \
     projectcontroller.h \
-    transactionlogcontroller.h \
     moneycode.h \
     genericmodelbase.h \
     genericmodel.h \
@@ -80,7 +82,15 @@ HEADERS += \
     http/QDjangoHttpController.h \
     http/QDjangoHttp_p.h \
     http/QDjangoFastCgiServer_p.h \
-    http/QDjangoFastCgiServer.h
+    http/QDjangoFastCgiServer.h \
+    log.h \
+    log/QsLogLevel.h \
+    log/QsLogDisableForThisFile.h \
+    log/QsLogDestFile.h \
+    log/QsLogDestConsole.h \
+    log/QsLogDest.h \
+    log/QsLog.h \
+    DestSQL.h
 
 QT += sql serialport
 
@@ -95,4 +105,8 @@ OTHER_FILES += \
     http/http.pro \
     db/db.pro \
     src.pro \
-    src.pri
+    src.pri \
+    log/QsLogReadme.txt \
+    log/QsLogChanges.txt \
+    log/QsLog.pri \
+    log/log_example.pro

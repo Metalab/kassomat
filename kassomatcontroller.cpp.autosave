@@ -33,7 +33,6 @@ void KassomatController::setSmartPayoutDevice(const QString &dev) {
 void KassomatController::setCredit(unsigned int credit){
     m_credit = credit;
     emit creditChanged(credit);
-    QLOG_INFO() << "uuuh the credits, they has a change";
 }
 
 void KassomatController::setDebt(unsigned int debt){

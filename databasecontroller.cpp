@@ -9,6 +9,7 @@
 #include "product.h"
 #include "project.h"
 #include "genericmodel.h"
+#include "log.h"
 
 
 DatabaseController::DatabaseController(){
@@ -40,6 +41,7 @@ void DatabaseController::dbTestFill(){
     QDjango::registerModel<Booking>().createTable();
     QDjango::registerModel<Booking_Row>().createTable();
     QDjango::registerModel<Moneycode>().createTable();
+    QDjango::registerModel<Log>().createTable();
 
     User admin_user;
     //QDjangoQuerySet<User> u;
@@ -88,6 +90,7 @@ void DatabaseController::dbTestFill(){
 }
 
 void DatabaseController::dbTestCleanup(){
+    QDjangoQuerySet<Log>().remove();
     QDjangoQuerySet<Moneycode>().remove();
     QDjangoQuerySet<Booking_Row>().remove();
     QDjangoQuerySet<Booking>().remove();
@@ -97,6 +100,7 @@ void DatabaseController::dbTestCleanup(){
     QDjangoQuerySet<MOS_User>().remove();
     QDjangoQuerySet<User>().remove();
 
+    QDjango::registerModel<Log>().dropTable();
     QDjango::registerModel<Moneycode>().dropTable();
     QDjango::registerModel<Booking_Row>().dropTable();
     QDjango::registerModel<Booking>().dropTable();
