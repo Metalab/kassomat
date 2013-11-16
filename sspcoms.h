@@ -24,8 +24,6 @@ class SSPComs : public QThread {
     QSerialPort *m_port;
 	QSerialPortInfo m_portInfo;
 
-    AES_KEY enc_key, dec_key;
-
 public:
     explicit SSPComs(const QSerialPortInfo &info);
     ~SSPComs();
@@ -109,7 +107,9 @@ private:
     
 	// encryption
 	
-	QByteArray key;
+    AES_KEY m_enc_key, m_dec_key;
+
+    bool m_encryptionEnabled;
 	QByteArray encrypt(const QByteArray &cmd);
     void negotiateEncryption();
 	

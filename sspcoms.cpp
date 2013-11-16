@@ -11,7 +11,7 @@
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
-SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_terminate(false), m_sequence(false) {
+SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_terminate(false), m_sequence(false), m_encryptionEnabled(false), m_key(16,0) {
 }
 
 void SSPComs::startConnection() {
@@ -52,7 +52,7 @@ void SSPComs::run() {
 		return;
 	}
 
-    // ### establish encryption here
+    negotiateEncryption(0x123456701234567ULL);
 
 	QMutexLocker locker(&m_taskQueueMutex);
 	while(!m_terminate) {
@@ -229,7 +229,7 @@ bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd) {
     return true;
 }
 
-void SSPComs::negotiateEncryption() {
+void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     // Diffie-Hellman keyexchange
     BIGNUM *generator, *modulus, *hostInterKey, *hostRandom;
 
@@ -337,8 +337,10 @@ void SSPComs::negotiateEncryption() {
     QByteArray secretKeyData(BN_num_bytes(secretKey), 0);
     BN_bn2bin(secretKey, secretKeyData.data());
 
-    key.fill(0);
-    std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), key.begin());
+    m_key.fill(0);
+    m_key.replace(0, 8, static_cast<const char*>(&fixedKey), 8);
+    std::reverse_copy(secretKeyData.constBegin(), secretKeyData.constEnd(), m_key.begin() += 8);
+    m_encryptionEnabled = true;
 
     CLEANUP;
     BN_free(slaveInterKey);
@@ -348,10 +350,11 @@ void SSPComs::negotiateEncryption() {
 
 QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     // see GA138 documentation page 11
-    QByteArray encryptedData(1, 0x7e);
 
-    // init encryption key:
-    // AES_set_encrypt_key(key, 128, &enc_key);
+
+    QByteArray encryptedData(1, 0x7e);
+    AES_KEY enc_key;
+    AES_set_encrypt_key(m_key.constData(), 128, &enc_key);
 
     // enc_out == preallocated memory area of the required size
     // text == 16 bytes of data to be encrypted
