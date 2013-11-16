@@ -111,6 +111,7 @@ private:
     QByteArray m_key;
     uint32_t m_encryptionCount;
 	QByteArray encrypt(const QByteArray &cmd);
+    QByteArray decrypt(const QByteArray &cmd);
     void negotiateEncryption();
 	
 	Q_DISABLE_COPY(SSPComs)

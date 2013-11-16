@@ -157,7 +157,7 @@ QByteArray SSPComs::readResponse() {
 				throw QString("Bad CRC");
 			}
 			
-			return content;
+            return decrypt(content);
 		}
 	}
 }
@@ -380,6 +380,34 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     m_encryptionCount++;
 
     return encryptedData;
+}
+
+QByteArray SSPComs::decrypt(const QByteArray &cmd) {
+    if(!m_encryptionEnabled || cmd[0] != 0x7e)
+        return cmd;
+    AES_KEY dec_key;
+    AES_set_decrypt_key(m_key.constData(), 128, &dec_key);
+
+    QByteArray decryptedData(cmd.length()-1,0);
+
+    for(uint8_t i = 0; i < (cmd.length()-1) / 16; i++)
+        AES_decrypt(&cmd[1+i*16], decryptedData[i*16], &dec_key);
+
+    uint8_t length = decryptedData[0];
+    if(length > decryptedData.length() - 7) {
+        throw "Length in encrypted packet is invalid";
+    }
+    uint16_t count = decryptedData[1] | (decryptedData[2] << 8) | (decryptedData[3] << 16) | (decryptedData[4] << 24);
+    if(count != m_encryptionCount) {
+        throw "Encryption Counter of received packet is incorrect";
+    }
+    m_encryptionCount++;
+    uint16_t crc = decryptedData[decryptedData.length()-2] | (decryptedData[decryptedData.length()-1] << 8);
+
+    if(crc != calculateCRC(decryptedData, CRC_SSP_SEED, CRC_SSP_POLY)) {
+        throw "Bad CRC";
+    }
+    return decryptedData.mid(5, length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
