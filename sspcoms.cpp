@@ -588,11 +588,32 @@ void SSPComs::smartEmpty() {
 
 }
 
-void SSPComs::poll(std::function<void(QList<SSPEvent*>)> callback) {
+void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback) {
 	enqueueTask(QByteArray(1, 0x7), [callback](uint8_t, const QByteArray &response) {
-		QList<SSPEvent*> events;
+        QList<QSharedPointer<SSPEvent>> events;
 		
-		// TODO parse events
+        QByteArray remainingResponse(response);
+        while(remainingResponse.length() > 0) {
+            QSharedPointer<SSPEvent> event;
+            switch(remainingResponse[0]) {
+            case 0xf1:
+                event.reset(new SSPResetEvent(remainingResponse));
+                break;
+            case 0xef:
+                event.reset(new SSPReadNoteEvent(remainingResponse));
+                break;
+            case 0xee:
+                event.reset(new SSPCreditNoteEvent(remainingResponse));
+                break;
+            case 0xed:
+                event.reset(new SSPNoteRejectingEvent(remainingResponse));
+                break;
+            default:
+                throw "bla";
+            }
+            remainingResponse = remainingResponse.right(event->length());
+            events.push_back(event);
+        }
 		
 		callback(events);
     });
