@@ -608,6 +608,135 @@ void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback
             case 0xed:
                 event.reset(new SSPNoteRejectingEvent(remainingResponse));
                 break;
+            case 0xec:
+                event.reset(new SSPNoteRejectedEvent(remainingResponse));
+                break;
+            case 0xcc:
+                event.reset(new SSPNoteStackingEvent(remainingResponse));
+                break;
+            case 0xeb:
+                event.reset(new SSPNoteStackedEvent(remainingResponse));
+                break;
+            case 0xea:
+                event.reset(new SSPSafeNoteJamEvent(remainingResponse));
+                break;
+            case 0xe9:
+                event.reset(new SSPUnsafeNoteJamEvent(remainingResponse));
+                break;
+            case 0xe8:
+                event.reset(new SSPDisabledEvent(remainingResponse));
+                break;
+            case 0xe6:
+                event.reset(new SSPFraudAttemptEvent(remainingResponse));
+                break;
+            case 0xe7:
+                event.reset(new SSPStackerFullEvent(remainingResponse));
+                break;
+            case 0xe1:
+                event.reset(new SSPNoteClearedFromFrontEvent(remainingResponse));
+                break;
+            case 0xe2:
+                event.reset(new SSPNoteClearedToCashboxEvent(remainingResponse));
+                break;
+            case 0xe3:
+                event.reset(new SSPCashboxRemovedEvent(remainingResponse));
+                break;
+            case 0xe4:
+                event.reset(new SSPCashboxReplacedEvent(remainingResponse));
+                break;
+            case 0xe5:
+                event.reset(new SSPBarCodeTicketValidatedEvent(remainingResponse));
+                break;
+            case 0xd1:
+                event.reset(new SSPBarCodeTicketAcknowledgeEvent(remainingResponse));
+                break;
+            case 0xe0:
+                event.reset(new SSPNotePathOpenEvent(remainingResponse));
+                break;
+            case 0xb5:
+                event.reset(new SSPChannelDisableEvent(remainingResponse));
+                break;
+            case 0xb6:
+                event.reset(new SSPInitiatingEvent(remainingResponse));
+                break;
+            case 0xda:
+                event.reset(new SSPDispensingEvent(remainingResponse));
+                break;
+            case 0xd2:
+                event.reset(new SSPDispensedEvent(remainingResponse));
+                break;
+            case 0xd5:
+                event.reset(new SSPJammedEvent(remainingResponse));
+                break;
+            case 0xd6:
+                event.reset(new SSPHaltedEvent(remainingResponse));
+                break;
+            case 0xd7:
+                event.reset(new SSPFloatingEvent(remainingResponse));
+                break;
+            case 0xd8:
+                event.reset(new SSPFloatedEvent(remainingResponse));
+                break;
+            case 0xd9:
+                event.reset(new SSPTimeoutEvent(remainingResponse));
+                break;
+            case 0xdc:
+                event.reset(new SSPIncompletePayoutEvent(remainingResponse));
+                break;
+            case 0xdd:
+                event.reset(new SSPIncompleteFloatEvent(remainingResponse));
+                break;
+            case 0xde:
+                event.reset(new SSPCashboxPaidEvent(remainingResponse));
+                break;
+            case 0xdf:
+                event.reset(new SSPCoinCreditEvent(remainingResponse));
+                break;
+            case 0xc4:
+                event.reset(new SSPCoinMechJammedEvent(remainingResponse));
+                break;
+            case 0xc5:
+                event.reset(new SSPCoinMechReturnPressedEvent(remainingResponse));
+                break;
+            case 0xc2:
+                event.reset(new SSPEmptyingEvent(remainingResponse));
+                break;
+            case 0xc3:
+                event.reset(new SSPEmptiedEvent(remainingResponse));
+                break;
+            case 0xb3:
+                event.reset(new SSPSmartEmptyingEvent(remainingResponse));
+                break;
+            case 0xb4:
+                event.reset(new SSPSmartEmptiedEvent(remainingResponse));
+                break;
+            case 0xb7:
+                event.reset(new SSPCoinMechErrorEvent(remainingResponse));
+                break;
+            case 0xdb:
+                event.reset(new SSPNoteStoredInPayoutEvent(remainingResponse));
+                break;
+            case 0xc6:
+                event.reset(new SSPPayoutOutOfServiceEvent(remainingResponse));
+                break;
+            case 0xb0:
+                event.reset(new SSPJamRecoveryEvent(remainingResponse));
+                break;
+            case 0xb1:
+                event.reset(new SSPErrorDuringPayoutEvent(remainingResponse));
+                break;
+            case 0xc9:
+                event.reset(new SSPNoteTransferredToStackerEvent(remainingResponse));
+                break;
+            case 0xce:
+                event.reset(new SSPNoteHeldInBezelEvent(remainingResponse));
+                break;
+            case 0xcb:
+                event.reset(new SSPNotePaidIntoStoreOnPowerupEvent(remainingResponse));
+                break;
+            case 0xca:
+                event.reset(new SSPNotePaidIntoStackerOnPowerupEvent(remainingResponse));
+                break;
             default:
                 throw "bla";
             }
