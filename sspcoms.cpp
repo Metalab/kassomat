@@ -514,7 +514,7 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
 
     uint16_t crc = decryptedData[decryptedData.length()-2] | (decryptedData[decryptedData.length()-1] << 8);
 
-    if(crc != calculateCRC(decryptedData, CRC_SSP_SEED, CRC_SSP_POLY)) {
+    if(crc != calculateCRC(decryptedData.left(decryptedData.length()-2), CRC_SSP_SEED, CRC_SSP_POLY)) {
         throw "Bad CRC";
     }
     return decryptedData.mid(5, length);
