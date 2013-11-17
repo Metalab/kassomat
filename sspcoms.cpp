@@ -121,7 +121,6 @@ struct __attribute__((__packed__)) TransportLayer {
 
 QByteArray SSPComs::readResponse() {
 	// TODO: verify sequence and slave id
-    msleep(500);
 	QByteArray recv;
 	while(true) {
         if(!m_port->waitForReadyRead(1000)) {
@@ -378,11 +377,9 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
         } while(retry);
     } while(false/*static_cast<uint8_t>(response[0]) == 0xf4*/);
 
-    /*
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Generator command";
     }
-    */
 
     QByteArray modulusData(BN_num_bytes(*modulus), 0);
     BN_bn2bin(*modulus, reinterpret_cast<uint8_t*>(modulusData.data()));
@@ -396,11 +393,9 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     }
 
     response = readResponse();
-    /*
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Modulus command";
     }
-    */
 
     QByteArray hostInterKeyData(BN_num_bytes(*hostInterKey), 0);
     BN_bn2bin(*hostInterKey, reinterpret_cast<uint8_t*>(hostInterKeyData.data()));
