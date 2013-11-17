@@ -345,6 +345,8 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
     do {
+        // FIRMWARE BUG: Everything beyond 32bit fails!
+        // According to the documentation, 64bits should be possible.
         BN_generate_prime_ex(*generator, 32, 0, NULL, NULL, NULL);
         BN_generate_prime_ex(*modulus, 32, 0, NULL, NULL, NULL);
 
