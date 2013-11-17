@@ -344,40 +344,38 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
+    // FIRMWARE BUG: Everything beyond 32bit fails!
+    // According to the documentation, 64bits should be possible.
+    BN_generate_prime_ex(*generator, 32, 0, NULL, NULL, NULL);
+    BN_generate_prime_ex(*modulus, 32, 0, NULL, NULL, NULL);
+
+    // Doesn't make sense when the generator is larger than the modulus value
+    if(BN_cmp(*generator, *modulus) == 1)
+        BN_swap(*generator, *modulus);
+
+    BN_rand(*hostRandom, 64, -1, 0);
+
+    // hostInterKey = generator ^ hostRandom % modulus
+    BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus, m_bn_ctx);
+
+    QByteArray generatorData(BN_num_bytes(*generator), 0);
+    BN_bn2bin(*generator, reinterpret_cast<uint8_t*>(generatorData.data()));
+
+    QByteArray setGenerator(9, 0);
+    setGenerator[0] = 0x4a;
+    std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
+
     do {
-        // FIRMWARE BUG: Everything beyond 32bit fails!
-        // According to the documentation, 64bits should be possible.
-        BN_generate_prime_ex(*generator, 32, 0, NULL, NULL, NULL);
-        BN_generate_prime_ex(*modulus, 32, 0, NULL, NULL, NULL);
-
-        // Doesn't make sense when the generator is larger than the modulus value
-        if(BN_cmp(*generator, *modulus) == 1)
-            BN_swap(*generator, *modulus);
-
-        BN_rand(*hostRandom, 64, -1, 0);
-
-        // hostInterKey = generator ^ hostRandom % modulus
-        BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus, m_bn_ctx);
-
-        QByteArray generatorData(BN_num_bytes(*generator), 0);
-        BN_bn2bin(*generator, reinterpret_cast<uint8_t*>(generatorData.data()));
-
-        QByteArray setGenerator(9, 0);
-        setGenerator[0] = 0x4a;
-        std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
-
-        do {
-            if(!sendCommand(0, setGenerator, retry)) {
-                throw "OMG OMG OMG";
-            }
-            retry = false;
-            try {
-                response = readResponse();
-            } catch(TimeoutException e) {
-                retry = true;
-            }
-        } while(retry);
-    } while(false/*static_cast<uint8_t>(response[0]) == 0xf4*/);
+        if(!sendCommand(0, setGenerator, retry)) {
+            throw "OMG OMG OMG";
+        }
+        retry = false;
+        try {
+            response = readResponse();
+        } catch(TimeoutException e) {
+            retry = true;
+        }
+    } while(retry);
 
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Generator command";
