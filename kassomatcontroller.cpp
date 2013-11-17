@@ -45,3 +45,7 @@ void KassomatController::setState(const QString &state){
     m_state = state;
     emit stateChanged(state);
 }
+
+void KassomatController::test() {
+    m_smartPayout->test();
+}

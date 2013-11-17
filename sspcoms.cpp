@@ -12,6 +12,20 @@
 #define CRC_SSP_SEED		0xFFFF
 #define CRC_SSP_POLY		0x8005
 
+QString toDebug(const QByteArray & line) {
+    QString s;
+    uchar c;
+
+    for ( int i=0 ; i < line.size() ; i++ ){
+        c = line[i];
+        s.append(QString("%1").arg(c, 2, 16, QLatin1Char('0')));
+        if(i+1 < line.size()) {
+            s.append(' ');
+        }
+    }
+    return s;
+}
+
 SSPComs::SSPComs(const QSerialPortInfo &info) : m_port(NULL), m_portInfo(info), m_terminate(false), m_sequence(false), m_encryptionEnabled(false), m_key(16,0) {
     m_bn_ctx = BN_CTX_new();
 }
@@ -50,10 +64,20 @@ void SSPComs::setTerminate(bool terminate) {
 
 void SSPComs::run() {
 	if(!open()) {
-		qCritical() << "SSPComs: Failed opening serial port with error " << m_port->error() << ".";
-		qCritical() << "errno = " << errno;
+        qCritical() << "SSPComs: Failed opening serial port with error" << m_port->error();
+        qCritical() << "Error" << errno << ":" << strerror(errno);
 		return;
 	}
+
+    if(sync())
+        m_sequence = false;
+
+#if 0
+    if(!sendCommand(0, QByteArray(1, 0x01))) {
+        throw "OMG OMG OMG";
+    }
+    QByteArray response = readResponse();
+#endif
 
     negotiateEncryption(0x123456701234567ULL);
 
@@ -61,11 +85,20 @@ void SSPComs::run() {
 	while(!m_terminate) {
 		while(!m_taskQueue.isEmpty()) {
 			SSPComsTask *task = m_taskQueue.dequeue();
-			if(!sendCommand(0x00, task->message())) {
-				// OMG OMG OMG
-			}
-			
-			QByteArray response = readResponse();
+            bool retry = false;
+            QByteArray response;
+            do {
+                if(!sendCommand(0x00, task->message(), retry)) {
+                    // OMG OMG OMG
+                }
+
+                retry = false;
+                try {
+                    response = readResponse();
+                } catch(TimeoutException e) {
+                    retry = true;
+                }
+            } while(retry);
 			QMetaObject::invokeMethod(task, "responseAvailable", Qt::QueuedConnection, Q_ARG(QByteArray, response));
 			QMetaObject::invokeMethod(task, "deleteLater", Qt::QueuedConnection);
 		}
@@ -80,17 +113,20 @@ void SSPComs::run() {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 struct __attribute__((__packed__)) TransportLayer {
-    uint8_t sequence:1;
     uint8_t slave_id:7;
+    uint8_t sequence:1;
     uint8_t length;
     uint8_t data_crc[];
 };
 
 QByteArray SSPComs::readResponse() {
 	// TODO: verify sequence and slave id
+    msleep(500);
 	QByteArray recv;
 	while(true) {
-		m_port->waitForReadyRead(1000000);
+        if(!m_port->waitForReadyRead(1000)) {
+            throw TimeoutException();
+        }
 		recv.append(m_port->readAll());
 		
 		if(recv.length() >= 5) {
@@ -152,6 +188,8 @@ QByteArray SSPComs::readResponse() {
 					throw "Non-stuffed byte received!";
 				}
 			}
+
+            qDebug() << "Received message:" << toDebug(recv);
 			
 			uint16_t crc = (crc2 << 8) | crc1;
 			// verify CRC
@@ -182,10 +220,15 @@ uint16_t SSPComs::calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd) 
 }
 
 
-bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain) {
+bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain, bool retry) {
     // see GA138 documentation page 9
-    QByteArray cmd = encrypt(cmd_plain);
+    QByteArray cmd = encrypt(cmd_plain, retry);
     TransportLayer *transport = reinterpret_cast<TransportLayer *>(new uint8_t[sizeof(TransportLayer) + cmd.size() + 2]);
+
+    if(retry)
+        m_sequence = !m_sequence;
+    if(cmd_plain[0] == 0x11) // reset for sync command
+        m_sequence = true;
 
     transport->sequence = m_sequence;
     transport->slave_id = slave_id;
@@ -214,6 +257,8 @@ bool SSPComs::sendCommand(uint8_t slave_id, const QByteArray &cmd_plain) {
             stuffedTransportBytes.data()[stuffedIndex++] = byte;
         }
     }
+
+    qDebug() << "Sending Bytes:" << toDebug(stuffedTransportBytes);
 
     qint64 bytesWritten = m_port->write(stuffedTransportBytes);
 
@@ -251,6 +296,45 @@ struct BIGNUMPtr {
 
 void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     // Diffie-Hellman keyexchange
+    bool retry = false;
+    QByteArray response;
+
+#if 0
+    do {
+        if(!sendCommand(0, QByteArray(1, 0x01), retry)) { // reset
+            throw "OMG OMG OMG";
+        }
+
+        retry = false;
+        try {
+            response = readResponse();
+        } catch(TimeoutException e) {
+            retry = true;
+        }
+    } while(retry);
+    if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        throw "Failed to reset device";
+    }
+#endif
+
+#if 0
+    do {
+        if(!sendCommand(0, QByteArray(1, 0x61), retry)) { // reset fixed encryption key
+            throw "OMG OMG OMG";
+        }
+
+        retry = false;
+        try {
+            response = readResponse();
+        } catch(TimeoutException e) {
+            retry = true;
+        }
+    } while(retry);
+    if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        throw "Failed to enable device";
+    }
+#endif
+
     BIGNUMPtr generator, modulus, hostInterKey, hostRandom;
 
     std::random_device rd;
@@ -261,33 +345,44 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
-    BN_generate_prime_ex(*generator, 64, 0, NULL, NULL, NULL);
-    BN_generate_prime_ex(*modulus, 64, 0, NULL, NULL, NULL);
+    do {
+        BN_generate_prime_ex(*generator, 64, 0, NULL, NULL, NULL);
+        BN_generate_prime_ex(*modulus, 64, 0, NULL, NULL, NULL);
 
-    // Doesn't make sense when the generator is larger than the modulus value
-    if(BN_cmp(*generator, *modulus) == 1)
-        BN_swap(*generator, *modulus);
+        // Doesn't make sense when the generator is larger than the modulus value
+        if(BN_cmp(*generator, *modulus) == 1)
+            BN_swap(*generator, *modulus);
 
-    BN_rand(*hostRandom, 64, -1, 0);
+        BN_rand(*hostRandom, 64, -1, 0);
 
-    // hostInterKey = generator ^ hostRandom % modulus
-    BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus, m_bn_ctx);
+        // hostInterKey = generator ^ hostRandom % modulus
+        BN_mod_exp(*hostInterKey, *generator, *hostRandom, *modulus, m_bn_ctx);
 
-    QByteArray generatorData(BN_num_bytes(*generator), 0);
-    BN_bn2bin(*generator, reinterpret_cast<uint8_t*>(generatorData.data()));
+        QByteArray generatorData(BN_num_bytes(*generator), 0);
+        BN_bn2bin(*generator, reinterpret_cast<uint8_t*>(generatorData.data()));
 
-    QByteArray setGenerator(9, 0);
-    setGenerator[0] = 0x4a;
-    std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
+        QByteArray setGenerator(9, 0);
+        setGenerator[0] = 0x4a;
+        std::reverse_copy(generatorData.constBegin(), generatorData.constEnd(), setGenerator.begin()+1);
 
-    if(!sendCommand(0, setGenerator)) {
-        throw "OMG OMG OMG";
-    }
+        do {
+            if(!sendCommand(0, setGenerator, retry)) {
+                throw "OMG OMG OMG";
+            }
+            retry = false;
+            try {
+                response = readResponse();
+            } catch(TimeoutException e) {
+                retry = true;
+            }
+        } while(retry);
+    } while(false/*static_cast<uint8_t>(response[0]) == 0xf4*/);
 
-    QByteArray response = readResponse();
+    /*
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Generator command";
     }
+    */
 
     QByteArray modulusData(BN_num_bytes(*modulus), 0);
     BN_bn2bin(*modulus, reinterpret_cast<uint8_t*>(modulusData.data()));
@@ -301,9 +396,11 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     }
 
     response = readResponse();
+    /*
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
         throw "Failed sending Set Modulus command";
     }
+    */
 
     QByteArray hostInterKeyData(BN_num_bytes(*hostInterKey), 0);
     BN_bn2bin(*hostInterKey, reinterpret_cast<uint8_t*>(hostInterKeyData.data()));
@@ -343,19 +440,24 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     m_encryptionCount = 0;
 }
 
-QByteArray SSPComs::encrypt(const QByteArray &cmd) {
+QByteArray SSPComs::encrypt(const QByteArray &cmd, bool retry) {
     if(!m_encryptionEnabled)
         return cmd;
     // see GA138 documentation page 11
     AES_KEY enc_key;
     AES_set_encrypt_key(reinterpret_cast<const uint8_t*>(m_key.constData()), 128, &enc_key);
 
+    if(retry)
+        m_encryptionCount--;
+
     // packet length + packet count
     QByteArray bytesToEncrypt;
     bytesToEncrypt.append(static_cast<uint8_t>(cmd.length()));
-    bytesToEncrypt.append(m_encryptionCount);
+    //bytesToEncrypt.append(m_encryptionCount);
     for(uint8_t i = 0; i < 4; i++) // byte ordering!
         bytesToEncrypt.append(static_cast<uint8_t>(m_encryptionCount >> (8*i) & 0xFF));
+
+    bytesToEncrypt.append(cmd);
 
     // padding
     uint8_t packLength = 16 - ((cmd.length()+7) % 16);
@@ -374,6 +476,8 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd) {
     bytesToEncrypt.append(static_cast<uint8_t>(crc >> 8));
 
     QByteArray encryptedData(1 + bytesToEncrypt.length(), 0x7e); // STEX
+
+    qDebug() << "Encrypting data:" << toDebug(bytesToEncrypt);
 
     // encrypt in 16 byte blocks
     for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
@@ -405,12 +509,32 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
         throw "Encryption Counter of received packet is incorrect";
     }
     m_encryptionCount++;
+
+    qDebug() << "Decrypted data:" << toDebug(decryptedData);
+
     uint16_t crc = decryptedData[decryptedData.length()-2] | (decryptedData[decryptedData.length()-1] << 8);
 
     if(crc != calculateCRC(decryptedData, CRC_SSP_SEED, CRC_SSP_POLY)) {
         throw "Bad CRC";
     }
     return decryptedData.mid(5, length);
+}
+
+bool SSPComs::sync() {
+    bool retry = false;
+    QByteArray response;
+    do {
+        if(!sendCommand(0, QByteArray(1, 0x11), retry)) {
+            throw "OMG OMG OMG";
+        }
+        retry = false;
+        try {
+            response = readResponse();
+        } catch(TimeoutException e) {
+            retry = true;
+        }
+    } while(retry);
+    return static_cast<uint8_t>(response[0]) == 0xf0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

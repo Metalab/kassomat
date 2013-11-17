@@ -17,7 +17,14 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    try {
     KassomatController kassomatController;
+
+    kassomatController.setSmartPayoutDevice("usbmodem1411");
+
+    kassomatController.test();
+
+#if 0
     DatabaseController databaseController;
 
     QsLogging::Logger& logger = QsLogging::Logger::instance();
@@ -53,6 +60,11 @@ int main(int argc, char *argv[])
 
 
     component.create();
+#endif
 
     return app.exec();
+    } catch(char const *msg) {
+        qFatal("FATAL Error: %s", msg);
+        return 1;
+    }
 }

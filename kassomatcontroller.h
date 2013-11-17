@@ -26,6 +26,8 @@ public:
     void setState(const QString &state);
     void setDebt(unsigned int debt);
 
+    void test();
+
 signals:
     void smartPayoutDeviceChanged(const QString &newDevice);
     void creditChanged(unsigned int);

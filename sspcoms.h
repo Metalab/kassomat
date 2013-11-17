@@ -16,6 +16,8 @@
 class SSPComsTask;
 class SSPEvent;
 
+class TimeoutException {};
+
 class SSPComs : public QThread {
     Q_OBJECT
 	
@@ -102,15 +104,17 @@ private:
 
 	void enqueueTask(const QByteArray &data, const std::function<void(uint8_t, const QByteArray&)> &response);
 	QByteArray readResponse();
-    bool sendCommand(uint8_t slave_id, const QByteArray &cmd);
+    bool sendCommand(uint8_t slave_id, const QByteArray &cmd, bool retry=false);
     uint16_t calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd);
+
+    bool sync();
     
 	// encryption
 	
     bool m_encryptionEnabled;
     QByteArray m_key;
     uint32_t m_encryptionCount;
-	QByteArray encrypt(const QByteArray &cmd);
+    QByteArray encrypt(const QByteArray &cmd, bool retry);
     QByteArray decrypt(const QByteArray &cmd);
     void negotiateEncryption(uint64_t fixedKey);
     BN_CTX *m_bn_ctx;

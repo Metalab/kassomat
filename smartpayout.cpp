@@ -24,6 +24,7 @@ void SmartPayout::setDevice(const QString &dev) {
 			coms->setTerminate(true);
 
         if(dev != "") {
+            qDebug() << "Opening device" << dev;
 			coms = new SSPComs(QSerialPortInfo(dev));
 			QObject::connect(coms, &SSPComs::terminating, [=]{
 				delete coms;
@@ -39,4 +40,8 @@ void SmartPayout::setDevice(const QString &dev) {
         }
         emit deviceChanged(m_device);
     }
+}
+
+void SmartPayout::test() {
+
 }

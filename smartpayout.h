@@ -20,6 +20,8 @@ public:
     const QString &device() const;
     void setDevice(const QString &dev);
 
+    void test();
+
 signals:
     void deviceChanged(const QString &newValue);
 };
