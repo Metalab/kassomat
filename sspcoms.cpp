@@ -346,8 +346,8 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     RAND_seed(rnd_seed, sizeof rnd_seed);
 
     do {
-        BN_generate_prime_ex(*generator, 64, 0, NULL, NULL, NULL);
-        BN_generate_prime_ex(*modulus, 64, 0, NULL, NULL, NULL);
+        BN_generate_prime_ex(*generator, 32, 0, NULL, NULL, NULL);
+        BN_generate_prime_ex(*modulus, 32, 0, NULL, NULL, NULL);
 
         // Doesn't make sense when the generator is larger than the modulus value
         if(BN_cmp(*generator, *modulus) == 1)
