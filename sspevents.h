@@ -58,6 +58,7 @@ public:
 
 class SSPNoteRejectedEvent : public SSPEvent {
 public:
+    SSPNoteRejectedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xec;
     }
@@ -68,6 +69,7 @@ public:
 
 class SSPNoteStackingEvent : public SSPEvent {
 public:
+    SSPNoteStackingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xcc;
     }
@@ -78,6 +80,7 @@ public:
 
 class SSPNoteStackedEvent : public SSPEvent {
 public:
+    SSPNoteStackedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xeb;
     }
@@ -88,6 +91,7 @@ public:
 
 class SSPSafeNoteJamEvent : public SSPEvent {
 public:
+    SSPSafeNoteJamEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xea;
     }
@@ -98,6 +102,7 @@ public:
 
 class SSPUnsafeNoteJamEvent : public SSPEvent {
 public:
+    SSPUnsafeNoteJamEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe9;
     }
@@ -108,6 +113,7 @@ public:
 
 class SSPDisabledEvent : public SSPEvent {
 public:
+    SSPDisabledEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe8;
     }
@@ -118,6 +124,7 @@ public:
 
 class SSPFraudAttemptEvent : public SSPEvent {
 public:
+    SSPFraudAttemptEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe6;
     }
@@ -128,6 +135,7 @@ public:
 
 class SSPStackerFullEvent : public SSPEvent {
 public:
+    SSPStackerFullEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe7;
     }
@@ -138,6 +146,7 @@ public:
 
 class SSPNoteClearedFromFrontEvent : public SSPEvent {
 public:
+    SSPNoteClearedFromFrontEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe1;
     }
@@ -148,6 +157,7 @@ public:
 
 class SSPNoteClearedToCashboxEvent : public SSPEvent {
 public:
+    SSPNoteClearedToCashboxEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe2;
     }
@@ -158,6 +168,7 @@ public:
 
 class SSPCashboxRemovedEvent : public SSPEvent {
 public:
+    SSPCashboxRemovedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe3;
     }
@@ -168,6 +179,7 @@ public:
 
 class SSPCashboxReplacedEvent : public SSPEvent {
 public:
+    SSPCashboxReplacedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe4;
     }
@@ -178,6 +190,7 @@ public:
 
 class SSPBarCodeTicketValidatedEvent : public SSPEvent {
 public:
+    SSPBarCodeTicketValidatedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe5;
     }
@@ -188,6 +201,7 @@ public:
 
 class SSPBarCodeTicketAcknowledgeEvent : public SSPEvent {
 public:
+    SSPBarCodeTicketAcknowledgeEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd1;
     }
@@ -198,6 +212,7 @@ public:
 
 class SSPNotePathOpenEvent : public SSPEvent {
 public:
+    SSPNotePathOpenEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xe0;
     }
@@ -208,6 +223,7 @@ public:
 
 class SSPChannelDisableEvent : public SSPEvent {
 public:
+    SSPChannelDisableEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb5;
     }
@@ -218,6 +234,7 @@ public:
 
 class SSPInitiatingEvent : public SSPEvent {
 public:
+    SSPInitiatingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb6;
     }
@@ -228,6 +245,7 @@ public:
 
 class SSPDispensingEvent : public SSPEvent {
 public:
+    SSPDispensingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xda;
     }
@@ -238,6 +256,7 @@ public:
 
 class SSPDispensedEvent : public SSPEvent {
 public:
+    SSPDispensedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd2;
     }
@@ -248,6 +267,7 @@ public:
 
 class SSPJammedEvent : public SSPEvent {
 public:
+    SSPJammedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd5;
     }
@@ -258,6 +278,7 @@ public:
 
 class SSPHaltedEvent : public SSPEvent {
 public:
+    SSPHaltedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd6;
     }
@@ -268,6 +289,7 @@ public:
 
 class SSPFloatingEvent : public SSPEvent {
 public:
+    SSPFloatingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd7;
     }
@@ -278,6 +300,7 @@ public:
 
 class SSPFloatedEvent : public SSPEvent {
 public:
+    SSPFloatedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd8;
     }
@@ -288,6 +311,7 @@ public:
 
 class SSPTimeoutEvent : public SSPEvent {
 public:
+    SSPTimeoutEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xd9;
     }
@@ -298,6 +322,7 @@ public:
 
 class SSPIncompletePayoutEvent : public SSPEvent {
 public:
+    SSPIncompletePayoutEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xdc;
     }
@@ -308,6 +333,7 @@ public:
 
 class SSPIncompleteFloatEvent : public SSPEvent {
 public:
+    SSPIncompleteFloatEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xdd;
     }
@@ -318,6 +344,7 @@ public:
 
 class SSPCashboxPaidEvent : public SSPEvent {
 public:
+    SSPCashboxPaidEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xde;
     }
@@ -328,6 +355,7 @@ public:
 
 class SSPCoinCreditEvent : public SSPEvent {
 public:
+    SSPCoinCreditEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xdf;
     }
@@ -338,6 +366,7 @@ public:
 
 class SSPCoinMechJammedEvent : public SSPEvent {
 public:
+    SSPCoinMechJammedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc4;
     }
@@ -348,6 +377,7 @@ public:
 
 class SSPCoinMechReturnPressedEvent : public SSPEvent {
 public:
+    SSPCoinMechReturnPressedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc5;
     }
@@ -358,6 +388,7 @@ public:
 
 class SSPEmptyingEvent : public SSPEvent {
 public:
+    SSPEmptyingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc2;
     }
@@ -368,6 +399,7 @@ public:
 
 class SSPEmptiedEvent : public SSPEvent {
 public:
+    SSPEmptiedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc3;
     }
@@ -378,6 +410,7 @@ public:
 
 class SSPSmartEmptyingEvent : public SSPEvent {
 public:
+    SSPSmartEmptyingEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb3;
     }
@@ -388,6 +421,7 @@ public:
 
 class SSPSmartEmptiedEvent : public SSPEvent {
 public:
+    SSPSmartEmptiedEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb4;
     }
@@ -398,6 +432,7 @@ public:
 
 class SSPCoinMechErrorEvent : public SSPEvent {
 public:
+    SSPCoinMechErrorEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb7;
     }
@@ -408,6 +443,7 @@ public:
 
 class SSPNoteStoredInPayoutEvent : public SSPEvent {
 public:
+    SSPNoteStoredInPayoutEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xdb;
     }
@@ -418,6 +454,7 @@ public:
 
 class SSPPayoutOutOfServiceEvent : public SSPEvent {
 public:
+    SSPPayoutOutOfServiceEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc6;
     }
@@ -428,6 +465,7 @@ public:
 
 class SSPJamRecoveryEvent : public SSPEvent {
 public:
+    SSPJamRecoveryEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb0;
     }
@@ -438,6 +476,7 @@ public:
 
 class SSPErrorDuringPayoutEvent : public SSPEvent {
 public:
+    SSPErrorDuringPayoutEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xb1;
     }
@@ -448,6 +487,7 @@ public:
 
 class SSPNoteTransferredToStackerEvent : public SSPEvent {
 public:
+    SSPNoteTransferredToStackerEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xc9;
     }
@@ -458,6 +498,7 @@ public:
 
 class SSPNoteHeldInBezelEvent : public SSPEvent {
 public:
+    SSPNoteHeldInBezelEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xce;
     }
@@ -468,6 +509,7 @@ public:
 
 class SSPNotePaidIntoStoreOnPowerupEvent : public SSPEvent {
 public:
+    SSPNotePaidIntoStoreOnPowerupEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xcb;
     }
@@ -478,6 +520,7 @@ public:
 
 class SSPNotePaidIntoStackerOnPowerupEvent : public SSPEvent {
 public:
+    SSPNotePaidIntoStackerOnPowerupEvent(const QByteArray &data) {}
     uint8_t eventCode() {
         return 0xca;
     }
