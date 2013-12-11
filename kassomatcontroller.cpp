@@ -1,5 +1,5 @@
 #include "kassomatcontroller.h"
-#include "log/QsLog.h"
+#include "QsLog/QsLog.h"
 #include <QDebug>
 
 KassomatController::KassomatController(QObject *parent) :

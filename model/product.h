@@ -1,7 +1,7 @@
 #ifndef PRODUCT_H
 #define PRODUCT_H
 
-#include "db/QDjangoModel.h"
+#include "QDjango/db/QDjangoModel.h"
 #include "project.h"
 
 class Product : public QDjangoModel

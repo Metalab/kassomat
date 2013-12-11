@@ -5,12 +5,12 @@
 #include "qtquick2applicationviewer.h"
 #include "kassomatcontroller.h"
 #include "databasecontroller.h"
-#include "db/QDjango.h"
-#include "db/QDjangoQuerySet.h"
-#include "product.h"
-#include "genericmodel.h"
-#include "log/QsLog.h"
-#include "DestSQL.h"
+#include "QDjango/db/QDjango.h"
+#include "QDjango/db/QDjangoQuerySet.h"
+#include "model/product.h"
+#include "model/genericmodel.h"
+#include "Qslog/QsLog.h"
+#include "qslogdestsql.h"
 #include <QtQml>
 
 int main(int argc, char *argv[])
@@ -24,12 +24,12 @@ int main(int argc, char *argv[])
 
     kassomatController.test();
 
-#if 0
+#if 1
     DatabaseController databaseController;
 
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     //logger.setLoggingLevel(QsLogging::TraceLevel);
-    QsLogging::DestinationPtr destSQL( QsLogging::DestinationPtr(new DestSQL) );
+    QsLogging::DestinationPtr destSQL( QsLogging::DestinationPtr(new QsLogDestSQL) );
     logger.addDestination(destSQL);
 
     //QList<Product *> p;

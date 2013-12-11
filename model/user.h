@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
-#include "db/QDjangoModel.h"
+#include "QDjango/db/QDjangoModel.h"
 
 class User : public QDjangoModel{
 

@@ -2,8 +2,8 @@
 #define BOOKING_H
 
 #include <QDateTime>
-#include "db/QDjangoModel.h"
-#include "admin.h"
+#include "QDjango/db/QDjangoModel.h"
+#include "model/admin.h"
 
 class Booking : public QDjangoModel
 {

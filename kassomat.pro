@@ -22,75 +22,74 @@ MAC {
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     smartpayout.cpp \
-    kassomatcontroller.cpp \
-	sspcoms.cpp \
-	sspcomstask.cpp \
+    sspcoms.cpp \
+    sspcomstask.cpp \
     databasecontroller.cpp \
-    db/QDjangoWhere.cpp \
-    db/QDjangoQuerySet.cpp \
-    db/QDjangoModel.cpp \
-    db/QDjangoMetaModel.cpp \
-    db/QDjango.cpp \
+    kassomatcontroller.cpp \
     projectcontroller.cpp \
-    genericmodelbase.cpp \
-    genericmodel.cpp \
-    http/QDjangoUrlResolver.cpp \
-    http/QDjangoHttpServer.cpp \
-    http/QDjangoHttpResponse.cpp \
-    http/QDjangoHttpRequest.cpp \
-    http/QDjangoHttpController.cpp \
-    http/QDjangoFastCgiServer.cpp \
-    log/QsLogDestFile.cpp \
-    log/QsLogDestConsole.cpp \
-    log/QsLogDest.cpp \
-    log/QsLog.cpp
+    QDjango/db/QDjangoWhere.cpp \
+    QDjango/db/QDjangoQuerySet.cpp \
+    QDjango/db/QDjangoModel.cpp \
+    QDjango/db/QDjangoMetaModel.cpp \
+    QDjango/db/QDjango.cpp \
+    model/genericmodelbase.cpp \
+    model/genericmodel.cpp \
+    QDjango/http/QDjangoUrlResolver.cpp \
+    QDjango/http/QDjangoHttpServer.cpp \
+    QDjango/http/QDjangoHttpResponse.cpp \
+    QDjango/http/QDjangoHttpRequest.cpp \
+    QDjango/http/QDjangoHttpController.cpp \
+    QDjango/http/QDjangoFastCgiServer.cpp \
+    Qslog/QsLogDestFile.cpp \
+    Qslog/QsLogDestConsole.cpp \
+    Qslog/QsLogDest.cpp \
+    Qslog/QsLog.cpp
 
 HEADERS += \
     smartpayout.h \
-    kassomatcontroller.h \
-	sspcoms.h \
-	sspcomstask.h \
-	sspevents.h \
-	encryption.h \
+    sspcoms.h \
+    sspcomstask.h \
+    sspevents.h \
     databasecontroller.h \
-    db/QDjangoWhere.h \
-    db/QDjangoWhere_p.h \
-    db/QDjangoQuerySet.h \
-    db/QDjangoQuerySet_p.h \
-    db/QDjangoModel.h \
-    db/QDjangoMetaModel.h \
-    db/QDjango.h \
-    db/QDjango_p.h \
-    admin.h \
-    booking_row.h \
-    booking.h \
-    product.h \
-    project.h \
-    mos_user.h \
-    user.h \
     projectcontroller.h \
-    moneycode.h \
-    genericmodelbase.h \
-    genericmodel.h \
-    http/QDjangoUrlResolver.h \
-    http/QDjangoHttpServer_p.h \
-    http/QDjangoHttpServer.h \
-    http/QDjangoHttpResponse_p.h \
-    http/QDjangoHttpResponse.h \
-    http/QDjangoHttpRequest_p.h \
-    http/QDjangoHttpRequest.h \
-    http/QDjangoHttpController.h \
-    http/QDjangoHttp_p.h \
-    http/QDjangoFastCgiServer_p.h \
-    http/QDjangoFastCgiServer.h \
-    log.h \
-    log/QsLogLevel.h \
-    log/QsLogDisableForThisFile.h \
-    log/QsLogDestFile.h \
-    log/QsLogDestConsole.h \
-    log/QsLogDest.h \
-    log/QsLog.h \
-    DestSQL.h
+    kassomatcontroller.h \
+    QDjango/db/QDjangoWhere.h \
+    QDjango/db/QDjangoWhere_p.h \
+    QDjango/db/QDjangoQuerySet.h \
+    QDjango/db/QDjangoQuerySet_p.h \
+    QDjango/db/QDjangoModel.h \
+    QDjango/db/QDjangoMetaModel.h \
+    QDjango/db/QDjango.h \
+    QDjango/db/QDjango_p.h \
+    model/admin.h \
+    model/booking_row.h \
+    model/booking.h \
+    model/product.h \
+    model/project.h \
+    model/mos_user.h \
+    model/user.h \
+    model/log.h \
+    model/moneycode.h \
+    model/genericmodelbase.h \
+    model/genericmodel.h \
+    QDjango/http/QDjangoUrlResolver.h \
+    QDjango/http/QDjangoHttpServer_p.h \
+    QDjango/http/QDjangoHttpServer.h \
+    QDjango/http/QDjangoHttpResponse_p.h \
+    QDjango/http/QDjangoHttpResponse.h \
+    QDjango/http/QDjangoHttpRequest_p.h \
+    QDjango/http/QDjangoHttpRequest.h \
+    QDjango/http/QDjangoHttpController.h \
+    QDjango/http/QDjangoHttp_p.h \
+    QDjango/http/QDjangoFastCgiServer_p.h \
+    QDjango/http/QDjangoFastCgiServer.h \
+    Qslog/QsLogLevel.h \
+    Qslog/QsLogDisableForThisFile.h \
+    Qslog/QsLogDestFile.h \
+    Qslog/QsLogDestConsole.h \
+    Qslog/QsLogDest.h \
+    Qslog/QsLog.h \
+    qslogdestsql.h
 
 QT += sql serialport
 
@@ -102,11 +101,11 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    http/http.pro \
-    db/db.pro \
-    src.pro \
-    src.pri \
-    log/QsLogReadme.txt \
-    log/QsLogChanges.txt \
-    log/QsLog.pri \
-    log/log_example.pro
+    QDjango/http/http.pro \
+    QDjango/db/db.pro \
+    QDjango/src.pro \
+    QDjango/src.pri \
+    Qslog/QsLogReadme.txt \
+    Qslog/QsLogChanges.txt \
+    Qslog/QsLog.pri \
+    Qslog/log_example.pro

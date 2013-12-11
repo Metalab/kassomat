@@ -2,8 +2,8 @@
 #define PROJECT_H
 
 #include <QDateTime>
-#include "db/QDjangoModel.h"
-#include "mos_user.h"
+#include "QDjango/db/QDjangoModel.h"
+#include "model/mos_user.h"
 
 class Project : public QDjangoModel
 {

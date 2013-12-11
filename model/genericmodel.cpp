@@ -19,8 +19,8 @@
 #include <QDebug>
 #include <QtCore/QMetaProperty>
 #include <QtCore/QStringList>
-#include "db/QDjangoQuerySet.h"
-#include "db/QDjangoWhere.h"
+#include "QDjango/db/QDjangoQuerySet.h"
+#include "QDjango/db/QDjangoWhere.h"
 
 template <class ModelTemplate>
 GenericModel<ModelTemplate>::GenericModel(QDjangoQuerySet<ModelTemplate> items, QObject *parent, bool cleanupPrefix)

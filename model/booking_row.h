@@ -1,9 +1,9 @@
 #ifndef BOOKING_ROW_H
 #define BOOKING_ROW_H
 
-#include "db/QDjangoModel.h"
-#include "booking.h"
-#include "product.h"
+#include "QDjango/db/QDjangoModel.h"
+#include "model/booking.h"
+#include "model/product.h"
 
 
 class Booking_Row : public QDjangoModel

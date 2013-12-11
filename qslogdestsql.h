@@ -1,15 +1,15 @@
-#ifndef DESTSQL_H
-#define DESTSQL_H
+#ifndef QSLOGDESTSQL_H
+#define QSLOGDESTSQL_H
 
-#include "log/QsLogDest.h"
-#include "log.h"
+#include "Qslog/QsLogDest.h"
+#include "model/log.h"
 #include <QDateTime>
 
 
-class DestSQL : public QsLogging::Destination{
+class QsLogDestSQL : public QsLogging::Destination{
 public:
 
-    DestSQL(){
+    QsLogDestSQL(){
         //m_log = Log();
     }
 
@@ -32,4 +32,4 @@ private:
 
 
 
-#endif // DESTSQL_H
+#endif // QSLOGDESTSQL_H

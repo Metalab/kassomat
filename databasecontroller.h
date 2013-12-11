@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include <QtSql>
-#include "project.h"
-#include "product.h"
-#include "user.h"
-#include "moneycode.h"
-#include "db/QDjango.h"
-#include "db/QDjangoQuerySet.h"
-#include "genericmodel.h"
+#include "model/project.h"
+#include "model/product.h"
+#include "model/user.h"
+#include "model/moneycode.h"
+#include "QDjango/db/QDjango.h"
+#include "QDjango/db/QDjangoQuerySet.h"
+#include "model/genericmodel.h"
 
 class DatabaseController : public QObject{
 

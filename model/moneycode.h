@@ -2,9 +2,9 @@
 #define MONEYCODE_H
 
 #include <QDateTime>
-#include "db/QDjangoModel.h"
-#include "booking.h"
-#include "user.h"
+#include "QDjango/db/QDjangoModel.h"
+#include "model/booking.h"
+#include "model/user.h"
 
 class Moneycode : public QDjangoModel
 {

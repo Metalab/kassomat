@@ -22,7 +22,7 @@
 
 #include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
-#include "db/QDjangoQuerySet.h"
+#include "QDjango/db/QDjangoQuerySet.h"
 
 template <class ModelTemplate>
 class GenericModel : public GenericModelBase

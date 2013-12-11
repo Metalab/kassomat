@@ -1,7 +1,7 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include "db/QDjangoModel.h"
+#include "QDjango/db/QDjangoModel.h"
 #include <QDateTime>
 
 class Log : public QDjangoModel{
