@@ -40,10 +40,10 @@ SOURCES += main.cpp \
     QDjango/http/QDjangoHttpRequest.cpp \
     QDjango/http/QDjangoHttpController.cpp \
     QDjango/http/QDjangoFastCgiServer.cpp \
-    Qslog/QsLogDestFile.cpp \
-    Qslog/QsLogDestConsole.cpp \
-    Qslog/QsLogDest.cpp \
-    Qslog/QsLog.cpp
+    QsLog/QsLogDestFile.cpp \
+    QsLog/QsLogDestConsole.cpp \
+    QsLog/QsLogDest.cpp \
+    QsLog/QsLog.cpp
 
 HEADERS += \
     smartpayout.h \
@@ -83,12 +83,12 @@ HEADERS += \
     QDjango/http/QDjangoHttp_p.h \
     QDjango/http/QDjangoFastCgiServer_p.h \
     QDjango/http/QDjangoFastCgiServer.h \
-    Qslog/QsLogLevel.h \
-    Qslog/QsLogDisableForThisFile.h \
-    Qslog/QsLogDestFile.h \
-    Qslog/QsLogDestConsole.h \
-    Qslog/QsLogDest.h \
-    Qslog/QsLog.h \
+    QsLog/QsLogLevel.h \
+    QsLog/QsLogDisableForThisFile.h \
+    QsLog/QsLogDestFile.h \
+    QsLog/QsLogDestConsole.h \
+    QsLog/QsLogDest.h \
+    QsLog/QsLog.h \
     qslogdestsql.h
 
 QT += sql serialport
@@ -105,7 +105,7 @@ OTHER_FILES += \
     QDjango/db/db.pro \
     QDjango/src.pro \
     QDjango/src.pri \
-    Qslog/QsLogReadme.txt \
-    Qslog/QsLogChanges.txt \
-    Qslog/QsLog.pri \
-    Qslog/log_example.pro
+    QsLog/QsLogReadme.txt \
+    QsLog/QsLogChanges.txt \
+    QsLog/QsLog.pri \
+    QsLog/log_example.pro
