@@ -9,7 +9,7 @@
 #include "QDjango/db/QDjangoQuerySet.h"
 #include "model/product.h"
 #include "model/genericmodel.h"
-#include "Qslog/QsLog.h"
+#include "QsLog/QsLog.h"
 #include "qslogdestsql.h"
 #include <QtQml>
 

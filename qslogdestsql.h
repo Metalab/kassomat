@@ -1,7 +1,7 @@
 #ifndef QSLOGDESTSQL_H
 #define QSLOGDESTSQL_H
 
-#include "Qslog/QsLogDest.h"
+#include "QsLog/QsLogDest.h"
 #include "model/log.h"
 #include <QDateTime>
 
