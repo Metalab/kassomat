@@ -108,7 +108,7 @@ private:
     uint16_t calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd);
 
     bool sync();
-    
+
 	// encryption
 	
     bool m_encryptionEnabled;

@@ -38,16 +38,19 @@ void SSPComs::startConnection() {
 bool SSPComs::open() {
     m_port = new QSerialPort;
     m_port->setPort(m_portInfo);
+	
+    bool result = m_port->open(QIODevice::ReadWrite);
+    if(!result) {
+        qCritical() << "SSPComs::open: could not open port";
+		return false;
+    }
+
     m_port->setBaudRate(QSerialPort::Baud9600);
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setParity(QSerialPort::NoParity);
     m_port->setStopBits(QSerialPort::TwoStop);
     m_port->setFlowControl(QSerialPort::NoFlowControl);
-	
-    bool result = m_port->open(QIODevice::ReadWrite);
-	if(!result)
-		return false;
-		
+
 	return true;
 }
 
@@ -96,6 +99,7 @@ void SSPComs::run() {
                 try {
                     response = readResponse();
                 } catch(TimeoutException e) {
+                    qDebug() << "caught timeout";
                     retry = true;
                 }
             } while(retry);
@@ -442,9 +446,6 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd, bool retry) {
     AES_KEY enc_key;
     AES_set_encrypt_key(reinterpret_cast<const uint8_t*>(m_key.constData()), 128, &enc_key);
 
-    if(retry)
-        m_encryptionCount--;
-
     // packet length + packet count
     QByteArray bytesToEncrypt;
     bytesToEncrypt.append(static_cast<uint8_t>(cmd.length()));
@@ -478,9 +479,6 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd, bool retry) {
     for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
         AES_encrypt(reinterpret_cast<const uint8_t*>(bytesToEncrypt.constData()) + i * 16, reinterpret_cast<uint8_t*>(encryptedData.data()) + (1 + i * 16), &enc_key);
 
-    // increment packet counter after the packet was encrypted
-    m_encryptionCount++;
-
     return encryptedData;
 }
 
@@ -500,18 +498,19 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
         throw "Length in encrypted packet is invalid";
     }
     uint16_t count = decryptedData[1] | (decryptedData[2] << 8) | (decryptedData[3] << 16) | (decryptedData[4] << 24);
+    m_encryptionCount++;
     if(count != m_encryptionCount) {
         throw "Encryption Counter of received packet is incorrect";
     }
-    m_encryptionCount++;
 
     qDebug() << "Decrypted data:" << toDebug(decryptedData);
 
-    uint16_t crc = decryptedData[decryptedData.length()-2] | (decryptedData[decryptedData.length()-1] << 8);
+    uint16_t crc = ((uint8_t)decryptedData[decryptedData.length()-2]) | (((uint8_t)decryptedData[decryptedData.length()-1]) << 8);
 
     if(crc != calculateCRC(decryptedData.left(decryptedData.length()-2), CRC_SSP_SEED, CRC_SSP_POLY)) {
         throw "Bad CRC";
     }
+
     return decryptedData.mid(5, length);
 }
 
@@ -543,20 +542,20 @@ void SSPComs::enqueueTask(const QByteArray &data, const std::function<void(uint8
 }
 
 void SSPComs::reset(std::function<void()> callback) {
-	enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
-		callback();
+    enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
+        callback();
     });
 }
 
 void SSPComs::disable(std::function<void()> callback) {
-	enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
-		callback();
+    enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
+        callback();
     });
 }
 
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
-	enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
-		callback(QString::fromUtf8(response));
+    enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
+        callback(QString::fromUtf8(response));
     });
 }
 
