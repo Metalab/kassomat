@@ -16,53 +16,82 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    QCoreApplication::setApplicationName("Kassomat");
+    QCoreApplication::setApplicationVersion("0.0.1");
+
+    QString deviceName = "ttyACM0";
+    bool headless = false;
+
+    {
+        QCommandLineParser parser;
+        parser.setApplicationDescription("Kassomat");
+        parser.addHelpOption();
+        parser.addVersionOption();
+
+        // Add option to select the device name
+        QCommandLineOption deviceNameOption(QStringList() << "n" << "name",
+                QCoreApplication::translate("main", "the <name> of the device to connect to."),
+                QCoreApplication::translate("main", "device name"));
+        parser.addOption(deviceNameOption);
+
+        // Add option to run headless
+        QCommandLineOption headlessOption("headless", QCoreApplication::translate("main", "run headless"));
+        parser.addOption(headlessOption);
+
+        // Process the actual command line arguments given by the user
+        parser.process(app);
+
+        // Evaluate the arguments and set the variables
+        if(parser.isSet(deviceNameOption)) {
+            deviceName = parser.value(deviceNameOption);
+        }
+
+        headless = parser.isSet(headlessOption);
+    }
 
     try {
-    KassomatController kassomatController;
+        // setup the KassomatController
+        KassomatController kassomatController;
+        kassomatController.setSmartPayoutDevice(deviceName);
+        kassomatController.test();
 
-    kassomatController.setSmartPayoutDevice("usbmodem1411");
+        // setup the DatabaseController
+        DatabaseController databaseController;
 
-    kassomatController.test();
+        // initialize the logging
+        QsLogging::Logger& logger = QsLogging::Logger::instance();
+        //logger.setLoggingLevel(QsLogging::TraceLevel);
+        QsLogging::DestinationPtr destSQL( QsLogging::DestinationPtr(new QsLogDestSQL) );
+        logger.addDestination(destSQL);
 
-#if 1
-    DatabaseController databaseController;
+        //QList<Product *> p;
+        GenericModel<Project> projectlist(databaseController.listProjects(false));
 
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    //logger.setLoggingLevel(QsLogging::TraceLevel);
-    QsLogging::DestinationPtr destSQL( QsLogging::DestinationPtr(new QsLogDestSQL) );
-    logger.addDestination(destSQL);
+        //p = databaseController.listProducts();
+        //productlist.addItems(p);
 
-    //QList<Product *> p;
-    GenericModel<Project> projectlist(databaseController.listProjects(false));
+        qmlRegisterType<Product>("db.product",1,0,"productlist");
 
-    //p = databaseController.listProducts();
-    //productlist.addItems(p);
+        //    QtQuick2ApplicationViewer viewer;
+        //    //in .qml files eine variable namens "controller" global verfuegbar machen
 
-    //kassomatController.setSmartPayoutDevice("/dev/ttyACM0");
+        //    viewer.rootContext()->setContextProperty("controller", &kassomatController);
+        //    viewer.rootContext()->setContextProperty("projectlist", &projectlist );
+        //    viewer.rootContext()->setContextProperty("database", &databaseController );
+        //    viewer.setMainQmlFile(QStringLiteral("qml/kassomat/main.qml"));
+        //    viewer.showExpanded();
 
-    qmlRegisterType<Product>("db.product",1,0,"productlist");
+        QQmlEngine engine;
+        engine.rootContext()->setContextProperty("controller", &kassomatController);
+        engine.rootContext()->setContextProperty("projectlist", &projectlist);
+        engine.rootContext()->setContextProperty("database", &databaseController);
 
-//    QtQuick2ApplicationViewer viewer;
-//    //in .qml files eine variable namens "controller" global verfuegbar machen
+        if(! headless) {
+            QQmlComponent component(&engine, QUrl::fromLocalFile("./qml/kassomat/main.qml"));
+            component.create();
+        }
 
-//    viewer.rootContext()->setContextProperty("controller", &kassomatController);
-//    viewer.rootContext()->setContextProperty("projectlist", &projectlist );
-//    viewer.rootContext()->setContextProperty("database", &databaseController );
-//    viewer.setMainQmlFile(QStringLiteral("qml/kassomat/main.qml"));
-//    viewer.showExpanded();
-
-    QQmlEngine engine;
-    QQmlComponent component(&engine, QUrl::fromLocalFile("./qml/kassomat/main.qml"));
-
-    engine.rootContext()->setContextProperty("controller", &kassomatController);
-    engine.rootContext()->setContextProperty("projectlist", &projectlist );
-    engine.rootContext()->setContextProperty("database", &databaseController );
-
-
-    component.create();
-#endif
-
-    return app.exec();
+        return app.exec();
     } catch(char const *msg) {
         qFatal("FATAL Error: %s", msg);
         return 1;
