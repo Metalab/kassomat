@@ -331,6 +331,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     do {
         if(!sendCommand(0, setGenerator, retry)) {
+            qCritical() << "setGenerator failed!";
             throw "OMG OMG OMG";
         }
         retry = false;
@@ -342,6 +343,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     } while(retry);
 
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        qCritical() << "Failed sending Set Generator command";
         throw "Failed sending Set Generator command";
     }
 
@@ -353,11 +355,13 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(modulusData.constBegin(), modulusData.constEnd(), setModulus.begin()+1);
 
     if(!sendCommand(0, setModulus)) {
+        qCritical() << "setModulus failed!";
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        qCritical() << "Failed sending Set Modulus command";
         throw "Failed sending Set Modulus command";
     }
 
@@ -370,11 +374,13 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(hostInterKeyData.constBegin(), hostInterKeyData.constEnd(), requestKeyExchange.begin()+1);
 
     if(!sendCommand(0, requestKeyExchange)) {
+        qCritical() << "requestKeyExchange failed!";
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(static_cast<uint8_t>(response[0]) != 0xf0 || response.length() != 9) {
+        qCritical() << "Failed sending Request Key Exchange command";
         throw "Failed sending Request Key Exchange command";
     }
 
@@ -455,11 +461,13 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
 
     uint8_t length = decryptedData[0];
     if(length > decryptedData.length() - 7) {
+        qCritical() << "Length in encrypted packet is invalid";
         throw "Length in encrypted packet is invalid";
     }
     uint16_t count = decryptedData[1] | (decryptedData[2] << 8) | (decryptedData[3] << 16) | (decryptedData[4] << 24);
     m_encryptionCount++;
     if(count != m_encryptionCount) {
+        qCritical() << "Encryption Counter of received packet is incorrect";
         throw "Encryption Counter of received packet is incorrect";
     }
 
@@ -468,6 +476,7 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
     uint16_t crc = ((uint8_t)decryptedData[decryptedData.length()-2]) | (((uint8_t)decryptedData[decryptedData.length()-1]) << 8);
 
     if(crc != calculateCRC(decryptedData.left(decryptedData.length()-2), CRC_SSP_SEED, CRC_SSP_POLY)) {
+        qCritical() << "Bad CRC";
         throw "Bad CRC";
     }
 
@@ -479,6 +488,7 @@ bool SSPComs::sync() {
     QByteArray response;
     do {
         if(!sendCommand(0, QByteArray(1, 0x11), retry)) {
+            qCritical() << "sync failed";
             throw "OMG OMG OMG";
         }
         retry = false;
