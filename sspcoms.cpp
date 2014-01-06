@@ -519,6 +519,12 @@ void SSPComs::enable(std::function<void()> callback) {
     });
 }
 
+void SSPComs::emptyAll(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x3F), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
     enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
         callback(QString::fromUtf8(response));

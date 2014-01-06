@@ -55,9 +55,11 @@ int main(int argc, char *argv[])
         kassomatController.setSmartPayoutDevice(deviceName);
         kassomatController.test();
 
-        kassomatController.poll();
-        kassomatController.poll();
-        kassomatController.poll();
+        while (true) {
+            qDebug() << "polling the device now";
+            kassomatController.poll();
+            sleep(2);
+        }
 
         // setup the DatabaseController
         DatabaseController databaseController;
