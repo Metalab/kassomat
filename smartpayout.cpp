@@ -1,6 +1,7 @@
 #include "smartpayout.h"
 #include <QDebug>
 #include "sspcoms.h"
+#include "sspevents.h"
 
 SmartPayout::SmartPayout(QObject *parent) :
     QObject(parent), coms(nullptr) {
@@ -32,6 +33,10 @@ void SmartPayout::setDevice(const QString &dev) {
 			
 			coms->startConnection();
 			
+            coms->enable([]() {
+                qDebug() << "enable finished";
+            });
+
 			coms->datasetVersion([](const QString &datasetVersion){
 				qDebug() << "datasetVersion =" << datasetVersion;
 			});
@@ -48,4 +53,14 @@ void SmartPayout::setDevice(const QString &dev) {
 
 void SmartPayout::test() {
 
+}
+
+void SmartPayout::poll() {
+    coms->poll([](const QList<QSharedPointer<SSPEvent>> &events){
+        qDebug() << "poll callback: got" << events.length() << "event(s)";
+        for(int i = 0; i < events.length(); i++) {
+            SSPEvent *event = events[i].data();
+            qDebug() << "poll callback: received: " << event->eventDescription();
+        }
+    });
 }

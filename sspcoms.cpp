@@ -513,6 +513,12 @@ void SSPComs::disable(std::function<void()> callback) {
     });
 }
 
+void SSPComs::enable(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x0A), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
     enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
         callback(QString::fromUtf8(response));
@@ -560,7 +566,11 @@ void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback
         QByteArray remainingResponse(response);
         while(remainingResponse.length() > 0) {
             QSharedPointer<SSPEvent> event;
-            switch(remainingResponse[0]) {
+
+            unsigned char eventId = remainingResponse[0];
+            qDebug() << "poll: parsing eventId:" << hex << eventId;
+
+            switch(eventId) {
             case 0xf1:
                 event.reset(new SSPResetEvent(remainingResponse));
                 break;
@@ -703,10 +713,14 @@ void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback
                 event.reset(new SSPNotePaidIntoStackerOnPowerupEvent(remainingResponse));
                 break;
             default:
-                throw "bla";
+                //throw "bla";
+                qCritical() << "poll: unknown eventId:" << hex << eventId;
             }
-            remainingResponse = remainingResponse.right(event->length());
+
             events.push_back(event);
+
+            u_int8_t sizeDataLeft = remainingResponse.length() - event->length();
+            remainingResponse = remainingResponse.right(sizeDataLeft);
         }
 		
 		callback(events);

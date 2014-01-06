@@ -49,3 +49,7 @@ void KassomatController::setState(const QString &state){
 void KassomatController::test() {
     m_smartPayout->test();
 }
+
+void KassomatController::poll() {
+    m_smartPayout->poll();
+}

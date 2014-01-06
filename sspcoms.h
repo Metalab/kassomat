@@ -62,6 +62,7 @@ public:
 	
     void reset(std::function<void()> callback);
     void disable(std::function<void()> callback);
+    void enable(std::function<void()> callback);
     void datasetVersion(std::function<void(const QString&)> callback);
     void firmwareVersion(std::function<void(const QString&)> callback);
     Result_Payout payout(uint32_t amount, bool test=false);
