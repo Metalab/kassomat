@@ -35,6 +35,10 @@ void SmartPayout::setDevice(const QString &dev) {
 			coms->datasetVersion([](const QString &datasetVersion){
 				qDebug() << "datasetVersion =" << datasetVersion;
 			});
+
+            coms->firmwareVersion([](const QString &firmwareVersion){
+                qDebug() << "firmwareVersion =" << firmwareVersion;
+            });
         } else {
 			coms = nullptr;
         }

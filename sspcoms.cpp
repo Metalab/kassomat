@@ -519,6 +519,12 @@ void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
     });
 }
 
+void SSPComs::firmwareVersion(std::function<void(const QString&)> callback) {
+    enqueueTask(QByteArray(1, 0x20), [callback](uint8_t, const QByteArray &response) {
+        callback(QString::fromUtf8(response));
+    });
+}
+
 SSPComs::Result_Payout SSPComs::payout(uint32_t amount, bool test) {
 
 }
