@@ -21,6 +21,7 @@ public:
     void setDevice(const QString &dev);
 
     void test();
+    void poll();
 
 signals:
     void deviceChanged(const QString &newValue);

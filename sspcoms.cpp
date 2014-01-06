@@ -38,16 +38,19 @@ void SSPComs::startConnection() {
 bool SSPComs::open() {
     m_port = new QSerialPort;
     m_port->setPort(m_portInfo);
+	
+    bool result = m_port->open(QIODevice::ReadWrite);
+    if(!result) {
+        qCritical() << "SSPComs::open: could not open port";
+		return false;
+    }
+
     m_port->setBaudRate(QSerialPort::Baud9600);
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setParity(QSerialPort::NoParity);
     m_port->setStopBits(QSerialPort::TwoStop);
     m_port->setFlowControl(QSerialPort::NoFlowControl);
-	
-    bool result = m_port->open(QIODevice::ReadWrite);
-	if(!result)
-		return false;
-		
+
 	return true;
 }
 
@@ -72,13 +75,6 @@ void SSPComs::run() {
     if(sync())
         m_sequence = false;
 
-#if 0
-    if(!sendCommand(0, QByteArray(1, 0x01))) {
-        throw "OMG OMG OMG";
-    }
-    QByteArray response = readResponse();
-#endif
-
     negotiateEncryption(0x123456701234567ULL);
 
 	QMutexLocker locker(&m_taskQueueMutex);
@@ -96,6 +92,7 @@ void SSPComs::run() {
                 try {
                     response = readResponse();
                 } catch(TimeoutException e) {
+                    qDebug() << "caught timeout";
                     retry = true;
                 }
             } while(retry);
@@ -127,7 +124,7 @@ QByteArray SSPComs::readResponse() {
             throw TimeoutException();
         }
 		recv.append(m_port->readAll());
-		
+
 		if(recv.length() >= 5) {
 			if(recv.constData()[0] != 0x7f) {
 				qCritical() << "Read response that doesn't start with STX. (got " << (int)*recv.constData() << ")";
@@ -188,7 +185,7 @@ QByteArray SSPComs::readResponse() {
 				}
 			}
 
-            qDebug() << "Received message:" << toDebug(recv);
+            qDebug() << "Reading Bytes:" << toDebug(recv);
 			
 			uint16_t crc = (crc2 << 8) | crc1;
 			// verify CRC
@@ -196,8 +193,11 @@ QByteArray SSPComs::readResponse() {
 				qCritical() << "Bad CRC";
 				throw QString("Bad CRC");
 			}
-			
-            return decrypt(content);
+
+            QByteArray message = decrypt(content);
+            qDebug() << "Received message:" << toDebug(message);
+
+            return message;
 		}
 	}
 }
@@ -298,42 +298,6 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     bool retry = false;
     QByteArray response;
 
-#if 0
-    do {
-        if(!sendCommand(0, QByteArray(1, 0x01), retry)) { // reset
-            throw "OMG OMG OMG";
-        }
-
-        retry = false;
-        try {
-            response = readResponse();
-        } catch(TimeoutException e) {
-            retry = true;
-        }
-    } while(retry);
-    if(static_cast<uint8_t>(response[0]) != 0xf0) {
-        throw "Failed to reset device";
-    }
-#endif
-
-#if 0
-    do {
-        if(!sendCommand(0, QByteArray(1, 0x61), retry)) { // reset fixed encryption key
-            throw "OMG OMG OMG";
-        }
-
-        retry = false;
-        try {
-            response = readResponse();
-        } catch(TimeoutException e) {
-            retry = true;
-        }
-    } while(retry);
-    if(static_cast<uint8_t>(response[0]) != 0xf0) {
-        throw "Failed to enable device";
-    }
-#endif
-
     BIGNUMPtr generator, modulus, hostInterKey, hostRandom;
 
     std::random_device rd;
@@ -367,6 +331,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
 
     do {
         if(!sendCommand(0, setGenerator, retry)) {
+            qCritical() << "setGenerator failed!";
             throw "OMG OMG OMG";
         }
         retry = false;
@@ -378,6 +343,7 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     } while(retry);
 
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        qCritical() << "Failed sending Set Generator command";
         throw "Failed sending Set Generator command";
     }
 
@@ -389,11 +355,13 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(modulusData.constBegin(), modulusData.constEnd(), setModulus.begin()+1);
 
     if(!sendCommand(0, setModulus)) {
+        qCritical() << "setModulus failed!";
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(static_cast<uint8_t>(response[0]) != 0xf0) {
+        qCritical() << "Failed sending Set Modulus command";
         throw "Failed sending Set Modulus command";
     }
 
@@ -406,11 +374,13 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     std::reverse_copy(hostInterKeyData.constBegin(), hostInterKeyData.constEnd(), requestKeyExchange.begin()+1);
 
     if(!sendCommand(0, requestKeyExchange)) {
+        qCritical() << "requestKeyExchange failed!";
         throw "OMG OMG OMG";
     }
 
     response = readResponse();
     if(static_cast<uint8_t>(response[0]) != 0xf0 || response.length() != 9) {
+        qCritical() << "Failed sending Request Key Exchange command";
         throw "Failed sending Request Key Exchange command";
     }
 
@@ -441,9 +411,6 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd, bool retry) {
     // see GA138 documentation page 11
     AES_KEY enc_key;
     AES_set_encrypt_key(reinterpret_cast<const uint8_t*>(m_key.constData()), 128, &enc_key);
-
-    if(retry)
-        m_encryptionCount--;
 
     // packet length + packet count
     QByteArray bytesToEncrypt;
@@ -478,9 +445,6 @@ QByteArray SSPComs::encrypt(const QByteArray &cmd, bool retry) {
     for(uint8_t i = 0; i < bytesToEncrypt.length() / 16; i++)
         AES_encrypt(reinterpret_cast<const uint8_t*>(bytesToEncrypt.constData()) + i * 16, reinterpret_cast<uint8_t*>(encryptedData.data()) + (1 + i * 16), &enc_key);
 
-    // increment packet counter after the packet was encrypted
-    m_encryptionCount++;
-
     return encryptedData;
 }
 
@@ -497,21 +461,25 @@ QByteArray SSPComs::decrypt(const QByteArray &cmd) {
 
     uint8_t length = decryptedData[0];
     if(length > decryptedData.length() - 7) {
+        qCritical() << "Length in encrypted packet is invalid";
         throw "Length in encrypted packet is invalid";
     }
     uint16_t count = decryptedData[1] | (decryptedData[2] << 8) | (decryptedData[3] << 16) | (decryptedData[4] << 24);
+    m_encryptionCount++;
     if(count != m_encryptionCount) {
+        qCritical() << "Encryption Counter of received packet is incorrect";
         throw "Encryption Counter of received packet is incorrect";
     }
-    m_encryptionCount++;
 
     qDebug() << "Decrypted data:" << toDebug(decryptedData);
 
-    uint16_t crc = decryptedData[decryptedData.length()-2] | (decryptedData[decryptedData.length()-1] << 8);
+    uint16_t crc = ((uint8_t)decryptedData[decryptedData.length()-2]) | (((uint8_t)decryptedData[decryptedData.length()-1]) << 8);
 
     if(crc != calculateCRC(decryptedData.left(decryptedData.length()-2), CRC_SSP_SEED, CRC_SSP_POLY)) {
+        qCritical() << "Bad CRC";
         throw "Bad CRC";
     }
+
     return decryptedData.mid(5, length);
 }
 
@@ -520,6 +488,7 @@ bool SSPComs::sync() {
     QByteArray response;
     do {
         if(!sendCommand(0, QByteArray(1, 0x11), retry)) {
+            qCritical() << "sync failed";
             throw "OMG OMG OMG";
         }
         retry = false;
@@ -543,20 +512,50 @@ void SSPComs::enqueueTask(const QByteArray &data, const std::function<void(uint8
 }
 
 void SSPComs::reset(std::function<void()> callback) {
-	enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
-		callback();
+    enqueueTask(QByteArray(1, 0x01), [callback](uint8_t, const QByteArray &response) {
+        callback();
     });
 }
 
 void SSPComs::disable(std::function<void()> callback) {
-	enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
-		callback();
+    enqueueTask(QByteArray(1, 0x09), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
+void SSPComs::enable(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x0A), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
+void SSPComs::emptyAll(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x3F), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
+void SSPComs::displayOn(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x3), [callback](uint8_t, const QByteArray &response) {
+        callback();
+    });
+}
+
+void SSPComs::displayOff(std::function<void()> callback) {
+    enqueueTask(QByteArray(1, 0x4), [callback](uint8_t, const QByteArray &response) {
+        callback();
     });
 }
 
 void SSPComs::datasetVersion(std::function<void(const QString&)> callback) {
-	enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
-		callback(QString::fromUtf8(response));
+    enqueueTask(QByteArray(1, 0x21), [callback](uint8_t, const QByteArray &response) {
+        callback(QString::fromUtf8(response));
+    });
+}
+
+void SSPComs::firmwareVersion(std::function<void(const QString&)> callback) {
+    enqueueTask(QByteArray(1, 0x20), [callback](uint8_t, const QByteArray &response) {
+        callback(QString::fromUtf8(response));
     });
 }
 
@@ -595,7 +594,11 @@ void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback
         QByteArray remainingResponse(response);
         while(remainingResponse.length() > 0) {
             QSharedPointer<SSPEvent> event;
-            switch(remainingResponse[0]) {
+
+            unsigned char eventId = remainingResponse[0];
+            qDebug() << "poll: parsing eventId:" << hex << eventId;
+
+            switch(eventId) {
             case 0xf1:
                 event.reset(new SSPResetEvent(remainingResponse));
                 break;
@@ -738,10 +741,14 @@ void SSPComs::poll(std::function<void(QList<QSharedPointer<SSPEvent>>)> callback
                 event.reset(new SSPNotePaidIntoStackerOnPowerupEvent(remainingResponse));
                 break;
             default:
-                throw "bla";
+                //throw "bla";
+                qCritical() << "poll: unknown eventId:" << hex << eventId;
             }
-            remainingResponse = remainingResponse.right(event->length());
+
             events.push_back(event);
+
+            u_int8_t sizeDataLeft = remainingResponse.length() - event->length();
+            remainingResponse = remainingResponse.right(sizeDataLeft);
         }
 		
 		callback(events);

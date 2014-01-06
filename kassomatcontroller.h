@@ -27,7 +27,7 @@ public:
     void setDebt(unsigned int debt);
 
     void test();
-
+    void poll();
 signals:
     void smartPayoutDeviceChanged(const QString &newDevice);
     void creditChanged(unsigned int);

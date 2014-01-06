@@ -62,7 +62,13 @@ public:
 	
     void reset(std::function<void()> callback);
     void disable(std::function<void()> callback);
+    void enable(std::function<void()> callback);
     void datasetVersion(std::function<void(const QString&)> callback);
+    void firmwareVersion(std::function<void(const QString&)> callback);
+    void emptyAll(std::function<void()> callback);
+    void displayOn(std::function<void()> callback);
+    void displayOff(std::function<void()> callback);
+
     Result_Payout payout(uint32_t amount, bool test=false);
     uint32_t getDenominationLevel(uint32_t denomination, const QString &currency);
     Result_Route getDenominationRoute(uint32_t denomination, const QString &currency);
@@ -108,7 +114,7 @@ private:
     uint16_t calculateCRC(const QByteArray &p, uint16_t seed, uint16_t cd);
 
     bool sync();
-    
+
 	// encryption
 	
     bool m_encryptionEnabled;
