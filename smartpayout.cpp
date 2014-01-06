@@ -52,12 +52,16 @@ void SmartPayout::setDevice(const QString &dev) {
 }
 
 void SmartPayout::test() {
+    coms->enable([]() {
+        qDebug() << "enable finished";
+    });
+
 //    coms->emptyAll([]() {
 //        qDebug() << "empty all finished";
 //    });
 
-    coms->enable([]() {
-        qDebug() << "enable finished";
+    coms->displayOn([]() {
+        qDebug() << "displayOn finished";
     });
 }
 

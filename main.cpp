@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
         // setup the KassomatController
         KassomatController kassomatController;
         kassomatController.setSmartPayoutDevice(deviceName);
+
         kassomatController.test();
 
         while (true) {
