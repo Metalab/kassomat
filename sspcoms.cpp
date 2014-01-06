@@ -124,7 +124,7 @@ QByteArray SSPComs::readResponse() {
             throw TimeoutException();
         }
 		recv.append(m_port->readAll());
-		
+
 		if(recv.length() >= 5) {
 			if(recv.constData()[0] != 0x7f) {
 				qCritical() << "Read response that doesn't start with STX. (got " << (int)*recv.constData() << ")";
@@ -185,7 +185,7 @@ QByteArray SSPComs::readResponse() {
 				}
 			}
 
-            qDebug() << "Received message:" << toDebug(recv);
+            qDebug() << "Reading Bytes:" << toDebug(recv);
 			
 			uint16_t crc = (crc2 << 8) | crc1;
 			// verify CRC
@@ -193,8 +193,11 @@ QByteArray SSPComs::readResponse() {
 				qCritical() << "Bad CRC";
 				throw QString("Bad CRC");
 			}
-			
-            return decrypt(content);
+
+            QByteArray message = decrypt(content);
+            qDebug() << "Received message:" << toDebug(message);
+
+            return message;
 		}
 	}
 }
