@@ -75,13 +75,6 @@ void SSPComs::run() {
     if(sync())
         m_sequence = false;
 
-#if 0
-    if(!sendCommand(0, QByteArray(1, 0x01))) {
-        throw "OMG OMG OMG";
-    }
-    QByteArray response = readResponse();
-#endif
-
     negotiateEncryption(0x123456701234567ULL);
 
 	QMutexLocker locker(&m_taskQueueMutex);
@@ -301,42 +294,6 @@ void SSPComs::negotiateEncryption(uint64_t fixedKey) {
     // Diffie-Hellman keyexchange
     bool retry = false;
     QByteArray response;
-
-#if 0
-    do {
-        if(!sendCommand(0, QByteArray(1, 0x01), retry)) { // reset
-            throw "OMG OMG OMG";
-        }
-
-        retry = false;
-        try {
-            response = readResponse();
-        } catch(TimeoutException e) {
-            retry = true;
-        }
-    } while(retry);
-    if(static_cast<uint8_t>(response[0]) != 0xf0) {
-        throw "Failed to reset device";
-    }
-#endif
-
-#if 0
-    do {
-        if(!sendCommand(0, QByteArray(1, 0x61), retry)) { // reset fixed encryption key
-            throw "OMG OMG OMG";
-        }
-
-        retry = false;
-        try {
-            response = readResponse();
-        } catch(TimeoutException e) {
-            retry = true;
-        }
-    } while(retry);
-    if(static_cast<uint8_t>(response[0]) != 0xf0) {
-        throw "Failed to enable device";
-    }
-#endif
 
     BIGNUMPtr generator, modulus, hostInterKey, hostRandom;
 
