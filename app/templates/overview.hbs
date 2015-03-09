@@ -4,7 +4,7 @@
 		<button class="btn btn-default" href="#carousel-projects" data-slide="prev"><span class="glyphicon glyphicon-triangle-left"></span></button>
 		<button class="btn btn-default" {{action 'showProjects'}}><span class="glyphicon glyphicon-th-list"></span></button>
 	</div>
-	<div id="carousel-projects" class="project carousel slide" data-ride="carousel" data-interval="10000" {{action 'showActiveProject'}}>
+	<div id="carousel-projects" class="project carousel slide" data-ride="carousel" data-interval="5000" {{action 'showActiveProject'}}>
 		<div class="carousel-inner" role="listbox">
 			{{#each project in projects}}
 				<div {{bind-attr class=":item project.active" data-id=project.id}}>
