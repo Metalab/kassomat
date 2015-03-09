@@ -1,0 +1,39 @@
+<div class="column1">
+	<div class="title">Projects
+		<button class="btn btn-default" href="#carousel-projects" data-slide="next"><span class="glyphicon glyphicon-triangle-right"></span></button>
+		<button class="btn btn-default" href="#carousel-projects" data-slide="prev"><span class="glyphicon glyphicon-triangle-left"></span></button>
+		<button class="btn btn-default" {{action 'showProjects'}}><span class="glyphicon glyphicon-th-list"></span></button>
+	</div>
+	<div id="carousel-projects" class="project carousel slide" data-ride="carousel" data-interval="10000" {{action 'showActiveProject'}}>
+		<div class="carousel-inner" role="listbox">
+			{{#each project in projects}}
+				<div {{bind-attr class=":item project.active" data-id=project.id}}>
+					<img class="teaserimage" {{bind-attr src="project.imageURL" alt="project.name"}}>
+					<div class="project-name">{{project.name}}</div>
+					<div class="project-teaser">{{project.teaser}}</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+	<a class="project-link" {{action 'showActiveProject'}}></a>
+</div>
+<div class="separator"></div>
+<div class="column2">
+	<div class="title">Metafridge
+		<button class="btn btn-default" {{action 'showDrinks'}}><span class="glyphicon glyphicon-th-list"></span></button>
+	</div>
+	<div class="items">
+		<a class="btn premium item" {{action 'buyPremium'}}><span class="price">€3</span></a>
+		<a class="btn mate item" {{action 'buyMate'}}><span class="price">€2</span></a>
+		<a class="btn pop item" {{action 'buyPop'}}><span class="price">€1.50</span></a>
+		<a class="btn water item" {{action 'buyWater'}}><span class="price">€1</span></a>
+		<a class="btn coffee item" {{action 'buyCoffee'}}><span class="price">€0.50</span></a>
+	</div>
+	<div class="title">Pay All The Jobs</div>
+	<div class="items">
+		<a class="btn lazzzor item" {{action 'handleLazzzor'}}></a>
+		<a class="btn cuttr item" {{action 'handleCuttr'}}></a>
+		<a class="btn printer3d item" {{action 'handlePrinter3D'}}></a>
+		<a class="btn printer2d item" {{action 'handlePrinter2D'}}></a>
+	</div>
+</div>

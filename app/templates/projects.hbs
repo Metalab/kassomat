@@ -1,0 +1,23 @@
+<div class="projectspage">
+	<div class="title">Projects
+		<button class="btn btn-default" {{action 'close'}}><span class="glyphicon glyphicon-remove"></span></button>
+	</div>
+	<div class="listwrapper">
+		<table class="list">
+			<colgroup>
+				<col class="image">
+				<col class="name">
+				<col class="teaser">
+			</colgroup>
+			<tbody>
+				{{#each project in model}}
+					<tr class="project" {{action 'showProject' project}}>
+						<td class="image"><img {{bind-attr src=project.imageURL alt=project.name}}></td>
+						<td class="name">{{project.name}}</td>
+						<td class="teaser">{{project.teaser}}</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+</div>

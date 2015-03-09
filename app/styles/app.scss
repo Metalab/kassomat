@@ -1,0 +1,284 @@
+@import "bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+
+button {
+	border-radius: 0 !important;
+	font-weight: bold !important;
+}
+
+.page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+
+	display: flex;
+	align-items: stretch;
+	align-content: stretch;
+}
+.sidebar {
+	width: 20%;
+	background-color: black;
+
+	text-transform: uppercase;
+	color: white;
+	text-align: center;
+
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	align-content: flex-start;
+
+	button {
+		text-transform: uppercase;
+		font-size: 20pt;
+		background-color: #21FFFE;
+		margin: 5px;
+	}
+	.user {
+		font-size: 20pt;
+		text-transform: none;
+	}
+	.credits {
+		.title {
+			font-size: 30pt;
+		}
+		font-size: 40pt;
+	}
+	.spacer {
+		flex-grow: 1;
+	}
+	.insert-coin {
+		margin-top: 40px;
+		font-size: 20pt;
+		color: #F4CF20;
+		text-shadow: 0px 0px 8px #F4CF20;
+	}
+}
+$mainbackground: white;
+.main {
+	position: relative;
+	background-color: $mainbackground;
+	flex-grow: 1;
+
+	display: flex;
+	.column2 {
+		flex-grow: 32;
+		display: flex;
+		flex-direction: column;
+		flex-flow: space-around;
+
+		.items {
+			display: flex;
+			flex-wrap: wrap;
+
+			.item {
+				background-color: gray;
+				padding: 5px;
+				border: 5px solid $mainbackground;
+				height: 95px;
+
+				flex-shrink: 0;
+				flex-basis: 100%;
+
+				position: relative;
+
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+
+				&.premium {
+					background-image: url(../images/drinks/premium.jpg);
+				}
+				&.mate {
+					background-image: url(../images/drinks/mate.jpg);
+				}
+				&.pop {
+					background-image: url(../images/drinks/pop.jpg);
+				}
+				&.water {
+					background-image: url(../images/drinks/water.jpg);
+				}
+				&.coffee {
+					background-image: url(../images/drinks/coffee.jpg);
+				}
+
+				.price {
+					position: absolute;
+					right: 10px;
+					bottom: 10px;
+					color: white;
+					font-size: 20pt;
+					font-weight: bold;
+					text-shadow: 0px 0px 4px black;
+				}
+
+				&.coffee, &.water {
+					flex-basis: 50%;
+				}
+
+				&.lazzzor, &.cuttr, &.printer3d, &.printer2d {
+					text-align: center;
+					font-size: 10pt;
+					flex-basis: auto;
+					flex-shrink: 1;
+					flex-grow: 1;
+				}
+
+				&.lazzzor {
+					background-image: url(../images/jobs/lazzzor.jpg);
+				}
+				&.cuttr {
+					background-image: url(../images/jobs/cuttr.jpg);
+				}
+				&.printer3d {
+					background-image: url(../images/jobs/printer3d.jpg);
+				}
+				&.printer2d {
+					background-image: url(../images/jobs/printer2d.jpg);
+				}
+			}
+		}
+	}
+	.separator {
+		flex-grow: 1;
+		background-color: black;
+		border: 5px solid $mainbackground;
+		border-top-width: 10px;
+		border-bottom-width: 10px;
+	}
+	.column1 {
+		width: 500px;
+		display: flex;
+		flex-direction: column;
+		flex-flow: space-around;
+
+		.project {
+			flex-grow: 2;
+			margin: 5px;
+
+			.teaserimage {
+				width: 500px;
+				height: 281px;
+			}
+			.project-name {
+				position: absolute;
+				top: 250px;
+				left: 5px;
+
+				font-size: 20pt;
+				font-weight: bold;
+				text-shadow: 0px 0px 4px black;
+				color: white;
+			}
+			.project-teaser {
+				margin-top: 10px;
+			}
+		}
+		.project-link {
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+
+			background-image: url(../images/wouldyoulike.png);
+			width: 500px;
+			height: 35px;
+		}
+	}
+	.title {
+		background-color: #EB431C;
+		text-transform: uppercase;
+		color: white;
+		font-size: 20pt;
+		font-weight: bold;
+		margin: 5px;
+		padding: 5px;
+
+		button {
+			border: 2px solid white;
+			background-color: transparent;
+			color: white;
+			float: right;
+			margin: 5px;
+		}
+	}
+}
+.projectspage {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	.title {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 45px;
+
+		background-color: #EB431C;
+		text-transform: uppercase;
+		color: white;
+		font-size: 20pt;
+		font-weight: bold;
+		margin: 0;
+
+		button {
+			position: relative;
+			top: -5px;
+		}
+	}
+	.listwrapper {
+		position: absolute;
+		left: 5px;
+		right: 5px;
+		top: 55px;
+		bottom: 5px;
+		overflow-y: scroll;
+
+		.list {
+			width: 100%;
+
+			colgroup {
+				.image {
+					width: 100px;
+				}
+				.teaser {
+					width: 400px;
+				}
+			}
+
+			.project {
+				max-width: 100%;
+				margin: 5px 0;
+				td {
+					padding-bottom: 5px;
+				}
+				.image {
+					width: 100px;
+					img {
+						width: 100px;
+						height: 56px;
+					}
+				}
+				.name {
+					max-width: 300px;
+					vertical-align: middle;
+					padding: 0 10px 0 10px;
+					font-size: 20pt;
+					font-weight: bold;
+
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+				.teaser {
+					max-width: 400px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+	}
+}
