@@ -23,11 +23,11 @@
 		<button class="btn btn-default" {{action 'showDrinks'}}><span class="glyphicon glyphicon-th-list"></span></button>
 	</div>
 	<div class="items">
-		<a class="btn premium item" {{action 'buyPremium'}}><span class="price">€3</span></a>
-		<a class="btn mate item" {{action 'buyMate'}}><span class="price">€2</span></a>
-		<a class="btn pop item" {{action 'buyPop'}}><span class="price">€1.50</span></a>
-		<a class="btn water item" {{action 'buyWater'}}><span class="price">€1</span></a>
-		<a class="btn coffee item" {{action 'buyCoffee'}}><span class="price">€0.50</span></a>
+		<a class="btn premium item" {{action 'buyPremium'}}><span class="price">{{money 300}}</span></a>
+		<a class="btn mate item" {{action 'buyMate'}}><span class="price">{{money 200}}</span></a>
+		<a class="btn pop item" {{action 'buyPop'}}><span class="price">{{money 150}}</span></a>
+		<a class="btn water item" {{action 'buyWater'}}><span class="price">{{money 100}}</span></a>
+		<a class="btn coffee item" {{action 'buyCoffee'}}><span class="price">{{money 50}}</span></a>
 	</div>
 	<div class="title">Pay All The Jobs</div>
 	<div class="items">
