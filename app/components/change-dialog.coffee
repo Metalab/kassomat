@@ -13,19 +13,6 @@ ChangeDialogComponent = Ember.Component.extend
 				count: 0
 	).on('init')
 
-	summary: (->
-		summary = []
-		value = 0
-		@get('units').forEach (unit) ->
-			if unit.get('count') > 0
-				summary.push "%@x €%@".fmt(unit.get('count'), parseFloat(unit.get('value') / 100, 10).toFixed(2))
-				value += unit.get('count') * unit.get('value')
-		if summary.length > 0
-			(summary.join " + ") + " = €" + parseFloat(value / 100, 10).toFixed(2)
-		else
-			""
-	).property('units.@each.count')
-
 	sum: (->
 		value = 0
 		@get('units').forEach (unit) ->
