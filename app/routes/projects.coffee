@@ -1,6 +1,7 @@
 `import Ember from 'ember'`
+`import ChildRoute from 'kassomat/routes/childroute'`
 
-ProjectsRoute = Ember.Route.extend
+ProjectsRoute = ChildRoute.extend
 	model: -> @store.find('project')
 
 	actions:

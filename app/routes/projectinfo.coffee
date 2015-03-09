@@ -1,5 +1,6 @@
 `import Ember from 'ember'`
+`import ChildRoute from 'kassomat/routes/childroute'`
 
-ProjectinfoRoute = Ember.Route.extend()
+ProjectinfoRoute = ChildRoute.extend()
 
 `export default ProjectinfoRoute`
