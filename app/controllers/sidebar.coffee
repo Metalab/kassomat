@@ -2,8 +2,6 @@
 
 SidebarController = Ember.Controller.extend
 	actions:
-		change: ->
-			console.log "change"
 		donate: ->
 			$.post('/api/actions/donate')
 		redeem: ->

@@ -1,0 +1,20 @@
+<div class="modal-dialog modal-lg change-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title">Change</h4>
+		</div>
+		<div class="modal-body">
+			Please select the desired coins and banknotes:
+			<div class="units">
+				{{#each unit in units}}
+					<img {{bind-attr src=unit.url alt=unit.value}} {{action 'addUnit' unit.value}}>
+				{{/each}}
+			</div>
+			{{summary}}
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-success btn-lg" data-dismiss="modal">Accept</button>
+			<button type="button" class="btn btn-cancel btn-lg" data-dismiss="modal">Cancel</button>
+		</div>
+	</div>
+</div>

@@ -1,11 +1,12 @@
 <div class="user">{{model.username}}</div>
 <div class="credits"><span class="title">Credits</span><br>{{money model.credits}}</div>
 {{#if model.credits}}
-	<button class="change btn btn-default" {{action "change"}}>Change</button>
-	<button class="donate btn btn-default" {{action "donate"}}>Donate</button>
-	<button class="redeem btn btn-default" {{action "redeem"}}>Redeem</button>
+	<button type="button" class="change sidebar-btn btn btn-default" data-toggle="modal" data-target="#changedialog">Change</button>
+	<button class="donate sidebar-btn btn btn-default" {{action "donate"}}>Donate</button>
+	<button class="redeem sidebar-btn btn btn-default" {{action "redeem"}}>Redeem</button>
 	<div class="spacer"></div>
-	<button class="return btn btn-default" {{action "return"}}>Return</button>
+	<button class="return sidebar-btn btn btn-default" {{action "return"}}>Return</button>
 {{else}}
 	{{insert-coin}}
 {{/if}}
+{{change-dialog id="changedialog"}}

@@ -29,7 +29,7 @@ button {
 	align-items: stretch;
 	align-content: flex-start;
 
-	button {
+	.sidebar-btn {
 		text-transform: uppercase;
 		font-size: 20pt;
 		background-color: #21FFFE;
@@ -53,6 +53,11 @@ button {
 		font-size: 20pt;
 		color: #F4CF20;
 		text-shadow: 0px 0px 8px #F4CF20;
+	}
+	#changedialog {
+		text-align: left;
+		color: black;
+		text-transform: none;
 	}
 }
 $mainbackground: white;
@@ -279,6 +284,17 @@ $mainbackground: white;
 					text-overflow: ellipsis;
 				}
 			}
+		}
+	}
+}
+.change-dialog {
+	.units {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-around;
+		img {
+			height: 100px;
+			margin: 10px;
 		}
 	}
 }
