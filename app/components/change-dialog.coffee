@@ -33,6 +33,10 @@ ChangeDialogComponent = Ember.Component.extend
 		return value
 	).property('units.@each.count')
 
+	disabled: (->
+		@get('sum') == 0 or @get('sum') > @get('userinfo.credits')
+	).property('sum', 'userinfo.credits')
+
 	actions:
 		addUnit: (unit) ->
 			unit.incrementProperty('count')
