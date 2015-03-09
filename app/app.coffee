@@ -15,7 +15,7 @@ loadInitializers(App, config.modulePrefix)
 Ember.Handlebars.helper 'money', (value, options) ->
     if value == null
         return new Ember.Handlebars.SafeString '$0'
-    formatted = parseFloat(value, 10).toFixed 2
+    formatted = parseFloat(value / 100, 10).toFixed 2
     return new Ember.Handlebars.SafeString '€' + formatted
 
 `export default App`

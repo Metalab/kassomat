@@ -5,7 +5,7 @@ module.exports = function(app) {
   var userinfo = {
       id: 0,
       username: "anlumo",
-      credits: 1
+      credits: 150
   };
 
   userinfoRouter.get('/', function(req, res) {
