@@ -297,4 +297,12 @@ $mainbackground: white;
 			margin: 10px;
 		}
 	}
+	.summary {
+		font-size: 20pt;
+		.remove-btn {
+			width: 40px;
+			height: 40px;
+			border-radius: 50% !important;
+		}
+	}
 }

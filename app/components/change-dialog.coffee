@@ -26,8 +26,18 @@ ChangeDialogComponent = Ember.Component.extend
 			""
 	).property('units.@each.count')
 
+	sum: (->
+		value = 0
+		@get('units').forEach (unit) ->
+			value += unit.get('count') * unit.get('value')
+		return value
+	).property('units.@each.count')
+
 	actions:
-		addUnit: (value) ->
-			@get('units').findBy('value', value).incrementProperty('count');
+		addUnit: (unit) ->
+			unit.incrementProperty('count')
+		removeUnit: (unit) ->
+			if unit.get('count') > 0
+				unit.decrementProperty('count')
 
 `export default ChangeDialogComponent`
