@@ -1,5 +1,5 @@
 <div class="user">{{model.username}}</div>
-<div class="credits"><span class="title">Credits</span><br>€{{model.credits}}</div>
+<div class="credits"><span class="title">Credits</span><br>{{money model.credits}}</div>
 {{#if model.credits}}
 	<button class="change btn btn-default" {{action "change"}}>Change</button>
 	<button class="donate btn btn-default" {{action "donate"}}>Donate</button>
