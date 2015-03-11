@@ -7,7 +7,12 @@
 			Please select the desired coins and banknotes:
 			<div class="units">
 				{{#each unit in units}}
-					<img {{bind-attr src=unit.url alt=unit.denomination}} {{action 'addUnit' unit}}>
+					<div class="unit">
+						<img {{bind-attr src=unit.url alt=unit.denomination}} {{action 'addUnit' unit}}>
+						{{#if unit.crossedout}}
+							<span class="crossedout">X</span>
+						{{/if}}
+					</div>
 				{{/each}}
 			</div>
 			{{#if sum}}

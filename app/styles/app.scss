@@ -292,9 +292,27 @@ $mainbackground: white;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-around;
-		img {
-			height: 100px;
+		.unit {
+			display: table-cell;
+			position: relative;
 			margin: 10px;
+			img {
+				height: 100px;
+			}
+			.crossedout {
+				position: absolute;
+				display: table-cell;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				height: 100px;
+				font-size: 90px;
+				color: red;
+				font-weight: bold;
+				text-align: center;
+				line-height: 100px;
+			}
 		}
 	}
 	.summary {

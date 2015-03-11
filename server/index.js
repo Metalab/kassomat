@@ -14,12 +14,6 @@ module.exports = function(app, options) {
     }
 
     var userinfo = {username: "anlumo", credits: 380};
-    var denominationLevels = [
-      { id: 20,  count: 100 },
-      { id: 50,  count: 65 },
-      { id: 100, count: 0 },
-      { id: 200, count: 12 }
-    ];
 
     var io = require('socket.io')(options.httpServer);
     io.on('connection', function(socket){
@@ -27,7 +21,7 @@ module.exports = function(app, options) {
         socket.emit('userinfo', userinfo);
         socket.emit('pushData', {
           type: 'DenominationLevel',
-          payload: denominationLevels
+          payload: database['denominationLevel']
         });
 
         socket.on('action', function(data, callback) {
