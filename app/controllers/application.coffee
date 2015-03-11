@@ -4,6 +4,11 @@ ApplicationController = Ember.Controller.extend
 	overviewTimerActive: false
 	timer: null
 
+	userinfo: {
+		username: ""
+		credits: 0
+	}
+
 	routeActivated: (name) ->
 		@activateOverviewTimer()
 	routeDeactivated: (name) ->
@@ -30,5 +35,11 @@ ApplicationController = Ember.Controller.extend
 		$(document).keydown debounce
 		$(document).keyup debounce
 	).on 'init'
+
+	sockets:
+		userinfo: (record) ->
+			@set 'userinfo', record
+		pushPayload: (payload) ->
+			@store.pushPayload payload
 
 `export default ApplicationController`

@@ -13,11 +13,15 @@ module.exports = function(app, options) {
         database[name[1]] = require(databaseFiles[i]);
     }
 
+    var userinfo = {username: "anlumo", credits: 380};
+
     var io = require('socket.io')(options.httpServer);
     io.on('connection', function(socket){
         console.log("Connect!");
+        socket.emit('userinfo', userinfo);
         socket.on('action', function(data, callback) {
-            actions[data.name](data.options, callback);
+            actions[data.name](data.options, userinfo, callback);
+            socket.emit('userinfo', userinfo);
         });
         socket.on('disconnect', function(){
             console.log("Disconnect!")
