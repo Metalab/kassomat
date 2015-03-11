@@ -1,5 +1,10 @@
 @import "bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
 
+* {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
 button {
 	border-radius: 0 !important;
 	font-weight: bold !important;
