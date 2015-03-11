@@ -9,6 +9,9 @@ App = Ember.Application.extend
     modulePrefix: config.modulePrefix
     podModulePrefix: config.podModulePrefix
     Resolver: Resolver
+    Socket: EmberSockets.extend
+        controllers: ['application', 'overview', 'sidebar']
+        autoConnect: true
 
 loadInitializers(App, config.modulePrefix)
 

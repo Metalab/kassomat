@@ -33,11 +33,10 @@ ChangeDialogComponent = Ember.Component.extend
 		accept: ->
 			units = @get('units').filterBy('count').map (u) ->
 				u.getProperties(['value', 'count'])
-			$.ajax
-				type: "POST"
-				url: '/api/actions/change'
-				data: JSON.stringify units
-				contentType: "application/json; charset=utf-8"
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'action',
+				name: 'change'
+				options: units
 
 
 `export default ChangeDialogComponent`

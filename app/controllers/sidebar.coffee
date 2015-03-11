@@ -3,11 +3,17 @@
 SidebarController = Ember.Controller.extend
 	actions:
 		donate: ->
-			$.post('/api/actions/donate')
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'action',
+				name: 'donate'
 		redeem: ->
-			$.post('/api/actions/redeem')
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'action',
+				name: 'redeem'
 		return: ->
-			$.post('/api/actions/return')
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'action',
+				name: 'return'
 
 
 `export default SidebarController`
