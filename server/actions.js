@@ -4,7 +4,7 @@ module.exports = {
 		var total = 0;
 		for(var i = 0; i < data.length; ++i) {
 			var unit = data[i];
-			total += unit.count * unit.value;
+			total += unit.count * unit.denomination;
 		}
 
 		if(userinfo.credits >= total) {

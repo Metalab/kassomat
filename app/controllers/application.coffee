@@ -39,7 +39,7 @@ ApplicationController = Ember.Controller.extend
 	sockets:
 		userinfo: (record) ->
 			@set 'userinfo', record
-		pushPayload: (payload) ->
-			@store.pushPayload payload
+		pushData: (data) ->
+			@store.pushMany data.type, data.payload
 
 `export default ApplicationController`

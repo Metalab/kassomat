@@ -14,11 +14,22 @@ module.exports = function(app, options) {
     }
 
     var userinfo = {username: "anlumo", credits: 380};
+    var denominationLevels = [
+      { id: 20,  count: 100 },
+      { id: 50,  count: 65 },
+      { id: 100, count: 0 },
+      { id: 200, count: 12 }
+    ];
 
     var io = require('socket.io')(options.httpServer);
     io.on('connection', function(socket){
         console.log("Connect!");
         socket.emit('userinfo', userinfo);
+        socket.emit('pushData', {
+          type: 'DenominationLevel',
+          payload: denominationLevels
+        });
+
         socket.on('action', function(data, callback) {
             actions[data.name](data.options, userinfo, callback);
             socket.emit('userinfo', userinfo);
@@ -41,6 +52,7 @@ module.exports = function(app, options) {
             for(var i = 0; i < objects.length; ++i) {
                 var object = objects[i];
                 if(object.id == data.query.id) {
+                  if(callback)
                     callback({
                         status: 1,
                         content: object
@@ -48,7 +60,6 @@ module.exports = function(app, options) {
                 }
             }
         });
-
     });
 
     // Log proxy requests

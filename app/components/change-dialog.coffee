@@ -16,7 +16,7 @@ ChangeDialogComponent = Ember.Component.extend
 	sum: (->
 		value = 0
 		@get('units').forEach (unit) ->
-			value += unit.get('count') * unit.get('value')
+			value += unit.get('count') * unit.get('denomination')
 		return value
 	).property('units.@each.count')
 
@@ -32,7 +32,7 @@ ChangeDialogComponent = Ember.Component.extend
 				unit.decrementProperty('count')
 		accept: ->
 			units = @get('units').filterBy('count').map (u) ->
-				u.getProperties(['value', 'count'])
+				u.getProperties(['denomination', 'count'])
 			socket = this.container.lookup('socket:main').socket
 			socket.emit 'action',
 				name: 'change'

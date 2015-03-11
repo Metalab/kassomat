@@ -7,14 +7,14 @@
 			Please select the desired coins and banknotes:
 			<div class="units">
 				{{#each unit in units}}
-					<img {{bind-attr src=unit.url alt=unit.value}} {{action 'addUnit' unit}}>
+					<img {{bind-attr src=unit.url alt=unit.denomination}} {{action 'addUnit' unit}}>
 				{{/each}}
 			</div>
 			{{#if sum}}
 				<div class="summary">
 					{{#each unit in units}}
 						{{#if unit.count}}
-							{{unit.count}}⨉ {{money unit.value}} <button class="btn remove-btn btn-danger" {{action 'removeUnit' unit}}><span class="glyphicon glyphicon-minus"></span></button>
+							{{unit.count}}⨉ {{money unit.denomination}} <button class="btn remove-btn btn-danger" {{action 'removeUnit' unit}}><span class="glyphicon glyphicon-minus"></span></button>
 						{{/if}}
 					{{/each}} = {{money sum}}
 				</div>
