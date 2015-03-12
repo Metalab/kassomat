@@ -26,7 +26,7 @@ module.exports = function(app, options) {
 
         socket.on('action', function(data, callback) {
             actions[data.name](data.options, userinfo, callback);
-            socket.emit('userinfo', userinfo);
+            io.emit('userinfo', userinfo);
         });
         socket.on('disconnect', function(){
             console.log("Disconnect!")
@@ -57,7 +57,7 @@ module.exports = function(app, options) {
               status: 1
             });
           }
-          socket.emit('userinfo', userinfo);
+          io.emit('userinfo', userinfo);
         });
 
         socket.on('findAll', function(data, callback) {
