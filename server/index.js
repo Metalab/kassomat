@@ -32,6 +32,42 @@ module.exports = function(app, options) {
             console.log("Disconnect!")
         });
 
+        socket.on('buy', function(data, callback) {
+          var value = 0;
+          switch(data.name) {
+            case 'premium':
+              value = 300;
+              break;
+            case 'mate':
+              value = 200;
+              break;
+            case 'pop':
+              value = 150;
+              break;
+            case 'water':
+              value = 100;
+              break;
+            case 'coffee':
+              value = 50;
+              break;
+          }
+          if(value > userinfo.credits) {
+            if(callback) {
+              callback({
+                status: 0
+              });
+            }
+          } else {
+            userinfo.credits -= value;
+            if(callback) {
+              callback({
+                status: 1
+              });
+            }
+            socket.emit('userinfo', userinfo);
+          }
+        });
+
         socket.on('findAll', function(data, callback) {
             console.log("[Adapter] | findall: ", data);
             callback({

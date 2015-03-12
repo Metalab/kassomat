@@ -14,7 +14,26 @@ OverviewController = Ember.Controller.extend
 			@transitionToRoute 'projectinfo', projectId
 		showProjects: ->
 			@transitionToRoute 'projects'
-
+		buyPremium: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'buy',
+				name: 'premium'
+		buyMate: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'buy',
+				name: 'mate'
+		buyPop: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'buy',
+				name: 'pop'
+		buyWater: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'buy',
+				name: 'water'
+		buyCoffee: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'buy',
+				name: 'coffee'
 
 
 `export default OverviewController`
