@@ -45,5 +45,6 @@ module.exports = {
 	},
 	logout: function(data, userinfo) {
 		userinfo.username = "";
+		userinfo.credits = 0; // credits are stored in the user's account
 	}
 };
