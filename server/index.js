@@ -84,6 +84,22 @@ module.exports = function(app, options) {
         });
     });
 
+    var express = require('express');
+    var bodyParser = require('body-parser');
+    var backsideRouter = express.Router();
+    app.use(bodyParser.json());
+
+    backsideRouter.post('/userinfo', function(req, res) {
+      userinfo = req.body;
+      io.emit('userinfo', userinfo);
+      res.send({
+        status: 1
+      });
+    });
+
+    app.use('/api', backsideRouter);
+
+
     // Log proxy requests
     var morgan  = require('morgan');
     app.use(morgan('dev'));
