@@ -1,5 +1,10 @@
 @import "bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
 
+@font-face {
+  font-family: 'PetMe';
+  src: url('../fonts/petme/PetMe128.ttf')  format('truetype'); /* Safari, Android, iOS */
+}
+
 * {
 	-webkit-user-select: none;
 	user-select: none;
@@ -60,6 +65,7 @@ button {
 		flex-grow: 1;
 	}
 	.insert-coin {
+		font-family: 'PetMe';
 		margin-top: 40px;
 		font-size: 20pt;
 		color: #F4CF20;
