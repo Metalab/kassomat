@@ -1,5 +1,5 @@
 {{#if model.username}}
-	<div class="user">{{model.username}} <button class="btn logout" {{action "logout"}}><span class="glyphicon glyphicon-log-out"></span></button></div>
+	<div class="user"><button class="btn logout" {{action "logout"}}><span class="glyphicon glyphicon-log-out"></span></button> {{model.username}}</div>
 {{/if}}
 <div class="credits"><span class="title">Credits</span><br>{{money model.credits}}</div>
 {{#if model.credits}}

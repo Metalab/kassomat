@@ -48,6 +48,9 @@ button {
 	.user {
 		font-size: 20pt;
 		text-transform: none;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 		.logout {
 			color: red;
 			background-color: #21FFFE;
