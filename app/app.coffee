@@ -10,7 +10,7 @@ App = Ember.Application.extend
     podModulePrefix: config.podModulePrefix
     Resolver: Resolver
     Socket: EmberSockets.extend
-        controllers: ['application', 'overview', 'sidebar']
+        controllers: ['application']
         autoConnect: true
 
 loadInitializers(App, config.modulePrefix)
