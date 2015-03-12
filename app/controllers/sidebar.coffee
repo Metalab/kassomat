@@ -14,6 +14,10 @@ SidebarController = Ember.Controller.extend
 			socket = this.container.lookup('socket:main').socket
 			socket.emit 'action',
 				name: 'return'
+		logout: ->
+			socket = this.container.lookup('socket:main').socket
+			socket.emit 'action',
+				name: 'logout'
 
 
 `export default SidebarController`

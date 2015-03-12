@@ -43,6 +43,12 @@ button {
 	.user {
 		font-size: 20pt;
 		text-transform: none;
+		.logout {
+			color: red;
+			background-color: #21FFFE;
+			float: right;
+			margin: 5px 20px 0 0;
+		}
 	}
 	.credits {
 		.title {

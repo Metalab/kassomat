@@ -42,5 +42,8 @@ module.exports = {
 			callback({
 				status: 1
 			});
+	},
+	logout: function(data, userinfo) {
+		userinfo.username = "";
 	}
 };
