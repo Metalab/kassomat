@@ -4,8 +4,8 @@
 <div class="credits"><span class="title">Credits</span><br>{{money model.credits}}</div>
 {{#if model.credits}}
 	<div class="spacer"></div>
-	<button type="button" class="change sidebar-btn btn btn-default" data-toggle="modal" data-target="#changedialog">Change</button>
 	<button class="donate sidebar-btn btn btn-default" {{action "donate"}}>Donate</button>
+	<button type="button" class="change sidebar-btn btn btn-default" data-toggle="modal" data-target="#changedialog">Change</button>
 	<button class="return sidebar-btn btn btn-default" {{action "return"}}>Return</button>
 {{else}}
 	{{insert-coin}}
