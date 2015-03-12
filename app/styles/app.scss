@@ -51,11 +51,12 @@ button {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
+		margin-right: 5px;
 		.logout {
 			color: red;
 			background-color: #21FFFE;
 			float: right;
-			margin: 5px 20px 0 0;
+			margin: 5px 20px 0 5px;
 		}
 	}
 	.credits {
