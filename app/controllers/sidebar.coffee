@@ -6,10 +6,6 @@ SidebarController = Ember.Controller.extend
 			socket = this.container.lookup('socket:main').socket
 			socket.emit 'action',
 				name: 'donate'
-		redeem: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'action',
-				name: 'redeem'
 		return: ->
 			socket = this.container.lookup('socket:main').socket
 			socket.emit 'action',

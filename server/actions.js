@@ -28,13 +28,6 @@ module.exports = {
 				status: 1
 			});
 	},
-	redeem: function(data, userinfo, callback) {
-		console.log("Redeem money!");
-		if(callback)
-			callback({
-				status: 1
-			});
-	},
 	donate: function(data, userinfo, callback) {
 		console.log("Donate money!");
 		userinfo.credits = 0;

@@ -5,9 +5,6 @@
 {{#if model.credits}}
 	<button type="button" class="change sidebar-btn btn btn-default" data-toggle="modal" data-target="#changedialog">Change</button>
 	<button class="donate sidebar-btn btn btn-default" {{action "donate"}}>Donate</button>
-	{{#if model.username}}
-		<button class="redeem sidebar-btn btn btn-default" {{action "redeem"}}>Redeem</button>
-	{{/if}}
 	<div class="spacer"></div>
 	<button class="return sidebar-btn btn btn-default" {{action "return"}}>Return</button>
 {{else}}
