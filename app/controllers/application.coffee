@@ -36,6 +36,12 @@ ApplicationController = Ember.Controller.extend
 		$(document).keyup debounce
 	).on 'init'
 
+	userinfoChanged: (->
+		if @get('userinfo.credits') < 0
+			$('#moneydialog').modal
+        backdrop: "static"
+	).observes('userinfo')
+
 	sockets:
 		userinfo: (record) ->
 			@set 'userinfo', record

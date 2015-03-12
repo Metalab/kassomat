@@ -51,21 +51,13 @@ module.exports = function(app, options) {
               value = 50;
               break;
           }
-          if(value > userinfo.credits) {
-            if(callback) {
-              callback({
-                status: 0
-              });
-            }
-          } else {
-            userinfo.credits -= value;
-            if(callback) {
-              callback({
-                status: 1
-              });
-            }
-            socket.emit('userinfo', userinfo);
+          userinfo.credits -= value;
+          if(callback) {
+            callback({
+              status: 1
+            });
           }
+          socket.emit('userinfo', userinfo);
         });
 
         socket.on('findAll', function(data, callback) {

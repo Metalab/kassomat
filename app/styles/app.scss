@@ -341,3 +341,14 @@ $mainbackground: white;
 		}
 	}
 }
+.money-dialog {
+	.modal-body {
+		font-size: 30pt;
+		.money {
+			text-align: right;
+			color: red;
+			font-size: 60pt;
+			margin-right: 40px;
+		}
+	}
+}
