@@ -12,6 +12,7 @@ App = Ember.Application.extend
     Socket: EmberSockets.extend
         controllers: ['application']
         autoConnect: true
+        port: 3000
 
 loadInitializers(App, config.modulePrefix)
 
