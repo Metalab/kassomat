@@ -11,6 +11,8 @@ require('zappajs') ->
 	@io.sockets.on 'connection', (socket) ->
 		console.log "Socket connected!"
 
+		# A new client needs userinfo and all denomination levels pushed
+
 		db.hgetall "userinfo", (err, reply) ->
 			if err
 				console.error err
