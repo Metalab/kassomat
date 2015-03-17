@@ -1,0 +1,16 @@
+{
+  "name": "Kassomat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andreas Monitzer",
+  "license": "GPLv3",
+  "dependencies": {
+    "hiredis": "^0.2.0",
+    "redis": "^0.12.1",
+    "zappajs": "^2.0.3"
+  }
+}
