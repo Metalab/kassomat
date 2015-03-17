@@ -1,51 +1,57 @@
 `import Ember from 'ember'`
 
 ApplicationController = Ember.Controller.extend
-	overviewTimerActive: false
-	timer: null
+  overviewTimerActive: false
+  timer: null
 
-	userinfo: {
-		username: ""
-		credits: 0
-	}
+  userinfo: {
+    username: ""
+    credits: 0
+  }
 
-	routeActivated: (name) ->
-		@activateOverviewTimer()
-	routeDeactivated: (name) ->
-		@set 'overviewTimerActive', false
-		Ember.run.cancel @get 'timer'
+  routeActivated: (name) ->
+    @activateOverviewTimer()
+  routeDeactivated: (name) ->
+    @set 'overviewTimerActive', false
+    Ember.run.cancel @get 'timer'
 
-	transitionToOverview: ->
-		@transitionToRoute 'overview'
+  transitionToOverview: ->
+    @transitionToRoute 'overview'
 
-	debounceOverviewTimer: ->
-		if @get('overviewTimerActive')
-        	@set 'timer', Ember.run.debounce(this, 'transitionToOverview', 10000)
+  debounceOverviewTimer: ->
+    if @get('overviewTimerActive')
+          @set 'timer', Ember.run.debounce(this, 'transitionToOverview', 10000)
 
-	activateOverviewTimer: ->
-		@set 'overviewTimerActive', true
-		@debounceOverviewTimer()
+  activateOverviewTimer: ->
+    @set 'overviewTimerActive', true
+    @debounceOverviewTimer()
 
-	setupOverviewTimer: (->
-		debounce = @debounceOverviewTimer.bind this
+  setupOverviewTimer: (->
+    debounce = @debounceOverviewTimer.bind this
 
-		$(document).mousemove debounce
-		$(document).mousedown debounce
-		$(document).mouseup debounce
-		$(document).keydown debounce
-		$(document).keyup debounce
-	).on 'init'
+    $(document).mousemove debounce
+    $(document).mousedown debounce
+    $(document).mouseup debounce
+    $(document).keydown debounce
+    $(document).keyup debounce
+  ).on 'init'
 
-	userinfoChanged: (->
-		if @get('userinfo.credits') < 0
-			$('#moneydialog').modal
+  userinfoChanged: (->
+    if @get('userinfo.credits') < 0
+      $('#moneydialog').modal
         backdrop: "static"
-	).observes('userinfo')
+  ).observes('userinfo')
 
-	sockets:
-		userinfo: (record) ->
-			@set 'userinfo', record
-		pushData: (data) ->
-			@store.pushMany data.type, data.payload
+  sockets:
+    userinfo: (record) ->
+      @set 'userinfo', record
+    pushData: (data) ->
+      @store.pushMany data.type, data.payload
+    delete: (data) ->
+      data.ids.forEach (id) ->
+        record = @store.getById(data.type, id)
+        @store.unloadRecord record if record
+    message: (message) ->
+      console.log "Received message:", message
 
 `export default ApplicationController`
