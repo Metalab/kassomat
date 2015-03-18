@@ -21,3 +21,12 @@ db.hmset 'entity:DenominationLevel:200', { count: 12 }, (err) ->
 db.hmset 'entity:DenominationLevel:1000', { count: 2 }, (err) ->
 	if err
 		console.error err
+
+fs = require "fs"
+fs.readFile "testimages/internet.jpg", (err, data) ->
+	if err
+		console.error err
+	else
+		db.hmset 'projectimages:internet', { type: 'jpg', data: data }, (err) ->
+			if err
+				console.error err

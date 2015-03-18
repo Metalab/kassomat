@@ -8,6 +8,28 @@ db.on 'error', (error) ->
 
 require('zappajs') ->
 	@get '/': 'hi'
+
+	@get '/projectimages/:id', (req, res) ->
+		path = "projectimages:" + req.params.id
+		db.hget path, "type", (err, type) ->
+			if err
+				console.error err
+				res.sendStatus(500)
+			else
+				if not type
+					res.sendStatus(404)
+				else
+					db.hget path, new Buffer("data"), (err, imageData) ->
+						if err
+							console.error "[Project Images " + req.params.id + "]:", err
+							res.sendStatus(500)
+						else
+							if not imageData
+								res.sendStatus(404)
+							else
+								res.type type
+								res.send imageData
+
 	@io.sockets.on 'connection', (socket) ->
 		console.log "Socket connected!"
 
