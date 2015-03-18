@@ -11,29 +11,13 @@ require('zappajs') ->
 	@io.sockets.on 'connection', (socket) ->
 		console.log "Socket connected!"
 
-		# A new client needs userinfo and all denomination levels pushed
-
+		# A new client needs userinfo pushed
 		db.hgetall "userinfo", (err, reply) ->
 			if err
 				console.error err
 			else
 				reply.credits = parseInt reply.credits
 				socket.emit 'userinfo', reply
-		db.keys 'entity:DenominationLevel:*', (err, keys) ->
-			if err
-				console.error "Failed getting DenominationLevel keys:", err
-			else
-				keys.forEach (key) ->
-					db.hgetall key, (err, reply) ->
-						if err
-							console.error "Failed fetching " + key + ":", err
-						else
-							payload = {}
-							payload.id = parseInt(key.split(":")[2])
-							payload.count = reply.count
-							socket.emit 'pushData',
-								type: 'DenominationLevel'
-								payload: [ payload ]
 
 		subscriptions = redis.createClient()
 		subscriptions.on "message", (channel, message) ->
@@ -65,6 +49,49 @@ require('zappajs') ->
 							ids: [ parts[2] ]
 		subscriptions.subscribe "frontend"
 		subscriptions.subscribe "updates"
+
+		socket.on 'findAll', (data, callback) ->
+			console.log "findAll " + JSON.stringify(data)
+			db.keys 'entity:' + data.type + ":*", (err, keys) ->
+				if err
+					console.error "[findAll " + data.type + "]:", err
+					callback
+						status: 0
+						error: err
+				else
+					console.log "Entity " + data.type + ":", JSON.stringify(keys)
+					keysRemaining = keys.length
+					results = []
+					keys.forEach (key) ->
+						db.hgetall key, (err, reply) ->
+							if keysRemaining > 0
+								if err
+									keysRemaining = -1
+									console.error "[findAll " + key + "]:", err
+									callback
+										status: 0
+										error: err
+								else
+									keysRemaining--
+									reply.id = key.split(":")[2]
+									results.push reply
+									if keysRemaining == 0
+										callback
+											status: 1
+											content: results
+
+		socket.on 'find', (data, callback) ->
+			db.hgetall "entity:" + data.type + ":" + data.query.id, (err, reply) ->
+				if err
+					console.error "[find " + data.type + ":" + data.query.id + "]:", err
+					callback
+						status: 0
+						error: err
+				else
+					reply.id = data.query.id
+					callback
+						status: 1
+						content: reply
 
 		socket.on 'disconnect', ->
 			subscriptions.end()
