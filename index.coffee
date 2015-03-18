@@ -118,5 +118,8 @@ require('zappajs') ->
 						status: 1
 						content: Object.keys(reply).reduce(((prev,cur) -> prev[cur] = encodeURI(reply[cur]); prev), {})
 
+		socket.on 'action', (data) ->
+			db.publish 'action', JSON.stringify(data)
+
 		socket.on 'disconnect', ->
 			subscriptions.end()
