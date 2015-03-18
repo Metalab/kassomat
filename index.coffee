@@ -121,5 +121,8 @@ require('zappajs') ->
 		socket.on 'action', (data) ->
 			db.publish 'action', JSON.stringify(data)
 
+		socket.on 'buy', (data) ->
+			db.publish 'buy', data.name
+
 		socket.on 'disconnect', ->
 			subscriptions.end()
