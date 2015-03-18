@@ -9,7 +9,7 @@ db.on 'error', (error) ->
 require('zappajs') ->
 	@get '/': 'hi'
 
-	@get '/projectimages/:id', (req, res) ->
+	@get '/images/projects/:id', (req, res) ->
 		path = "projectimages:" + req.params.id
 		db.hget path, "type", (err, type) ->
 			if err
