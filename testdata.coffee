@@ -30,3 +30,10 @@ fs.readFile "testimages/internet.jpg", (err, data) ->
 		db.hmset 'projectimages:internet', { type: 'jpg', data: data }, (err) ->
 			if err
 				console.error err
+fs.readFile "testimages/kassomat.png", (err, data) ->
+	if err
+		console.error err
+	else
+		db.hmset 'projectimages:kassomat', { type: 'png', data: data }, (err) ->
+			if err
+				console.error err
