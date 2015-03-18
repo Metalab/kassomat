@@ -52,24 +52,24 @@ SocketAdapter = DS.Adapter.extend
 	find: (store, type, id) ->
 		console.log '[Adapter] FIND: ', type.typeKey
 		@makeSocketRequest store, 'find',
-			type: type.typeKey
+			type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
 			query:
 				id: id
 
 	findAll: (store, type, id) ->
 		console.log '[Adapter] FINDALL: ', type.typeKey, id
 		@makeSocketRequest store, 'findAll',
-			type: type.typeKey
+			type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
 			query:
 				since: id
 
 	findQuery: (store, type, query) ->
 		@makeSocketRequest store, 'findQuery',
-			type: type.typeKey
+			type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
 			query: query
 	findMany: (store, type, ids, records) ->
 		@makeSocketRequest store, 'findMany',
-			type: type.typeKey
+			type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
 			query:
 				ids: ids
 	findBelongsTo: (store, record, url) ->
@@ -77,7 +77,7 @@ SocketAdapter = DS.Adapter.extend
 		type = record.constructor.typeKey
 		console.log '[Adapter] findBelongsTo: ', type, url
 		@makeSocketRequest store, 'findBelongsTo',
-			type: type
+			type: type.charAt(0).toUpperCase() + type.slice(1)
 			query:
 				id: id
 	findHasMany: (store, record, url) ->
@@ -85,7 +85,7 @@ SocketAdapter = DS.Adapter.extend
 		type = record.constructor.typeKey
 		console.log '[Adapter] findHasMany: ', type, url
 		@makeSocketRequest store, 'findHasMany',
-			type: type,
+			type: type.charAt(0).toUpperCase() + type.slice(1)
 			query:
 				id: id
 
