@@ -34,17 +34,18 @@ require('zappajs') ->
 		console.log "Socket connected!"
 
 		# A new client needs userinfo pushed
-		db.hgetall "userinfo", (err, reply) ->
+		db.hgetall "userinfo", (err, userinfo) ->
 			if err
 				console.error err
 			else
-				reply.credits = parseInt reply.credits
-				socket.emit 'userinfo', reply
+				socket.emit 'userinfo',
+					username: encodeURI(userinfo.username)
+					credits: parseInt userinfo.credits
 
 		subscriptions = redis.createClient()
 		subscriptions.on "message", (channel, message) ->
 			if channel == "frontend"
-				socket.emit 'message', message
+				socket.emit 'message', encodeURI(message)
 			else if channel == "updates"
 				parts = message.split(":")
 				switch parts[0]
@@ -53,8 +54,9 @@ require('zappajs') ->
 							if err
 								console.error "Failed fetching userinfo:", err
 							else
-								reply.credits = parseInt(reply.credits)
-								socket.emit 'userinfo', reply
+								socket.emit 'userinfo',
+									username: encodeURI(reply.username)
+									credits: parseInt(reply.credits)
 					when "update"
 						console.log "Updating " + "entity:" + parts[1] + ":" + parts[2]
 						db.hgetall "entity:" + parts[1] + ":" + parts[2], (err, reply) ->
@@ -65,11 +67,11 @@ require('zappajs') ->
 								payload.id = parts[2]
 								socket.emit 'pushData',
 									type: parts[1]
-									payload: [ payload ]
+									payload: [ Object.keys(payload).reduce(((prev,cur) -> prev[cur] = encodeURI(payload[cur]); prev), {}) ]
 					when "delete"
 						socket.emit 'delete',
 							type: parts[1]
-							ids: [ parts[2] ]
+							ids: [ encodeURI(parts[2]) ]
 		subscriptions.subscribe "frontend"
 		subscriptions.subscribe "updates"
 
@@ -97,7 +99,7 @@ require('zappajs') ->
 								else
 									keysRemaining--
 									reply.id = key.split(":")[2]
-									results.push reply
+									results.push Object.keys(reply).reduce(((prev,cur) -> prev[cur] = encodeURI(reply[cur]); prev), {})
 									if keysRemaining == 0
 										callback
 											status: 1
@@ -114,7 +116,7 @@ require('zappajs') ->
 					reply.id = data.query.id
 					callback
 						status: 1
-						content: reply
+						content: Object.keys(reply).reduce(((prev,cur) -> prev[cur] = encodeURI(reply[cur]); prev), {})
 
 		socket.on 'disconnect', ->
 			subscriptions.end()

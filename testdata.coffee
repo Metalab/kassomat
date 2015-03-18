@@ -53,3 +53,11 @@ db.hmset 'entity:Project:2', {
 }, (err) ->
 	if err
 		console.error err
+
+db.hmset 'entity:Project:3', {
+	name: 'UTF-8 Testing'
+	image: 'internet'
+	teaser: '日本語😩'
+}, (err) ->
+	if err
+		console.error err
