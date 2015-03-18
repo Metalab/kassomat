@@ -56,7 +56,8 @@ require('zappajs') ->
 								reply.credits = parseInt(reply.credits)
 								socket.emit 'userinfo', reply
 					when "update"
-						db.hgetall "entity:" + message, (err, reply) ->
+						console.log "Updating " + "entity:" + parts[1] + ":" + parts[2]
+						db.hgetall "entity:" + parts[1] + ":" + parts[2], (err, reply) ->
 							if err
 								console.error "Failed fetching entity:" + message + ":", err
 							else

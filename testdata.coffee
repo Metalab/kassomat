@@ -37,3 +37,19 @@ fs.readFile "testimages/kassomat.png", (err, data) ->
 		db.hmset 'projectimages:kassomat', { type: 'png', data: data }, (err) ->
 			if err
 				console.error err
+
+db.hmset 'entity:Project:1', {
+	name: 'Kassomat'
+	image: 'kassomat'
+	teaser: 'Eine selbstgebaute Kassa mit Touchinterface, die hauptsächlich als Ersatz zur offenen Kassa im Einsatz sein soll, die verhindern soll dass nicht einfach so mehrere Geldscheine aus der Kassa verschwinden. Zusätzlich eröffnen sich angenehme Funktionalität wie zB: iButton Credits, automatische Buchhaltung, Lazzzor Jobs erfassen, Barcode Scanner,.. whatnot'
+}, (err) ->
+	if err
+		console.error err
+
+db.hmset 'entity:Project:2', {
+	name: 'Internet'
+	image: 'internet'
+	teaser: 'The Internet is a global system of interconnected computer networks that use the standard Internet protocol suite (TCP/IP) to link several billion devices worldwide. It is a network of networks that consists of millions of private, public, academic, business, and government networks of local to global scope, linked by a broad array of electronic, wireless, and optical networking technologies. The Internet carries an extensive range of information resources and services, such as the inter-linked hypertext documents and applications of the World Wide Web (WWW), the infrastructure to support email, and peer-to-peer networks for file sharing and telephony.'
+}, (err) ->
+	if err
+		console.error err
