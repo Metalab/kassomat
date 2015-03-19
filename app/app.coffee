@@ -6,13 +6,14 @@
 Ember.MODEL_FACTORY_INJECTIONS = true
 
 App = Ember.Application.extend
-    modulePrefix: config.modulePrefix
-    podModulePrefix: config.podModulePrefix
-    Resolver: Resolver
-    Socket: EmberSockets.extend
-        controllers: ['application']
-        autoConnect: true
-        port: 3000
+  modulePrefix: config.modulePrefix
+  podModulePrefix: config.podModulePrefix
+  Resolver: Resolver
+  LOG_TRANSITIONS: true
+  Socket: EmberSockets.extend
+    controllers: ['application']
+    autoConnect: true
+    port: 3000
 
 Ember.Application.initializer
   name: 'logging'
@@ -38,9 +39,9 @@ Ember.Application.initializer
 loadInitializers(App, config.modulePrefix)
 
 Ember.Handlebars.helper 'money', (value, options) ->
-    if value == null
-        return new Ember.Handlebars.SafeString '$0'
-    formatted = parseFloat(value / 100, 10).toFixed 2
-    return new Ember.Handlebars.SafeString '€' + formatted
+  if value == null
+    return new Ember.Handlebars.SafeString '$0'
+  formatted = parseFloat(value / 100, 10).toFixed 2
+  return new Ember.Handlebars.SafeString '€' + formatted
 
 `export default App`
