@@ -44,36 +44,37 @@ require('zappajs') ->
 
 		subscriptions = redis.createClient()
 		subscriptions.on "message", (channel, message) ->
-			if channel == "frontend"
+			if channel == "__keyevent@0__:hset"
+				if message == "userinfo"
+					db.hgetall "userinfo", (err, reply) ->
+						if err
+							console.error "Failed fetching userinfo:", err
+						else
+							socket.emit 'userinfo',
+								username: encodeURI(reply.username)
+								credits: parseInt(reply.credits)
+				else if message.slice(0, "entity:".length) == "entity:"
+					db.hgetall message, (err, reply) ->
+						if err
+							console.error "Failed fetching entity:" + message + ":", err
+						else
+							parts = message.split(":")
+							payload = extend {}, reply
+							payload.id = parts[2]
+							socket.emit 'pushData',
+								type: parts[1]
+								payload: [ Object.keys(payload).reduce(((prev,cur) -> prev[cur] = encodeURI(payload[cur]); prev), {}) ]
+			else if channel == "__keyevent@0__:del"
+				if message.slice(0, "entity:".length) == "entity:"
+					parts = message.split(":")
+					socket.emit 'delete',
+						type: parts[1]
+						ids: [ encodeURI(parts[2]) ]
+			else if channel == "frontend"
 				socket.emit 'message', encodeURI(message)
-			else if channel == "updates"
-				parts = message.split(":")
-				switch parts[0]
-					when "userinfo"
-						db.hgetall "userinfo", (err, reply) ->
-							if err
-								console.error "Failed fetching userinfo:", err
-							else
-								socket.emit 'userinfo',
-									username: encodeURI(reply.username)
-									credits: parseInt(reply.credits)
-					when "update"
-						console.log "Updating " + "entity:" + parts[1] + ":" + parts[2]
-						db.hgetall "entity:" + parts[1] + ":" + parts[2], (err, reply) ->
-							if err
-								console.error "Failed fetching entity:" + message + ":", err
-							else
-								payload = extend {}, reply
-								payload.id = parts[2]
-								socket.emit 'pushData',
-									type: parts[1]
-									payload: [ Object.keys(payload).reduce(((prev,cur) -> prev[cur] = encodeURI(payload[cur]); prev), {}) ]
-					when "delete"
-						socket.emit 'delete',
-							type: parts[1]
-							ids: [ encodeURI(parts[2]) ]
 		subscriptions.subscribe "frontend"
-		subscriptions.subscribe "updates"
+		subscriptions.subscribe "__keyevent@0__:hset"
+		subscriptions.subscribe "__keyevent@0__:del"
 
 		socket.on 'findAll', (data, callback) ->
 			console.log "findAll " + JSON.stringify(data)
