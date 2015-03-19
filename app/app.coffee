@@ -23,7 +23,6 @@ Ember.Application.initializer
       args = Array.prototype.slice.call(arguments)
       socket = container.lookup('socket:main').socket
       socket.emit 'log', encodeURI(args.map( (o) ->
-        log "o = ", o
         if typeof o == "object"
           JSON.stringify(o)
         else if typeof o == "undefined"
