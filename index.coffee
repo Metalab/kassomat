@@ -124,5 +124,12 @@ require('zappajs') ->
 		socket.on 'buy', (data) ->
 			db.publish 'buy', data.name
 
+		socket.on 'log', (data) ->
+			timestamp = new Date()
+			db.lpush 'log', JSON.stringify
+				source: 'frontend'
+				timestamp: timestamp.getTime() / 1000
+				message: decodeURI(data)
+
 		socket.on 'disconnect', ->
 			subscriptions.end()
