@@ -52,7 +52,7 @@ ApplicationController = Ember.Controller.extend
       payload.forEach (obj) -> Object.keys(obj).forEach (key) -> if obj.hasOwnProperty(key) then obj[key] = decodeURI(obj[key])
       @store.pushMany data.type, data.payload
     delete: (data) ->
-      data.ids.forEach (id) ->
+      data.ids.forEach (id) =>
         record = @store.getById(data.type, id)
         @store.unloadRecord record if record
     message: (message) ->
