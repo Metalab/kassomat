@@ -1,0 +1,12 @@
+*.o
+*.dylib
+*.Plo
+*.a
+*.lai
+*.la
+*.lo
+*.pc
+*.Po
+libevent-2.0.22-stable/test
+libevent-2.0.22-stable/sample/.libs
+essp-kassomat
