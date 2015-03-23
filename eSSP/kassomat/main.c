@@ -8,7 +8,7 @@
 #include <adapters/libevent.h>
 
 void connectToValidator(SSP_COMMAND *sspC);
-void esspPoll(int fd, short event, void *arg);
+void sspPoll(int fd, short event, void *arg);
 
 redisAsyncContext *db;
 struct event sspPollEvent;
@@ -70,12 +70,12 @@ void connectToValidator(SSP_COMMAND *sspC) {
 	time.tv_sec = 0;
 	time.tv_usec = 500000;
 
-	event_set(&sspPollEvent, 0, EV_PERSIST, esspPoll, NULL);
+	event_set(&sspPollEvent, 0, EV_PERSIST, sspPoll, NULL);
 	event_base_set(eventBase, &sspPollEvent);
 	evtimer_add(&sspPollEvent, &time);
 }
 
-void esspPoll(int fd, short event, void *arg) {
+void sspPoll(int fd, short event, void *arg) {
 	fprintf(stderr, "Poll\n");
 }
 
