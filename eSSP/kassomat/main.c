@@ -14,11 +14,14 @@ redisAsyncContext *db;
 struct event sspPollEvent;
 struct event_base *eventBase;
 
+char const *sspAddress;
+int sspPort;
+
 void cleanup(void) {
 	if(db) {
 		redisAsyncFree(db);
 	}
-	close_ssp_port();
+	CloseSSPPort(sspPort);
 }
 
 void interrupt(int signal) {
@@ -77,6 +80,14 @@ void connectToValidator(SSP_COMMAND *sspC) {
 
 void sspPoll(int fd, short event, void *arg) {
 	fprintf(stderr, "Poll\n");
+}
+
+int send_ssp_command(SSP_COMMAND *sspC) {
+	return SSPSendCommand(sspPort, sspC);
+}
+
+int negotiate_ssp_encryption(SSP_COMMAND *sspC, SSP_FULL_KEY * hostKey){
+	return NegotiateSSPEncryption(sspPort, sspC->SSPAddress, hostKey);
 }
 
 int main(int argc, char **argv) {

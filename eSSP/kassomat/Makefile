@@ -1,4 +1,4 @@
-OBJS=main.o ssp_helpers.o linux.o
+OBJS=main.o ssp_helpers.o
 
 CFLAGS=-g -I../inc -I../../hiredis -I../../libevent-2.0.22-stable/include
 LDFLAGS=-L../lib/bin/shared -L../../hiredis -L../../libevent-2.0.22-stable/.libs
