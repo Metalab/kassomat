@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SSPComs.h>
-#include "port_linux.h"
 #include <signal.h>
 #include <hiredis.h>
 #include <async.h>

@@ -2,13 +2,8 @@
 #ifndef BASIC_DEMO6_SSP_HELPERS_H
 #define BASIC_DEMO6_SSP_HELPERS_H
 
-#ifdef WIN32
-#include "port_win32_ssp.h"
-#else
-#include "port_linux.h"
-#endif
-
 #include <stdio.h>
+#include "../inc/SSPComs.h"
 
 #define SSP_CMD_RUN_CALIBRATION 0x48
 #define SSP_CMD_SET_COINMECH_INHIBITS 0x40
@@ -117,5 +112,8 @@ SSP_RESPONSE_ENUM ssp6_stack_note(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_payout_note(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_run_calibration(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_set_coinmech_inhibits(SSP_COMMAND *sspC, unsigned int value, const char *cc, enum channel_state state);
+
+int send_ssp_command(SSP_COMMAND *sspC);
+int negotiate_ssp_encryption(SSP_COMMAND *sspC, SSP_FULL_KEY * hostKey);
 
 #endif
