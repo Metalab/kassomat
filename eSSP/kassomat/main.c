@@ -5,6 +5,7 @@
 #include <async.h>
 #include <adapters/libevent.h>
 
+#include "main.h"
 #include "ssp.h"
 
 redisAsyncContext *db;
@@ -19,10 +20,17 @@ void cleanup(void) {
 	sspCleanup();
 }
 
-void interrupt(int signal) {
+void terminate(void) {
 	evtimer_del(&sspPollEvent);
-	redisAsyncDisconnect(db);
-	db = NULL;
+	if(db) {
+		redisAsyncCommand(db, NULL, NULL, "SET component:ssp 0");
+		redisAsyncDisconnect(db);
+		db = NULL;
+	}
+}
+
+void interrupt(int signal) {
+	terminate();
 }
 
 void setupDatabase(void) {
@@ -53,6 +61,8 @@ void connectCallback(const redisAsyncContext *c, int status) {
 	event_set(&sspPollEvent, 0, EV_PERSIST, sspPoll, NULL);
 	event_base_set(eventBase, &sspPollEvent);
 	evtimer_add(&sspPollEvent, &time);
+
+	redisAsyncCommand(db, NULL, NULL, "SET component:ssp 1");
 }
 
 void disconnectCallback(const redisAsyncContext *c, int status) {
@@ -71,11 +81,13 @@ int main(int argc, char **argv) {
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, interrupt);
-	eventBase = event_base_new();
 
 	fprintf(stderr, "eSSP starting up (port %s)...\n", argv[1]);
+	if(!sspConnectToValidator(argv[1])) {
+		return 3;
+	}
+	eventBase = event_base_new();
 	atexit(cleanup);
-	sspConnectToValidator(argv[1]);
 	setupDatabase();
 
 	redisLibeventAttach(db, eventBase);

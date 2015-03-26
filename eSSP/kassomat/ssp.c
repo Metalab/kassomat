@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <SSPComs.h>
 #include "ssp_helpers.h"
+#include "main.h"
+#include "ssp.h"
 
 static const unsigned long long encryptionKey = 0x123456701234567LL;
 
@@ -11,7 +12,7 @@ static SSP_COMMAND sspC;
 
 void parse_poll(SSP_POLL_DATA6 *poll);
 
-void sspConnectToValidator(const char * const sspAddress) {
+bool sspConnectToValidator(const char * const sspAddress) {
 	SSP6_SETUP_REQUEST_DATA setup_req;
 	fprintf(stderr, "Connecting to validator...\n");
 
@@ -22,33 +23,33 @@ void sspConnectToValidator(const char * const sspAddress) {
 
 	if((sspPort = OpenSSPPort(sspAddress)) == -1) {
 		fprintf(stderr, "Failed opening port %s.\n", sspAddress);
-		exit(errno);
+		return false;
 	}
 
 	// check validator is present
 	if(ssp6_sync(&sspC) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "NO VALIDATOR FOUND\n");
-		exit(3);
+		return false;
 	}
 	fprintf(stderr, "Validator Found\n");
 
 	// try to setup encryption using the default key
 	if(ssp6_setup_encryption(&sspC, encryptionKey) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Encryption Failed\n");
-		exit(3);
+		return false;
 	}
 	fprintf(stderr, "SSP Encryption Setup\n");
 
 	// Make sure we are using ssp version 6
 	if(ssp6_host_protocol(&sspC, 0x06) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Host Protocol Failed\n");
-		exit(3);
+		return false;
 	}
 
 	// Collect some information about the validator
 	if(ssp6_setup_request(&sspC, &setup_req) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Setup Request Failed\n");
-		exit(3);
+		return false;
 	}
 	fprintf(stderr, "Firmware: %s\n", setup_req.FirmwareVersion);
 	fprintf(stderr, "Channels:\n");
@@ -59,20 +60,21 @@ void sspConnectToValidator(const char * const sspAddress) {
 	// enable the payout unit
 	if(ssp6_enable_payout(&sspC, setup_req.UnitType) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Enable Failed\n");
-		exit(3);
+		return false;
 	}
 
 	// set the inhibits (enable all note acceptance)
 	if(ssp6_set_inhibits(&sspC,0xFF,0xFF) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Inhibits Failed\n");
-		exit(3);
+		return false;
 	}
 
 	// enable the validator
 	if(ssp6_enable(&sspC) != SSP_RESPONSE_OK) {
 		fprintf(stderr, "SSP Enable Failed\n");
-		exit(3);
+		return false;
 	}
+	return true;
 }
 
 void sspPoll(int fd, short event, void *arg) {
@@ -84,14 +86,16 @@ void sspPoll(int fd, short event, void *arg) {
 			break;
 		case SSP_RESPONSE_TIMEOUT:
 			fprintf(stderr, "SSP Poll Timeout\n");
-			exit(3);
+			terminate();
+			break;
 		case 0xFA:
 			// The validator has responded with key not set, so we should try to negotiate one
 			if(ssp6_setup_encryption(&sspC, encryptionKey) != SSP_RESPONSE_OK) {
 				fprintf(stderr, "SSP Encryption Failed\n");
-				exit(3);
+				terminate();
+			} else {
+				fprintf(stderr, "SSP Encryption Setup\n");
 			}
-			fprintf(stderr, "SSP Encryption Setup\n");
 			break;
 		default:
 			fprintf(stderr, "SSP Poll Error: 0x%x\n", rsp_status);
