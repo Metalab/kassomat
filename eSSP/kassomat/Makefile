@@ -1,6 +1,6 @@
 OBJS=main.o ssp_helpers.o
 
-CFLAGS=-g -I../inc -I../../hiredis -I../../libevent-2.0.22-stable/include
+CFLAGS=-g -I../inc -I../../hiredis -I../../libevent-2.0.22-stable/include -Wall -Werror -pedantic
 LDFLAGS=-L../lib/bin/shared -L../../hiredis -L../../libevent-2.0.22-stable/.libs
 LIBS=-litlssp -lhiredis -levent
 
