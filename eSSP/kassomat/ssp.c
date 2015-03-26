@@ -4,6 +4,7 @@
 #include "ssp_helpers.h"
 #include "main.h"
 #include "ssp.h"
+#include <async.h>
 
 static const unsigned long long encryptionKey = 0x123456701234567LL;
 
@@ -135,69 +136,89 @@ void parse_poll(SSP_POLL_DATA6 * poll) {
 			// the 'read' event contains 1 data value, which if >0 means a note has been validated and is in escrow
 			if(poll->events[i].data1 > 0) {
 				printf("Note Read %ld %s\n", poll->events[i].data1, poll->events[i].cc);
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'read'}");
+			} else {
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'reading'}");
 			}
 			break;
 		case SSP_POLL_CREDIT:
 			// The note which was in escrow has been accepted
 			printf("Credit %ld %s\n", poll->events[i].data1, poll->events[i].cc);
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'credit','channel':%ld}", poll->events[i].data1);
 			break;
 		case SSP_POLL_INCOMPLETE_PAYOUT:
 			// the validator shutdown during a payout, this event is reporting that some value remains to payout
 			printf("Incomplete payout %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'incomplete payout','dispensed':%ld,'requested':%ld}", poll->events[i].data1, poll->events[i].data2);
 			break;
 		case SSP_POLL_INCOMPLETE_FLOAT:
 			// the validator shutdown during a float, this event is reporting that some value remains to float
 			printf("Incomplete float %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'incomplete float','floated':%ld,'requested':%ld}", poll->events[i].data1, poll->events[i].data2);
 			break;
 		case SSP_POLL_REJECTING:
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'rejecting'}");
 			break;
 		case SSP_POLL_REJECTED:
 			// The note was rejected
 			printf("Note Rejected\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'rejected'}");
 			break;
 		case SSP_POLL_STACKING:
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'stacking'}");
 			break;
 		case SSP_POLL_STORED:
 			// The note has been stored in the payout unit
 			printf("Stored\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'stored'}");
 			break;
 		case SSP_POLL_STACKED:
 			// The note has been stacked in the cashbox
 			printf("Stacked\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'stacked'}");
 			break;
 		case SSP_POLL_SAFE_JAM:
 			printf("Safe Jam\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'safe jam'}");
 			break;
 		case SSP_POLL_UNSAFE_JAM:
 			printf("Unsafe Jam\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'unsafe jam'}");
 			break;
 		case SSP_POLL_DISABLED:
 			// The validator has been disabled
 			printf("DISABLED\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'disabled'}");
 			break;
 		case SSP_POLL_FRAUD_ATTEMPT:
 			// The validator has detected a fraud attempt
 			printf("Fraud Attempt %ld %s\n", poll->events[i].data1, poll->events[i].cc);
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'fraud attempt','dispensed':%ld}", poll->events[i].data1);
 			break;
 		case SSP_POLL_STACKER_FULL:
 			// The cashbox is full
 			printf("Stacker Full\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'stacker full'}");
 			break;
 		case SSP_POLL_CASH_BOX_REMOVED:
 			// The cashbox has been removed
 			printf("Cashbox Removed\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'cashbox removed'}");
 			break;
 		case SSP_POLL_CASH_BOX_REPLACED:
 			// The cashbox has been replaced
 			printf("Cashbox Replaced\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'cashbox replaced'}");
 			break;
 		case SSP_POLL_CLEARED_FROM_FRONT:
 			// A note was in the notepath at startup and has been cleared from the front of the validator
 			printf("Cleared from front\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'cleared from front'}");
 			break;
 		case SSP_POLL_CLEARED_INTO_CASHBOX:
 			// A note was in the notepath at startup and has been cleared into the cashbox
 			printf("Cleared Into Cashbox\n");
+			redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'cleared into cashbox'}");
 			break;
 		case SSP_POLL_CALIBRATION_FAIL:
 			// the hopper calibration has failed. An extra byte is available with an error code.
@@ -206,27 +227,35 @@ void parse_poll(SSP_POLL_DATA6 * poll) {
 			switch(poll->events[i].data1) {
 			case NO_FAILUE:
 				printf ("No failure\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'no error'}");
 				break;
 			case SENSOR_FLAP:
 				printf ("Optical sensor flap\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'sensor flap'}");
 				break;
 			case SENSOR_EXIT:
 				printf ("Optical sensor exit\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'sensor exit'}");
 				break;
 			case SENSOR_COIL1:
 				printf ("Coil sensor 1\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'sensor coil 1'}");
 				break;
 			case SENSOR_COIL2:
 				printf ("Coil sensor 2\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'sensor coil 2'}");
 				break;
 			case NOT_INITIALISED:
 				printf ("Unit not initialised\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'not initialized'}");
 				break;
 			case CHECKSUM_ERROR:
 				printf ("Data checksum error\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'calibration fail','error':'checksum error'}");
 				break;
 			case COMMAND_RECAL:
 				printf ("Recalibration by command required\n");
+				redisAsyncCommand(db, NULL, NULL, "PUBLISH validator {'event':'recalibrating'}");
 				ssp6_run_calibration(&sspC);
 				break;
 			}
