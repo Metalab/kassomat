@@ -9,7 +9,7 @@ static const unsigned long long encryptionKey = 0x123456701234567LL;
 static int sspPort = -1;
 static SSP_COMMAND sspC;
 
-void parse_poll(SSP_COMMAND *sspC, SSP_POLL_DATA6 * poll);
+void parse_poll(SSP_POLL_DATA6 *poll);
 
 void sspConnectToValidator(const char * const sspAddress) {
 	SSP6_SETUP_REQUEST_DATA setup_req;
@@ -80,7 +80,7 @@ void sspPoll(int fd, short event, void *arg) {
 	SSP_POLL_DATA6 poll;
 	switch(rsp_status = ssp6_poll(&sspC, &poll)) {
 		case SSP_RESPONSE_OK:
-			parse_poll(&sspC, &poll);
+			parse_poll(&poll);
 			break;
 		case SSP_RESPONSE_TIMEOUT:
 			fprintf(stderr, "SSP Poll Timeout\n");
@@ -116,35 +116,34 @@ void sspCleanup(void) {
 
 // parse the validators response to the poll command. the SSP_POLL_DATA6 structure has an
 // array of structures which contain values and country codes
-void parse_poll(SSP_COMMAND *sspC, SSP_POLL_DATA6 * poll) {
-	int i;
-	for (i = 0; i < poll->event_count; ++i) {
+void parse_poll(SSP_POLL_DATA6 * poll) {
+	for(int i = 0; i < poll->event_count; ++i) {
 		switch(poll->events[i].event) {
 		case SSP_POLL_RESET:
 			printf("Unit Reset\n");
 			// Make sure we are using ssp version 6
-			if (ssp6_host_protocol(sspC, 0x06) != SSP_RESPONSE_OK) {
-	      printf("Host Protocol Failed\n");
-	      return;
-	    }
+			if(ssp6_host_protocol(&sspC, 0x06) != SSP_RESPONSE_OK) {
+				fprintf(stderr, "SSP Host Protocol Failed\n");
+				exit(3);
+			}
 			break;
 		case SSP_POLL_READ:
 			// the 'read' event contains 1 data value, which if >0 means a note has been validated and is in escrow
-			if (poll->events[i].data1 > 0){
+			if(poll->events[i].data1 > 0) {
 				printf("Note Read %ld %s\n", poll->events[i].data1, poll->events[i].cc);
 			}
 			break;
 		case SSP_POLL_CREDIT:
 			// The note which was in escrow has been accepted
-    	printf("Credit %ld %s\n", poll->events[i].data1, poll->events[i].cc);
+			printf("Credit %ld %s\n", poll->events[i].data1, poll->events[i].cc);
 			break;
 		case SSP_POLL_INCOMPLETE_PAYOUT:
 			// the validator shutdown during a payout, this event is reporting that some value remains to payout
-    	printf("Incomplete payout %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
+			printf("Incomplete payout %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
 			break;
-    case SSP_POLL_INCOMPLETE_FLOAT:
-   			// the validator shutdown during a float, this event is reporting that some value remains to float
-    	printf("Incomplete float %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
+		case SSP_POLL_INCOMPLETE_FLOAT:
+			// the validator shutdown during a float, this event is reporting that some value remains to float
+			printf("Incomplete float %ld of %ld %s\n", poll->events[i].data1, poll->events[i].data2, poll->events[i].cc);
 			break;
 		case SSP_POLL_REJECTING:
 			break;
@@ -174,52 +173,60 @@ void parse_poll(SSP_COMMAND *sspC, SSP_POLL_DATA6 * poll) {
 			break;
 		case SSP_POLL_FRAUD_ATTEMPT:
 			// The validator has detected a fraud attempt
-	    	printf("Fraud Attempt %ld %s\n", poll->events[i].data1, poll->events[i].cc);
+			printf("Fraud Attempt %ld %s\n", poll->events[i].data1, poll->events[i].cc);
 			break;
 		case SSP_POLL_STACKER_FULL:
 			// The cashbox is full
 			printf("Stacker Full\n");
 			break;
-    case SSP_POLL_CASH_BOX_REMOVED:
-	  	// The cashbox has been removed
-      printf("Cashbox Removed\n");
-      break;
-    case SSP_POLL_CASH_BOX_REPLACED:
-    	// The cashbox has been replaced
-      printf("Cashbox Replaced\n");
-      break;
-    case SSP_POLL_CLEARED_FROM_FRONT:
-    	// A note was in the notepath at startup and has been cleared from the front of the validator
-      printf("Cleared from front\n");
-      break;
-    case SSP_POLL_CLEARED_INTO_CASHBOX:
-      // A note was in the notepath at startup and has been cleared into the cashbox
-      printf("Cleared Into Cashbox\n");
-      break;
-    case SSP_POLL_CALIBRATION_FAIL:
-    	// the hopper calibration has failed. An extra byte is available with an error code.
-      printf("Calibration fail: ");
+		case SSP_POLL_CASH_BOX_REMOVED:
+			// The cashbox has been removed
+			printf("Cashbox Removed\n");
+			break;
+		case SSP_POLL_CASH_BOX_REPLACED:
+			// The cashbox has been replaced
+			printf("Cashbox Replaced\n");
+			break;
+		case SSP_POLL_CLEARED_FROM_FRONT:
+			// A note was in the notepath at startup and has been cleared from the front of the validator
+			printf("Cleared from front\n");
+			break;
+		case SSP_POLL_CLEARED_INTO_CASHBOX:
+			// A note was in the notepath at startup and has been cleared into the cashbox
+			printf("Cleared Into Cashbox\n");
+			break;
+		case SSP_POLL_CALIBRATION_FAIL:
+			// the hopper calibration has failed. An extra byte is available with an error code.
+			printf("Calibration fail: ");
 
-      switch(poll->events[i].data1) {
-      case NO_FAILUE:
-	      printf ("No failure\n");
-      case SENSOR_FLAP:
-	      printf ("Optical sensor flap\n");
-      case SENSOR_EXIT:
-        printf ("Optical sensor exit\n");
-      case SENSOR_COIL1:
-        printf ("Coil sensor 1\n");
-      case SENSOR_COIL2:
-        printf ("Coil sensor 2\n");
-      case NOT_INITIALISED:
-        printf ("Unit not initialised\n");
-      case CHECKSUM_ERROR:
-        printf ("Data checksum error\n");
-      case COMMAND_RECAL:
-        printf ("Recalibration by command required\n");
-        ssp6_run_calibration(sspC);
-	    }
-      break;
+			switch(poll->events[i].data1) {
+			case NO_FAILUE:
+				printf ("No failure\n");
+				break;
+			case SENSOR_FLAP:
+				printf ("Optical sensor flap\n");
+				break;
+			case SENSOR_EXIT:
+				printf ("Optical sensor exit\n");
+				break;
+			case SENSOR_COIL1:
+				printf ("Coil sensor 1\n");
+				break;
+			case SENSOR_COIL2:
+				printf ("Coil sensor 2\n");
+				break;
+			case NOT_INITIALISED:
+				printf ("Unit not initialised\n");
+				break;
+			case CHECKSUM_ERROR:
+				printf ("Data checksum error\n");
+				break;
+			case COMMAND_RECAL:
+				printf ("Recalibration by command required\n");
+				ssp6_run_calibration(&sspC);
+				break;
+			}
+			break;
 		}
 	}
 }
