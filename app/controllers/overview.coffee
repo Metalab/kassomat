@@ -1,12 +1,11 @@
 `import Ember from 'ember'`
 
 OverviewController = Ember.Controller.extend
-	updatedProjects: (->
+	updatedProjects: Ember.observer 'projects.[]', ->
 		projects = @get 'projects'
 		if projects.get('length') > 0
 			projects.setEach 'active', false
 			projects.get('firstObject').set 'active', true
-	).observes('projects.[]')
 
 	actions:
 		showActiveProject: ->

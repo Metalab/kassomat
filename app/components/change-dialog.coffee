@@ -5,7 +5,7 @@ ChangeDialogComponent = Ember.Component.extend
 
 	levels: null
 	units: null
-	levelsUpdated: (->
+	levelsUpdated: Ember.observer 'levels', ->
 		levels = @get('levels')
 		units = @get 'units'
 		if levels
@@ -24,25 +24,22 @@ ChangeDialogComponent = Ember.Component.extend
 						crossedout: level.count == 0
 		else
 			@set 'units', []
-	).observes('levels')
 
 	generateUnits: (->
 		@store.findAll('DenominationLevel').then (levels) =>
 			@set 'levels', levels
 	).on('init')
 
-	sum: (->
+	sum: Ember.computed 'untis.@each.count', ->
 		value = 0
 		units = @get('units')
 		if units
 			units.forEach (unit) ->
 				value += unit.get('count') * unit.get('denomination')
 		return value
-	).property('units.@each.count')
 
-	disabled: (->
+	disabled: Ember.computed 'sum', 'userinfo.credits', ->
 		@get('sum') == 0 or @get('sum') > @get('userinfo.credits')
-	).property('sum', 'userinfo.credits')
 
 	actions:
 		addUnit: (unit) ->

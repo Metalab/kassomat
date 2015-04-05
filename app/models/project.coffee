@@ -9,8 +9,7 @@ Project = DS.Model.extend
         defaultValue: false
         transient: true
 
-    imageURL: (->
+    imageURL: Ember.computed 'image', ->
         "images/projects/" + @get('image')
-    ).property('image')
 
 `export default Project`
