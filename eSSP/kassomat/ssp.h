@@ -22,12 +22,19 @@ typedef enum {
 	sspResultTimeout = 0xFF
 } sspResult;
 
+typedef enum {
+	sspPayoutNotEnoughValue = 0,
+	sspPayoutCannotPayExact = 1,
+	sspPayoutDeviceBusy = 3,
+	sspPayoutDeviceDisabled = 4
+} sspPayoutResult;
+
 bool sspConnectToValidator(const char * const device);
 void sspPoll(int fd, short event, void *arg);
 
 sspResult sspEmpty(void);
 sspResult sspGetAllLevels(uint8_t *count, struct SSPDenomination **levels); // *levels must NOT be freed!
-sspResult sspPayout(int value);
+sspResult sspPayout(uint32_t value, bool test, sspPayoutResult *error); // error only set when result == sspResultCommandNotProcessed
 sspResult sspPayoutByDenomination(unsigned count, const struct SSPDenomination * const denominationList, bool test);
 sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b);
 

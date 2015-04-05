@@ -298,8 +298,26 @@ sspResult sspGetAllLevels(uint8_t *count, struct SSPDenomination **levels) {
 	return sspResultOk;
 }
 
-sspResult sspPayout(int value) {
-	return sspResultOk;
+sspResult sspPayout(uint32_t value, bool test, sspPayoutResult *error) {
+	sspC.CommandDataLength = 9;
+	sspC.CommandData[0] = SSP_CMD_PAYOUT_VALUE;
+	sspC.CommandData[1] = value & 0xff;
+	sspC.CommandData[2] = (value >> 8) & 0xff;
+	sspC.CommandData[3] = (value >> 16) & 0xff;
+	sspC.CommandData[4] = (value >> 24) & 0xff;
+	sspC.CommandData[5] = 'E';
+	sspC.CommandData[6] = 'U';
+	sspC.CommandData[7] = 'R';
+	sspC.CommandData[8] = test?0x19:0x58;
+
+	if(send_ssp_command(&sspC) == 0) {
+		return sspResultTimeout;
+	}
+	if(sspC.ResponseData[0] == SSP_RESPONSE_COMMAND_NOT_PROCESSED) {
+		*error = (sspPayoutResult)sspC.ResponseData[1];
+		return sspResultCommandNotProcessed;
+	}
+	return (sspResult)sspC.ResponseData[0];
 }
 
 sspResult sspPayoutByDenomination(unsigned count, const struct SSPDenomination * const denominationList, bool test) {
