@@ -320,8 +320,34 @@ sspResult sspPayout(uint32_t value, bool test, sspPayoutResult *error) {
 	return (sspResult)sspC.ResponseData[0];
 }
 
-sspResult sspPayoutByDenomination(unsigned count, const struct SSPDenomination * const denominationList, bool test) {
-	return sspResultOk;
+sspResult sspPayoutByDenomination(uint8_t count, const struct SSPDenomination * const denominationList, bool test, sspPayoutResult *error) {
+	if(count > 28) {
+		return sspResultInvalidParameter;
+	}
+	sspC.CommandDataLength = 3 + count * 9;
+	sspC.CommandData[0] = SSP_CMD_PAYOUT_BY_DENOMINATION;
+	sspC.CommandData[1] = count;
+	for(uint8_t i = 0; i < count; ++i) {
+		sspC.CommandData[2+i*9+0] = denominationList[i].count & 0xff;
+		sspC.CommandData[2+i*9+1] = (denominationList[i].count >> 8) & 0xff;
+		sspC.CommandData[2+i*9+2] = denominationList[i].value & 0xff;
+		sspC.CommandData[2+i*9+3] = (denominationList[i].value >> 8) & 0xff;
+		sspC.CommandData[2+i*9+4] = (denominationList[i].value >> 16) & 0xff;
+		sspC.CommandData[2+i*9+5] = (denominationList[i].value >> 24) & 0xff;
+		sspC.CommandData[2+i*9+6] = 'E';
+		sspC.CommandData[2+i*9+7] = 'U';
+		sspC.CommandData[2+i*9+8] = 'R';
+	}
+	sspC.CommandData[2+count*9] = test?0x19:0x58;
+
+	if(send_ssp_command(&sspC) == 0) {
+		return sspResultTimeout;
+	}
+	if(sspC.ResponseData[0] == SSP_RESPONSE_COMMAND_NOT_PROCESSED) {
+		*error = (sspPayoutResult)sspC.ResponseData[1];
+		return sspResultCommandNotProcessed;
+	}
+	return (sspResult)sspC.ResponseData[0];
 }
 
 sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b) {
