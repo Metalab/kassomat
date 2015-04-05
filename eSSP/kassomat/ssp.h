@@ -36,7 +36,7 @@ sspResult sspEmpty(void);
 sspResult sspGetAllLevels(uint8_t *count, struct SSPDenomination **levels); // *levels must NOT be freed!
 sspResult sspPayout(uint32_t value, bool test, sspPayoutResult *error); // error only set when result == sspResultCommandNotProcessed
 sspResult sspPayoutByDenomination(uint8_t count, const struct SSPDenomination * const denominationList, bool test, sspPayoutResult *error); // see above
-sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b);
+sspResult sspConfigureBezel(uint8_t r, uint8_t g, uint8_t b, bool store);
 
 void sspCleanup(void);
 

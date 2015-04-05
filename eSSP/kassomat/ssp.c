@@ -350,6 +350,16 @@ sspResult sspPayoutByDenomination(uint8_t count, const struct SSPDenomination * 
 	return (sspResult)sspC.ResponseData[0];
 }
 
-sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b) {
-	return sspResultOk;
+sspResult sspConfigureBezel(uint8_t r, uint8_t g, uint8_t b, bool store) {
+	sspC.CommandDataLength = 5;
+	sspC.CommandData[0] = SSP_CMD_CONFIGURE_BEZEL;
+	sspC.CommandData[1] = r;
+	sspC.CommandData[2] = g;
+	sspC.CommandData[3] = b;
+	sspC.CommandData[4] = store?1:0;
+
+	if(send_ssp_command(&sspC) == 0) {
+		return sspResultTimeout;
+	}
+	return (sspResult)sspC.ResponseData[0];
 }
