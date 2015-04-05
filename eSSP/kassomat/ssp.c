@@ -263,3 +263,29 @@ void parse_poll(SSP_POLL_DATA6 * poll) {
 		}
 	}
 }
+
+sspResult sspEmpty(void) {
+	sspC.CommandDataLength = 1;
+	sspC.CommandData[0] = SSP_CMD_EMPTY;
+
+	if(send_ssp_command(&sspC) == 0) {
+		return sspResultTimeout;
+	}
+	return (sspResult)sspC.ResponseData[0];
+}
+
+sspResult sspGetAllLevels(void) {
+	return sspResultOk;
+}
+
+sspResult sspPayout(int value) {
+	return sspResultOk;
+}
+
+sspResult sspPayoutByDenomination(unsigned count, const struct SSPDenomination * const denominationList, bool test) {
+	return sspResultOk;
+}
+
+sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b) {
+	return sspResultOk;
+}
