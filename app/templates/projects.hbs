@@ -12,7 +12,7 @@
 			<tbody>
 				{{#each project in model}}
 					<tr class="project" {{action 'showProject' project}}>
-						<td class="image"><img {{bind-attr src=project.imageURL alt=project.name}}></td>
+						<td class="image"><img src="{{project.imageURL}}" alt="{{project.name}}"></td>
 						<td class="name">{{project.name}}</td>
 						<td class="teaser">{{project.teaser}}</td>
 					</tr>

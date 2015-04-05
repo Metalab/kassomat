@@ -8,7 +8,7 @@
 			<div class="units">
 				{{#each unit in units}}
 					<div class="unit">
-						<img {{bind-attr src=unit.url alt=unit.denomination}} {{action 'addUnit' unit}}>
+						<img src="{{unit.url}}" alt="{{unit.denomination}}" {{action 'addUnit' unit}}>
 						{{#if unit.crossedout}}
 							<span class="crossedout">X</span>
 						{{/if}}
@@ -26,7 +26,7 @@
 			{{/if}}
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-success btn-lg" data-dismiss="modal" {{bind-attr disabled=disabled}} {{action 'accept'}}>Accept</button>
+			<button type="button" class="btn btn-success btn-lg" data-dismiss="modal" disabled="{{disabled}}" {{action 'accept'}}>Accept</button>
 			<button type="button" class="btn btn-cancel btn-lg" data-dismiss="modal">Cancel</button>
 		</div>
 	</div>
