@@ -274,7 +274,27 @@ sspResult sspEmpty(void) {
 	return (sspResult)sspC.ResponseData[0];
 }
 
-sspResult sspGetAllLevels(void) {
+sspResult sspGetAllLevels(uint8_t *count, struct SSPDenomination **levels) {
+	static struct SSPDenomination levelsBuffer[28]; // can't be more than 28, because the maximum response size is 255 bytes, and a single record is 9 bytes long
+	sspC.CommandDataLength = 1;
+	sspC.CommandData[0] = SSP_CMD_GET_ALL_LEVELS;
+
+	if(send_ssp_command(&sspC) == 0) {
+		return sspResultTimeout;
+	}
+	if(sspC.ResponseData[0] != SSP_RESPONSE_OK) {
+		return (sspResult)sspC.ResponseData[0];
+	}
+	*count = sspC.ResponseData[1];
+	if(*count > 28) {
+		*count = 28;
+	}
+	*levels = levelsBuffer;
+	for(uint8_t i = 0; i < *count; ++i) {
+		levelsBuffer[i].count = sspC.ResponseData[1+i*9+1] << 8 | (uint16_t)sspC.ResponseData[1+i*9+0];
+		levelsBuffer[i].value = sspC.ResponseData[1+i*9+5] << 24 | sspC.ResponseData[1+i*9+4] << 16 | sspC.ResponseData[1+i*9+3] << 8 | (uint16_t)sspC.ResponseData[1+i*9+2];
+		// ignore currency
+	}
 	return sspResultOk;
 }
 

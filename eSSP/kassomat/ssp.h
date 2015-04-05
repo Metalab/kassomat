@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 struct SSPDenomination {
-	unsigned long value;
-	unsigned long count;
+	uint32_t value;
+	uint16_t count;
 };
 
 typedef enum {
@@ -26,7 +26,7 @@ bool sspConnectToValidator(const char * const device);
 void sspPoll(int fd, short event, void *arg);
 
 sspResult sspEmpty(void);
-sspResult sspGetAllLevels(void);
+sspResult sspGetAllLevels(uint8_t *count, struct SSPDenomination **levels); // *levels must NOT be freed!
 sspResult sspPayout(int value);
 sspResult sspPayoutByDenomination(unsigned count, const struct SSPDenomination * const denominationList, bool test);
 sspResult sspSetBezel(unsigned char r, unsigned char g, unsigned char b);
