@@ -20,7 +20,7 @@ module.exports = function(environment) {
     contentSecurityPolicy: {
         'connect-src': "*",
         'font-src': "*",
-        'style-src': "*"
+        'style-src': "* 'unsafe-inline'"
     }
   };
 
