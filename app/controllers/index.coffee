@@ -1,13 +1,27 @@
 `import Ember from 'ember'`
 
 IndexController = Ember.Controller.extend
-	updatedProjects: Ember.observer 'projects.[]', ->
-		projects = @get 'projects'
+	updatedProjects: Ember.observer 'model.[]', ->
+		projects = @get 'model'
 		if projects.get('length') > 0
 			projects.setEach 'active', false
 			projects.get('firstObject').set 'active', true
 
+	_currentProjectIndex: 0
+	currentProjectIndex: Ember.computed '_currentProjectIndex', (key, value) ->
+		if value != undefined
+			if value < 0
+				value = @get('model.length') - 1
+			@set '_currentProjectIndex', (value % @get('model.length'))
+		@get '_currentProjectIndex'
+	currentProject: Ember.computed 'model.[]', 'currentProjectIndex', ->
+		@get('model').objectAt @get('currentProjectIndex')
+
 	actions:
+		next: ->
+			@incrementProperty 'currentProjectIndex'
+		prev: ->
+			@decrementProperty 'currentProjectIndex'
 		showActiveProject: ->
 			projectId = $('#carousel-projects .item.active').data('id')
 			@transitionToRoute 'projectinfo', projectId

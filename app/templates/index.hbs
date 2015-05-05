@@ -1,26 +1,24 @@
 <div class="column1">
 	<div class="title">Projects
-		<button class="btn btn-default" href="#carousel-projects" data-slide="next"><span class="glyphicon glyphicon-triangle-right"></span></button>
-		<button class="btn btn-default" href="#carousel-projects" data-slide="prev"><span class="glyphicon glyphicon-triangle-left"></span></button>
-		<button class="btn btn-default" {{action 'showProjects'}}><span class="glyphicon glyphicon-th-list"></span></button>
+		<div class="ui button inverted" {{action 'next'}}><i class="chevron right icon"></i></div>
+		<div class="ui button inverted" {{action 'prev'}}><i class="chevron left icon"></i></div>
+		<div class="ui button inverted" {{action 'showProjects'}}><i class="list ul icon"></i></div>
 	</div>
-	<div id="carousel-projects" class="project carousel slide" data-ride="carousel" data-interval="5000" {{action 'showActiveProject'}}>
-		<div class="carousel-inner" role="listbox">
-			{{#each project in model}}
-				<div {{bind-attr class=":item project.active" data-id=project.id}}>
-					<img class="teaserimage" {{bind-attr src="project.imageURL" alt="project.name"}}>
-					<div class="project-name">{{project.name}}</div>
-					<div class="project-teaser">{{project.teaser}}</div>
-				</div>
-			{{/each}}
-		</div>
+	<div id="carousel-projects" class="project" {{action 'showActiveProject'}}>
+		{{#with currentProject as project}}
+			<div class="item">
+				<img class="teaserimage" src={{project.imageURL}} alt={{project.name}}>
+				<div class="project-name">{{project.name}}</div>
+				<div class="project-teaser">{{project.teaser}}</div>
+			</div>
+		{{/with}}
 	</div>
 	<a class="project-link" {{action 'showActiveProject'}}></a>
 </div>
 <div class="separator"></div>
 <div class="column2">
 	<div class="title">Metafridge
-		<button class="btn btn-default" {{action 'showDrinks'}}><span class="glyphicon glyphicon-th-list"></span></button>
+		<div class="ui button inverted" {{action 'showDrinks'}}><i class="list ul icon"></i></div>
 	</div>
 	<div class="items">
 		<a class="btn premium item" {{action 'buyPremium'}}><span class="price">{{money 300}}</span></a>
