@@ -12,8 +12,8 @@
     "ember-qunit": "0.3.1",
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
-    "bootstrap-sass-official": "~3.3.3",
-    "ember-sockets": "~0.6.10"
+    "ember-sockets": "~0.6.10",
+    "semantic-ui": "~1.12.2"
   },
   "resolutions": {
     "jquery": "^2.1.3",

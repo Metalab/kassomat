@@ -1,5 +1,5 @@
 <div class="page">
 	<div class="main">{{outlet}}</div>
-	<div class="sidebar">{{render "sidebar" userinfo}}</div>
+	{{kassomat-sidebar model=userinfo}}
 </div>
 {{money-dialog userinfo=userinfo id="moneydialog"}}

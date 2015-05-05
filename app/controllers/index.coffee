@@ -1,6 +1,6 @@
 `import Ember from 'ember'`
 
-OverviewController = Ember.Controller.extend
+IndexController = Ember.Controller.extend
 	updatedProjects: Ember.observer 'projects.[]', ->
 		projects = @get 'projects'
 		if projects.get('length') > 0
@@ -35,4 +35,4 @@ OverviewController = Ember.Controller.extend
 				name: 'coffee'
 
 
-`export default OverviewController`
+`export default IndexController`

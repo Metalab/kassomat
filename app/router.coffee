@@ -5,10 +5,8 @@ Router = Ember.Router.extend
     location: config.locationType
 
 Router.map ->
-    @route 'overview',
-        path: '/'
     @route 'projects'
     @route 'projectinfo',
-        path: '/projects/:id'
+        path: '/project/:id'
 
 `export default Router`

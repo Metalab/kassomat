@@ -1,0 +1,13 @@
+{{#if model.username}}
+	<div class="user"><button class="ui inverted button logout" {{action "logout"}}><span class="glyphicon glyphicon-log-out"></span></button> {{model.username}}</div>
+{{/if}}
+<div class="credits"><span class="title">Credits</span><br>{{money model.credits}}</div>
+{{#if model.credits}}
+	<div class="spacer"></div>
+	<div class="donate ui inverted button sidebar-btn" {{action "donate"}}>Donate</div>
+	<div class="change ui inverted button sidebar-btn">Change</div>
+	<div class="return ui inverted red button sidebar-btn" {{action "return"}}>Return</div>
+{{else}}
+	{{insert-coin}}
+{{/if}}
+{{!-- {{change-dialog userinfo=model store=store id="changedialog"}} --}}

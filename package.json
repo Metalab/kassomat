@@ -25,7 +25,6 @@
     "ember-cli": "0.2.3",
     "ember-cli-app-version": "0.3.3",
     "ember-cli-babel": "^5.0.0",
-    "ember-cli-bootstrap-sassy": "0.0.12",
     "ember-cli-coffeescript": "0.9.1",
     "ember-cli-content-security-policy": "0.4.0",
     "ember-cli-dependency-checker": "0.0.8",
@@ -38,7 +37,8 @@
     "ember-export-application-global": "^1.0.2",
     "express": "^4.8.5",
     "glob": "^4.4.2",
-    "morgan": "^1.5.1"
+    "morgan": "^1.5.1",
+    "semantic-ui-ember": "0.0.1-rc.8"
   },
   "dependencies": {
     "body-parser": "^1.12.0",

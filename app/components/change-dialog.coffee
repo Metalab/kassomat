@@ -26,11 +26,11 @@ ChangeDialogComponent = Ember.Component.extend
 			@set 'units', []
 
 	generateUnits: (->
-		@store.findAll('DenominationLevel').then (levels) =>
-			@set 'levels', levels
+		# @store.findAll('DenominationLevel').then (levels) =>
+		# 	@set 'levels', levels
 	).on('init')
 
-	sum: Ember.computed 'untis.@each.count', ->
+	sum: Ember.computed 'units.@each.count', ->
 		value = 0
 		units = @get('units')
 		if units

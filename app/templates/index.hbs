@@ -6,7 +6,7 @@
 	</div>
 	<div id="carousel-projects" class="project carousel slide" data-ride="carousel" data-interval="5000" {{action 'showActiveProject'}}>
 		<div class="carousel-inner" role="listbox">
-			{{#each project in projects}}
+			{{#each project in model}}
 				<div {{bind-attr class=":item project.active" data-id=project.id}}>
 					<img class="teaserimage" {{bind-attr src="project.imageURL" alt="project.name"}}>
 					<div class="project-name">{{project.name}}</div>
