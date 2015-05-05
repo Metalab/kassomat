@@ -5,13 +5,11 @@
 		<div class="ui button inverted" {{action 'showProjects'}}><i class="list ul icon"></i></div>
 	</div>
 	<div id="carousel-projects" class="project" {{action 'showActiveProject'}}>
-		{{#with currentProject as project}}
-			<div class="item">
-				<img class="teaserimage" src={{project.imageURL}} alt={{project.name}}>
-				<div class="project-name">{{project.name}}</div>
-				<div class="project-teaser">{{project.teaser}}</div>
-			</div>
-		{{/with}}
+		{{#liquid-with currentProject as project class="carousel-item"}}
+			<img class="teaserimage" src={{project.imageURL}} alt={{project.name}}>
+			<div class="project-name">{{project.name}}</div>
+			<div class="project-teaser">{{project.teaser}}</div>
+		{{/liquid-with}}
 	</div>
 	<a class="project-link" {{action 'showActiveProject'}}></a>
 </div>

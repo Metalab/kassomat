@@ -37,6 +37,7 @@
     "ember-export-application-global": "^1.0.2",
     "express": "^4.8.5",
     "glob": "^4.4.2",
+    "liquid-fire": "^0.19.3",
     "morgan": "^1.5.1",
     "semantic-ui-ember": "0.0.1-rc.8"
   },
