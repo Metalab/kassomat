@@ -27,5 +27,11 @@ Transitions = ->
 		@use('toUp'),
 		@reverse('toDown')
 	)
+	@transition(
+		@fromRoute('index'),
+		@toRoute('projects'),
+		@use('crossFade'),
+		@reverse('crossFade')
+	)
 
 `export default Transitions`

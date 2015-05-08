@@ -84,148 +84,150 @@ button {
 }
 $mainbackground: white;
 .main {
-	position: relative;
-	background-color: $mainbackground;
-	flex-grow: 1;
+  flex-grow: 1;
+  position: relative;
+  background-color: $mainbackground;
 
-	display: flex;
-	.column2 {
-		flex-grow: 32;
-		display: flex;
-		flex-direction: column;
-		flex-flow: space-around;
+  &> div {
+  	display: flex;
+  	.column2 {
+  		flex-grow: 32;
+  		display: flex;
+  		flex-direction: column;
+  		flex-flow: space-around;
 
-		.items {
-			display: flex;
-			flex-wrap: wrap;
+  		.items {
+  			display: flex;
+  			flex-wrap: wrap;
 
-			.item {
-				background-color: gray;
-				padding: 5px;
-				border: 5px solid $mainbackground;
-				height: 95px;
+  			.item {
+  				background-color: gray;
+  				padding: 5px;
+  				border: 5px solid $mainbackground;
+  				height: 95px;
 
-				flex-shrink: 0;
-				flex-basis: 100%;
+  				flex-shrink: 0;
+  				flex-basis: 100%;
 
-				position: relative;
+  				position: relative;
 
-				background-size: contain;
-				background-repeat: no-repeat;
-				background-position: center;
+  				background-size: contain;
+  				background-repeat: no-repeat;
+  				background-position: center;
 
-				&.premium {
-					background-image: url(../images/drinks/premium.jpg);
-				}
-				&.mate {
-					background-image: url(../images/drinks/mate.jpg);
-				}
-				&.pop {
-					background-image: url(../images/drinks/pop.jpg);
-				}
-				&.water {
-					background-image: url(../images/drinks/water.jpg);
-				}
-				&.coffee {
-					background-image: url(../images/drinks/coffee.jpg);
-				}
+  				&.premium {
+  					background-image: url(../images/drinks/premium.jpg);
+  				}
+  				&.mate {
+  					background-image: url(../images/drinks/mate.jpg);
+  				}
+  				&.pop {
+  					background-image: url(../images/drinks/pop.jpg);
+  				}
+  				&.water {
+  					background-image: url(../images/drinks/water.jpg);
+  				}
+  				&.coffee {
+  					background-image: url(../images/drinks/coffee.jpg);
+  				}
 
-				.price {
-					position: absolute;
-					right: 10px;
-					bottom: 10px;
-					color: white;
-					font-size: 20pt;
-					font-weight: bold;
-					text-shadow: 0px 0px 4px black;
-				}
+  				.price {
+  					position: absolute;
+  					right: 10px;
+  					bottom: 10px;
+  					color: white;
+  					font-size: 20pt;
+  					font-weight: bold;
+  					text-shadow: 0px 0px 4px black;
+  				}
 
-				&.coffee, &.water {
-					flex-basis: 50%;
-				}
+  				&.coffee, &.water {
+  					flex-basis: 50%;
+  				}
 
-				&.lazzzor, &.cuttr, &.printer3d, &.printer2d {
-					text-align: center;
-					font-size: 10pt;
-					flex-basis: auto;
-					flex-shrink: 1;
-					flex-grow: 1;
-				}
+  				&.lazzzor, &.cuttr, &.printer3d, &.printer2d {
+  					text-align: center;
+  					font-size: 10pt;
+  					flex-basis: auto;
+  					flex-shrink: 1;
+  					flex-grow: 1;
+  				}
 
-				&.lazzzor {
-					background-image: url(../images/jobs/lazzzor.jpg);
-				}
-				&.cuttr {
-					background-image: url(../images/jobs/cuttr.jpg);
-				}
-				&.printer3d {
-					background-image: url(../images/jobs/printer3d.jpg);
-				}
-				&.printer2d {
-					background-image: url(../images/jobs/printer2d.jpg);
-				}
-			}
-		}
-	}
-	.separator {
-		flex-grow: 1;
-		background-color: black;
-		border: 5px solid $mainbackground;
-		border-top-width: 10px;
-		border-bottom-width: 10px;
-	}
-	.column1 {
-		width: 500px;
-		display: flex;
-		flex-direction: column;
-		flex-flow: space-around;
+  				&.lazzzor {
+  					background-image: url(../images/jobs/lazzzor.jpg);
+  				}
+  				&.cuttr {
+  					background-image: url(../images/jobs/cuttr.jpg);
+  				}
+  				&.printer3d {
+  					background-image: url(../images/jobs/printer3d.jpg);
+  				}
+  				&.printer2d {
+  					background-image: url(../images/jobs/printer2d.jpg);
+  				}
+  			}
+  		}
+  	}
+  	.separator {
+  		flex-grow: 1;
+  		background-color: black;
+  		border: 5px solid $mainbackground;
+  		border-top-width: 10px;
+  		border-bottom-width: 10px;
+  	}
+  	.column1 {
+  		width: 500px;
+  		display: flex;
+  		flex-direction: column;
+  		flex-flow: space-around;
 
-		.project {
-			flex-grow: 2;
-			margin: 5px;
+  		.project {
+  			flex-grow: 2;
+  			margin: 5px;
 
-			.teaserimage {
-				width: 500px;
-				height: 281px;
-			}
-			.project-name {
-				position: absolute;
-				top: 250px;
-				left: 5px;
+  			.teaserimage {
+  				width: 500px;
+  				height: 281px;
+  			}
+  			.project-name {
+  				position: absolute;
+  				top: 250px;
+  				left: 5px;
 
-				font-size: 20pt;
-				font-weight: bold;
-				text-shadow: 0px 0px 4px black;
-				color: white;
-			}
-			.project-teaser {
-				margin-top: 10px;
-			}
-		}
-		.project-link {
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
+  				font-size: 20pt;
+  				font-weight: bold;
+  				text-shadow: 0px 0px 4px black;
+  				color: white;
+  			}
+  			.project-teaser {
+  				margin-top: 10px;
+  			}
+  		}
+  		.project-link {
+  			background-size: contain;
+  			background-repeat: no-repeat;
+  			background-position: center;
 
-			background-image: url(../images/wouldyoulike.png);
-			width: 500px;
-			height: 35px;
-		}
-	}
-	.title {
-		background-color: #EB431C;
-		text-transform: uppercase;
-		color: white;
-		font-size: 20pt;
-		font-weight: bold;
-		margin: 5px;
-		padding: 5px;
+  			background-image: url(../images/wouldyoulike.png);
+  			width: 500px;
+  			height: 35px;
+  		}
+  	}
+  	.title {
+  		background-color: #EB431C;
+  		text-transform: uppercase;
+  		color: white;
+  		font-size: 20pt;
+  		font-weight: bold;
+  		margin: 5px;
+  		padding: 5px;
 
-		.button {
-			float: right;
-			margin: 5px;
-		}
-	}
+  		.button {
+  			float: right;
+  			margin: 5px;
+  		}
+  	}
+  }
 }
 .projectspage {
 	position: absolute;
