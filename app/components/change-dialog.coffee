@@ -1,64 +1,87 @@
 `import Ember from 'ember'`
 
 ChangeDialogComponent = Ember.Component.extend
-	classNames: ['modal', 'fade']
+  classNames: ['modal', 'ui', 'change-dialog']
+  tagName: 'div'
 
-	levels: null
-	units: null
-	levelsUpdated: Ember.observer 'levels', ->
-		levels = @get('levels')
-		units = @get 'units'
-		if levels
-			@set 'units', levels.filterBy('count').map (level) ->
-				if units
-					oldUnit = units.findBy('denomination', level.id)
-					if oldUnit
-						oldUnit.set 'crossedout', level.count <= oldUnit.count
-				else
-					oldUnit = null
+  levels: null
+  units: null
+  levelsUpdated: Ember.observer 'levels', ->
+    levels = @get('levels')
+    units = @get 'units'
+    if levels
+      @set 'units', levels.filterBy('count').map (level) ->
+        if units
+          oldUnit = units.findBy('denomination', level.id)
+          if oldUnit
+            oldUnit.set 'crossedout', level.count <= oldUnit.count
+        else
+          oldUnit = null
 
-				oldUnit || Ember.Object.create
-						denomination: level.id
-						url: "images/euros/" + level.id + ".png"
-						count: 0
-						crossedout: level.count == 0
-		else
-			@set 'units', []
+        oldUnit || Ember.Object.create
+            denomination: level.id
+            url: "images/euros/" + level.id + ".png"
+            count: 0
+            crossedout: level.count == 0
+    else
+      @set 'units', []
 
-	generateUnits: (->
-		# @store.findAll('DenominationLevel').then (levels) =>
-		# 	@set 'levels', levels
-	).on('init')
+  generateUnits: (->
+    # @store.findAll('DenominationLevel').then (levels) =>
+    #   @set 'levels', levels
+  ).on('init')
 
-	sum: Ember.computed 'units.@each.count', ->
-		value = 0
-		units = @get('units')
-		if units
-			units.forEach (unit) ->
-				value += unit.get('count') * unit.get('denomination')
-		return value
+  sum: Ember.computed 'units.@each.count', ->
+    value = 0
+    units = @get('units')
+    if units
+      units.forEach (unit) ->
+        value += unit.get('count') * unit.get('denomination')
+    return value
 
-	disabled: Ember.computed 'sum', 'userinfo.credits', ->
-		@get('sum') == 0 or @get('sum') > @get('userinfo.credits')
+  disabled: Ember.computed 'sum', 'userinfo.credits', ->
+    @get('sum') == 0 or @get('sum') > @get('userinfo.credits')
 
-	actions:
-		addUnit: (unit) ->
-			@store.find('DenominationLevel', unit.denomination).then (level) ->
-				if level.get('count') > unit.get('count')
-					unit.incrementProperty('count')
-				unit.set 'crossedout', level.get('count') <= unit.get('count')
-		removeUnit: (unit) ->
-			if unit.get('count') > 0
-				@store.find('DenominationLevel', unit.denomination).then (level) ->
-					unit.decrementProperty('count')
-					unit.set 'crossedout', level.get('count') <= unit.get('count')
-		accept: ->
-			units = @get('units').filterBy('count').map (u) ->
-				u.getProperties(['denomination', 'count'])
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'action',
-				name: 'change'
-				options: units
+  hideDialog: Ember.on 'didInsertElement', ->
+    @$().modal
+      onHide: =>
+        console.log 'hide'
+        @propertyWillChange 'visible'
+      onHidden: =>
+        console.log 'hidden'
+        @propertyDidChange 'visible'
+
+  visible: Ember.computed (key, value) ->
+    if not @get('element')
+      return false
+    if value
+      @$().modal('show')
+      return true
+    else if value == false
+      @$().modal('hide')
+      return false
+    else
+      console.log "is active =", @$().modal('is active')
+      @$().modal('is active')
+
+  actions:
+    addUnit: (unit) ->
+      @store.find('DenominationLevel', unit.denomination).then (level) ->
+        if level.get('count') > unit.get('count')
+          unit.incrementProperty('count')
+        unit.set 'crossedout', level.get('count') <= unit.get('count')
+    removeUnit: (unit) ->
+      if unit.get('count') > 0
+        @store.find('DenominationLevel', unit.denomination).then (level) ->
+          unit.decrementProperty('count')
+          unit.set 'crossedout', level.get('count') <= unit.get('count')
+    accept: ->
+      units = @get('units').filterBy('count').map (u) ->
+        u.getProperties(['denomination', 'count'])
+      socket = this.container.lookup('socket:main').socket
+      socket.emit 'action',
+        name: 'change'
+        options: units
 
 
 `export default ChangeDialogComponent`

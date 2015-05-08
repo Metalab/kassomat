@@ -1,5 +1,5 @@
 {{#liquid-if model.username class="user"}}
-	<button class="ui inverted button logout" {{action "logout"}}><span class="glyphicon glyphicon-log-out"></span></button> {{model.username}}
+	<button class="ui inverted button logout" {{action "logout"}}><i class="sign out icon"></i></button> {{model.username}}
 {{/liquid-if}}
 <div class="credits"><span class="title">Credits</span><br>{{#liquid-with model.credits as credits class="creditsValue"}}{{money credits}}{{/liquid-with}}
 </div>
@@ -10,4 +10,4 @@
 {{#liquid-if hasMoney class="donate sidebar-action"}}<div class="ui inverted button sidebar-btn" {{action "donate"}}>Donate</div>{{/liquid-if}}
 {{#liquid-if hasMoney class="change sidebar-action"}}<div class="ui inverted button sidebar-btn" {{action "change"}}>Change</div>{{/liquid-if}}
 {{#liquid-if hasMoney class="return sidebar-action"}}<div class="ui inverted red button sidebar-btn" {{action "return"}}>Return</div>{{/liquid-if}}
-{{!-- {{change-dialog userinfo=model store=store id="changedialog"}} --}}
+{{change-dialog visible=showChange userinfo=model store=store id="changedialog"}}
