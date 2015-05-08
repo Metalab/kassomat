@@ -45,7 +45,7 @@ IndexController = Ember.Controller.extend
 		buyWater: ->
 			socket = @get('socket.socket')
 			socket.send JSON.stringify
-			 	eventType: 'buy'
+				eventType: 'buy'
 				name: 'water'
 		buyCoffee: ->
 			socket = @get('socket.socket')
