@@ -73,7 +73,7 @@ SocketAdapter = DS.Adapter.extend
       else
         @doRequest req
 
-      clog Array.prototype.slice.call arguments
+      clog.apply console, Array.prototype.slice.call arguments
     @_super()
 
   makeSocketRequest: (store, eventType, query) ->
