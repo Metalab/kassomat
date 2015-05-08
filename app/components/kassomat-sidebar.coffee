@@ -5,17 +5,25 @@ KassomatSidebarComponent = Ember.Component.extend
 
 	hasMoney: Ember.computed 'model.credits', -> @get('model.credits') != 0
 
-	donate: ->
-		socket = this.container.lookup('socket:main').socket
-		socket.emit 'action',
-			name: 'donate'
-	return: ->
-		socket = this.container.lookup('socket:main').socket
-		socket.emit 'action',
-			name: 'return'
-	logout: ->
-		socket = this.container.lookup('socket:main').socket
-		socket.emit 'action',
-			name: 'logout'
+	showChange: false
+
+	actions:
+		donate: ->
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'action'
+				name: 'donate'
+		change: ->
+			@set 'showChange', true
+		return: ->
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'action'
+				name: 'return'
+		logout: ->
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'action'
+				name: 'logout'
 
 `export default KassomatSidebarComponent`
