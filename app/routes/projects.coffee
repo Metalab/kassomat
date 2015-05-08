@@ -5,8 +5,6 @@ ProjectsRoute = ChildRoute.extend
 	model: -> @store.find('project')
 
 	actions:
-		close: ->
-			@transitionTo 'overview'
 		showProject: (project) ->
 			@transitionTo 'projectinfo', project
 
