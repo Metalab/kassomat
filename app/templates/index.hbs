@@ -1,8 +1,8 @@
 <div class="column1">
 	<div class="title">Projects
-		<div class="ui button inverted" {{action 'next'}}><i class="chevron right icon"></i></div>
-		<div class="ui button inverted" {{action 'prev'}}><i class="chevron left icon"></i></div>
-		{{#link-to 'projects' class="ui button inverted"}}<i class="list ul icon"></i>{{/link-to}}
+		<div class="ui button inverted icon small" {{action 'next'}}><i class="chevron right icon"></i></div>
+		<div class="ui button inverted icon small" {{action 'prev'}}><i class="chevron left icon"></i></div>
+		{{#link-to 'projects' class="ui button inverted icon small"}}<i class="list ul icon"></i>{{/link-to}}
 	</div>
 	<div id="carousel-projects" class="project" {{action 'showActiveProject'}}>
 		{{#liquid-with currentProject as project class="carousel-item"}}
@@ -16,7 +16,7 @@
 <div class="separator"></div>
 <div class="column2">
 	<div class="title">Metafridge
-		<div class="ui button inverted" {{action 'showDrinks'}}><i class="list ul icon"></i></div>
+		<div class="ui button inverted icon small" {{action 'showDrinks'}}><i class="list ul icon"></i></div>
 	</div>
 	<div class="items">
 		<a class="btn premium item" {{action 'buyPremium'}}><span class="price">{{money 300}}</span></a>
