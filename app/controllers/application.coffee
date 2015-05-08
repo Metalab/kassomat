@@ -44,7 +44,7 @@ ApplicationController = Ember.Controller.extend
   sockets:
     userinfo: (record) ->
       @set 'userinfo',
-        username: decodeURI(record.username)
+        username: record.username
         credits: record.credits
     pushData: (data) ->
       payload = Ember.copy data.payload

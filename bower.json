@@ -12,7 +12,6 @@
     "ember-qunit": "0.3.1",
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
-    "ember-sockets": "~0.6.10",
     "semantic-ui": "~1.12.2"
   },
   "resolutions": {

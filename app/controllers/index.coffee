@@ -28,24 +28,29 @@ IndexController = Ember.Controller.extend
 		showProjects: ->
 			@transitionToRoute 'projects'
 		buyPremium: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'buy',
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'buy'
 				name: 'premium'
 		buyMate: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'buy',
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'buy'
 				name: 'mate'
 		buyPop: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'buy',
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'buy'
 				name: 'pop'
 		buyWater: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'buy',
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+			 	eventType: 'buy'
 				name: 'water'
 		buyCoffee: ->
-			socket = this.container.lookup('socket:main').socket
-			socket.emit 'buy',
+			socket = @get('socket.socket')
+			socket.send JSON.stringify
+				eventType: 'buy'
 				name: 'coffee'
 
 
