@@ -16,7 +16,7 @@ ApplicationController = Ember.Controller.extend
     Ember.run.cancel @get 'timer'
 
   transitionToOverview: ->
-    @transitionToRoute 'overview'
+    @transitionToRoute 'index'
 
   debounceOverviewTimer: ->
     if @get('overviewTimerActive')
