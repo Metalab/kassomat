@@ -21,5 +21,11 @@ Transitions = ->
 		@hasClass('money'),
 		@use('toDown')
 	)
+	@transition(
+		@hasClass('sidebar-action'),
+		@toValue(true),
+		@use('toUp'),
+		@reverse('toDown')
+	)
 
 `export default Transitions`

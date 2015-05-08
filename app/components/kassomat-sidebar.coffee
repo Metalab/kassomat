@@ -3,6 +3,8 @@
 KassomatSidebarComponent = Ember.Component.extend
 	classNames: ['sidebar']
 
+	hasMoney: Ember.computed 'model.credits', -> @get('model.credits') != 0
+
 	donate: ->
 		socket = this.container.lookup('socket:main').socket
 		socket.emit 'action',

@@ -3,12 +3,11 @@
 {{/liquid-if}}
 <div class="credits"><span class="title">Credits</span><br>{{#liquid-with model.credits as credits class="creditsValue"}}{{money credits}}{{/liquid-with}}
 </div>
-{{#if model.credits}}
-	<div class="spacer"></div>
-	<div class="donate ui inverted button sidebar-btn" {{action "donate"}}>Donate</div>
-	<div class="change ui inverted button sidebar-btn">Change</div>
-	<div class="return ui inverted red button sidebar-btn" {{action "return"}}>Return</div>
-{{else}}
+{{#unless hasMoney}}
 	{{insert-coin}}
-{{/if}}
+{{/unless}}
+<div class="spacer"></div>
+{{#liquid-if hasMoney class="donate sidebar-action"}}<div class="ui inverted button sidebar-btn" {{action "donate"}}>Donate</div>{{/liquid-if}}
+{{#liquid-if hasMoney class="change sidebar-action"}}<div class="ui inverted button sidebar-btn" {{action "change"}}>Change</div>{{/liquid-if}}
+{{#liquid-if hasMoney class="return sidebar-action"}}<div class="ui inverted red button sidebar-btn" {{action "return"}}>Return</div>{{/liquid-if}}
 {{!-- {{change-dialog userinfo=model store=store id="changedialog"}} --}}
