@@ -17,5 +17,9 @@ Transitions = ->
 		@hasClass('creditsValue'),
 		@use('toDown')
 	)
+	@transition(
+		@hasClass('money'),
+		@use('toDown')
+	)
 
 `export default Transitions`

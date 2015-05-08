@@ -344,8 +344,8 @@ $mainbackground: white;
 	}
 }
 .money-dialog {
-	.modal-body {
-		font-size: 30pt;
+	.content {
+		font-size: 30pt !important;
 		.money {
 			text-align: right;
 			color: red;
