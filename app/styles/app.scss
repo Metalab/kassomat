@@ -254,58 +254,21 @@ $mainbackground: white;
 			top: -5px;
 		}
 	}
-	.listwrapper {
+	.list {
 		position: absolute;
 		left: 5px;
 		right: 5px;
 		top: 55px;
 		bottom: 5px;
-		overflow-y: scroll;
-
-		.list {
-			width: 100%;
-
-			colgroup {
-				.image {
-					width: 100px;
-				}
-				.teaser {
-					width: 400px;
-				}
-			}
-
-			.project {
-				max-width: 100%;
-				margin: 5px 0;
-				td {
-					padding-bottom: 5px;
-				}
-				.image {
-					width: 100px;
-					img {
-						width: 100px;
-						height: 56px;
-					}
-				}
-				.name {
-					max-width: 300px;
-					vertical-align: middle;
-					padding: 0 10px 0 10px;
-					font-size: 20pt;
-					font-weight: bold;
-
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-				}
-				.teaser {
-					max-width: 400px;
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-				}
-			}
-		}
+    overflow-y: scroll;
+    .content {
+      width: calc(100% - 3em);
+      .description {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
 	}
 }
 .change-dialog {

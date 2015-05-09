@@ -2,22 +2,15 @@
 	<div class="title">Projects
 		{{#link-to 'index' class="ui icon button inverted small" }}<i class="remove icon"></i>{{/link-to}}
 	</div>
-	<div class="listwrapper">
-		<table class="list">
-			<colgroup>
-				<col class="image">
-				<col class="name">
-				<col class="teaser">
-			</colgroup>
-			<tbody>
-				{{#each project in model}}
-					<tr class="project" {{action 'showProject' project}}>
-						<td class="image"><img src="{{project.imageURL}}" alt="{{project.name}}"></td>
-						<td class="name">{{project.name}}</td>
-						<td class="teaser">{{project.teaser}}</td>
-					</tr>
-				{{/each}}
-			</tbody>
-		</table>
+	<div class="ui massive list celled selection">
+		{{#each project in model}}
+			<div class="item project" {{action 'showProject' project}}>
+				<img class="ui avatar image" src="{{project.imageURL}}" alt="{{project.name}}">
+				<div class="content">
+					<div class="header">{{project.name}}</div>
+					<div class="description">{{project.teaser}}</div>
+				</div>
+			</div>
+		{{/each}}
 	</div>
 </div>
