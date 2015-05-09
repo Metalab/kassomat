@@ -5,7 +5,7 @@
 	<div class="ui massive list celled selection">
 		{{#each project in model}}
 			<div class="item project" {{action 'showProject' project}}>
-				<img class="ui avatar image" src="{{project.imageURL}}" alt="{{project.name}}">
+				<img class="ui tiny image" src="{{project.imageURL}}" alt="{{project.name}}">
 				<div class="content">
 					<div class="header">{{project.name}}</div>
 					<div class="description">{{project.teaser}}</div>

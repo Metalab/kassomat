@@ -262,7 +262,7 @@ $mainbackground: white;
 		bottom: 5px;
     overflow-y: scroll;
     .content {
-      width: calc(100% - 3em);
+      width: calc(100% - 80px - 0.5em);
       .description {
         white-space: nowrap;
         overflow: hidden;
