@@ -103,9 +103,9 @@ SocketAdapter = DS.Adapter.extend
         since: id
 
   findQuery: (store, type, query) ->
-    @makeSocketRequest store, 'findQuery',
-      type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
-      query: query
+    q = Ember.copy query
+    q.type = type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
+    @makeSocketRequest store, 'findQuery', q
   findMany: (store, type, ids, records) ->
     @makeSocketRequest store, 'findMany',
       type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
