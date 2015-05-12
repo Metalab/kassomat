@@ -6,131 +6,178 @@ db = redis.createClient
 db.on 'error', (error) ->
 	console.log "Database error:", error
 
-require('zappajs') ->
-	@get '/': 'hi'
+WebSocketServer = require('ws').Server
+http = require('http')
+express = require('express')
+app = express()
 
-	@get '/images/projects/:id', (req, res) ->
-		path = "projectimages:" + req.params.id
-		db.hget path, "type", (err, type) ->
-			if err
-				console.error err
-				res.sendStatus(500)
+app.get '/images/projects/:id', (req, res) ->
+	path = "projectimages:" + req.params.id
+	db.hget path, "type", (err, type) ->
+		if err
+			console.error err
+			res.sendStatus(500)
+		else
+			if not type
+				res.sendStatus(404)
 			else
-				if not type
-					res.sendStatus(404)
-				else
-					db.hget path, new Buffer("data"), (err, imageData) ->
-						if err
-							console.error "[Project Images " + req.params.id + "]:", err
-							res.sendStatus(500)
+				db.hget path, new Buffer("data"), (err, imageData) ->
+					if err
+						console.error "[Project Images " + req.params.id + "]:", err
+						res.sendStatus(500)
+					else
+						if not imageData
+							res.sendStatus(404)
 						else
-							if not imageData
-								res.sendStatus(404)
-							else
-								res.type type
-								res.send imageData
+							res.type type
+							res.send imageData
 
-	@io.sockets.on 'connection', (socket) ->
-		console.log "Socket connected!"
+server = http.createServer app
+server.listen 3000
 
-		# A new client needs userinfo pushed
-		db.hgetall "userinfo", (err, userinfo) ->
-			if err
-				console.error err
+wss = new WebSocketServer
+	server: server
+	path: "/ws"
+
+wss.on 'connection', (ws) ->
+	console.log "Socket connected!"
+	if ws.protocol != "kassomat"
+		console.error "Invalid protocol:", ws.protocol
+		ws.close()
+		return
+
+	# A new client needs userinfo pushed
+	db.hgetall "userinfo", (err, userinfo) ->
+		if err
+			console.error err
+		else
+			ws.send JSON.stringify
+				command: 'userinfo'
+				username: userinfo.username
+				credits: parseInt userinfo.credits
+
+	ws.on 'message', (message) ->
+		data = JSON.parse message
+		console.log 'received: %s', JSON.stringify data, true, 2
+
+		switch data.eventType
+			when 'findAll'
+				console.log "findAll " + JSON.stringify data.query, true, 2
+				db.keys 'entity:' + data.query.type + ":*", (err, keys) ->
+					if err
+						console.error "[findAll " + data.query.type + "]:", err
+						ws.send JSON.stringify
+							command: 'reply'
+							id: data.id
+							status: 0
+							error: err
+					else
+						console.log "Entity " + data.query.type + ":", JSON.stringify(keys)
+						keysRemaining = keys.length
+						results = []
+						keys.forEach (key) ->
+							db.hgetall key, (err, reply) ->
+								if keysRemaining > 0
+									if err
+										keysRemaining = -1
+										console.error "[findAll " + key + "]:", err
+										ws.send JSON.stringify
+											command: 'reply'
+											id: data.id
+											status: 0
+											error: err
+									else
+										keysRemaining--
+										reply.id = key.split(":")[2]
+										results.push reply
+										if keysRemaining == 0
+											ws.send JSON.stringify
+												command: 'reply'
+												id: data.id
+												status: 1
+												content: results
+			when 'find', 'findQuery'
+				console.error "[" + data.eventType + " " + data.query.type + ":" + data.query.id + "]"
+				db.hgetall "entity:" + data.query.type + ":" + data.query.id, (err, reply) ->
+					if err
+						console.error "[find " + data.query.type + ":" + data.query.id + "]:", err
+						ws.send JSON.stringify
+							command: 'reply'
+							id: data.id
+							status: 0
+							error: err
+					else
+						if not reply
+							ws.send JSON.stringify
+								command: 'reply'
+								id: data.id
+								status: 1
+						else
+							reply.id = data.id
+							ws.send JSON.stringify
+								command: 'reply'
+								id: data.id
+								status: 1
+								content: reply
+			when 'action'
+				db.publish 'action', JSON.stringify data
+			when 'buy'
+				if data.name
+					db.publish 'buy', data.name
+				else
+					console.error "Incorrect number of arguments in buy action"
+			when 'log'
+				timestamp = new Date()
+				console.log '[log]', data.message
+				db.lpush 'log', JSON.stringify
+					source: 'frontend'
+					timestamp: timestamp.getTime() / 1000
+					message: data.message
 			else
-				socket.emit 'userinfo',
-					username: encodeURI(userinfo.username)
-					credits: parseInt userinfo.credits
+				console.error "Unknown command received: ", data.eventType
 
-		subscriptions = redis.createClient()
-		subscriptions.on "message", (channel, message) ->
-			if channel == "__keyevent@0__:hset"
-				if message == "userinfo"
-					db.hgetall "userinfo", (err, reply) ->
-						if err
-							console.error "Failed fetching userinfo:", err
-						else
-							socket.emit 'userinfo',
-								username: encodeURI(reply.username)
-								credits: parseInt(reply.credits)
-				else if message.slice(0, "entity:".length) == "entity:"
-					db.hgetall message, (err, reply) ->
-						if err
-							console.error "Failed fetching entity:" + message + ":", err
-						else
-							parts = message.split(":")
-							payload = extend {}, reply
-							payload.id = parts[2]
-							socket.emit 'pushData',
-								type: parts[1]
-								payload: [ Object.keys(payload).reduce(((prev,cur) -> prev[cur] = encodeURI(payload[cur]); prev), {}) ]
-			else if channel == "__keyevent@0__:del"
-				if message.slice(0, "entity:".length) == "entity:"
-					parts = message.split(":")
-					socket.emit 'delete',
-						type: parts[1]
-						ids: [ encodeURI(parts[2]) ]
-			else if channel == "frontend"
-				socket.emit 'message', encodeURI(message)
-		subscriptions.subscribe "frontend"
-		subscriptions.subscribe "__keyevent@0__:hset"
-		subscriptions.subscribe "__keyevent@0__:del"
+	ws.on 'disconnect', ->
+		subscriptions.end()
 
-		socket.on 'findAll', (data, callback) ->
-			console.log "findAll " + JSON.stringify(data)
-			db.keys 'entity:' + data.type + ":*", (err, keys) ->
+subscriptions = redis.createClient()
+subscriptions.on "message", (channel, message) ->
+	if channel == "__keyevent@0__:hset"
+		if message == "userinfo"
+			db.hgetall "userinfo", (err, reply) ->
 				if err
-					console.error "[findAll " + data.type + "]:", err
-					callback
-						status: 0
-						error: err
+					console.error "Failed fetching userinfo:", err
 				else
-					console.log "Entity " + data.type + ":", JSON.stringify(keys)
-					keysRemaining = keys.length
-					results = []
-					keys.forEach (key) ->
-						db.hgetall key, (err, reply) ->
-							if keysRemaining > 0
-								if err
-									keysRemaining = -1
-									console.error "[findAll " + key + "]:", err
-									callback
-										status: 0
-										error: err
-								else
-									keysRemaining--
-									reply.id = key.split(":")[2]
-									results.push Object.keys(reply).reduce(((prev,cur) -> prev[cur] = encodeURI(reply[cur]); prev), {})
-									if keysRemaining == 0
-										callback
-											status: 1
-											content: results
-
-		socket.on 'find', (data, callback) ->
-			db.hgetall "entity:" + data.type + ":" + data.query.id, (err, reply) ->
+					wss.clients.forEach (client) ->
+						client.send JSON.stringify
+							command: 'userinfo'
+							username: reply.username
+							credits: parseInt(reply.credits)
+		else if message.slice(0, "entity:".length) == "entity:"
+			db.hgetall message, (err, reply) ->
 				if err
-					console.error "[find " + data.type + ":" + data.query.id + "]:", err
-					callback
-						status: 0
-						error: err
+					console.error "Failed fetching entity:" + message + ":", err
 				else
-					reply.id = data.query.id
-					callback
-						status: 1
-						content: Object.keys(reply).reduce(((prev,cur) -> prev[cur] = encodeURI(reply[cur]); prev), {})
-
-		socket.on 'action', (data) ->
-			db.publish 'action', JSON.stringify(data)
-
-		socket.on 'buy', (data) ->
-			db.publish 'buy', data.name
-
-		socket.on 'log', (data) ->
-			timestamp = new Date()
-			db.lpush 'log', JSON.stringify
-				source: 'frontend'
-				timestamp: timestamp.getTime() / 1000
-				message: decodeURI(data)
-
-		socket.on 'disconnect', ->
-			subscriptions.end()
+					parts = message.split ":"
+					payload = extend {}, reply
+					payload.id = parts[2]
+					wss.clients.forEach (client) ->
+						client.send JSON.stringify
+							command: 'pushData'
+							type: parts[1]
+							payload: payload
+	else if channel == "__keyevent@0__:del"
+		if message.slice(0, "entity:".length) == "entity:"
+			parts = message.split(":")
+			wss.clients.forEach (client) ->
+				client.send JSON.stringify
+				 	command: 'delete'
+					type: parts[1]
+					ids: [ parts[2] ]
+	else if channel == "frontend"
+		wss.clients.forEach (client) ->
+			client.send JSON.stringify
+				command: 'message'
+				message: message
+subscriptions.subscribe "frontend"
+subscriptions.subscribe "__keyevent@0__:hset"
+subscriptions.subscribe "__keyevent@0__:del"

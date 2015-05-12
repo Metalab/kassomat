@@ -9,8 +9,9 @@
   "author": "Andreas Monitzer",
   "license": "GPLv3",
   "dependencies": {
+    "express": "^4.12.3",
     "hiredis": "^0.2.0",
     "redis": "^0.12.1",
-    "zappajs": "^2.0.3"
+    "ws": "^0.7.1"
   }
 }
