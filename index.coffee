@@ -91,13 +91,14 @@ wss.on 'connection', (ws) ->
 										reply.id = key.split(":")[2]
 										results.push reply
 										if keysRemaining == 0
+											content = {}
+											content[data.query.type + 's'] = results
 											ws.send JSON.stringify
 												command: 'reply'
 												id: data.id
 												status: 1
-												content: results
-			when 'find', 'findQuery'
-				console.error "[" + data.eventType + " " + data.query.type + ":" + data.query.id + "]"
+												content: content
+			when 'find'
 				db.hgetall "entity:" + data.query.type + ":" + data.query.id, (err, reply) ->
 					if err
 						console.error "[find " + data.query.type + ":" + data.query.id + "]:", err
@@ -113,12 +114,36 @@ wss.on 'connection', (ws) ->
 								id: data.id
 								status: 1
 						else
-							reply.id = data.id
+							reply.id = data.query.id
+							content = {}
+							content[data.query.type] = reply
 							ws.send JSON.stringify
 								command: 'reply'
 								id: data.id
 								status: 1
-								content: reply
+								content: content
+			when 'findQuery'
+				db.hgetall "entity:" + data.query.type + ":" + data.query.id, (err, reply) ->
+					if err
+						console.error "[find " + data.query.type + ":" + data.query.id + "]:", err
+						ws.send JSON.stringify
+							command: 'reply'
+							id: data.id
+							status: 0
+							error: err
+					else
+						if not reply
+							ws.send JSON.stringify
+								command: 'reply'
+								id: data.id
+								status: 1
+						else
+							reply.id = data.query.id
+							ws.send JSON.stringify
+								command: 'reply'
+								id: data.id
+								status: 1
+								content: [reply]
 			when 'action'
 				db.publish 'action', JSON.stringify data
 			when 'buy'
