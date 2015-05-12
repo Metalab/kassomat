@@ -92,6 +92,7 @@ $mainbackground: white;
   	display: flex;
   	.column2 {
   		flex-grow: 32;
+      height: 600px;
   		display: flex;
   		flex-direction: column;
   		flex-flow: space-around;
@@ -177,6 +178,7 @@ $mainbackground: white;
   	}
   	.column1 {
   		width: 500px;
+      height: 600px;
   		display: flex;
   		flex-direction: column;
   		flex-flow: space-around;
