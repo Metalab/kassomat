@@ -92,8 +92,7 @@ SocketAdapter = DS.Adapter.extend
     console.log '[Adapter] FIND: ', type.typeKey
     @makeSocketRequest store, 'find',
       type: type.typeKey.charAt(0).toUpperCase() + type.typeKey.slice(1)
-      query:
-        id: id
+      id: id
 
   findAll: (store, type, id) ->
     console.log '[Adapter] FINDALL: ', type.typeKey, id
