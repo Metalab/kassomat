@@ -1,5 +1,5 @@
 {{#liquid-if model.username class="user"}}
-	<button class="ui inverted button logout" {{action "logout"}}><i class="sign out icon"></i></button> {{model.username}}
+	<button class="ui inverted button icon logout" {{action "logout"}}><i class="sign out icon"></i></button> {{model.username}}
 {{/liquid-if}}
 <div class="credits"><span class="title">Credits</span><br>{{#liquid-with model.credits as credits class="creditsValue"}}{{money credits}}{{/liquid-with}}
 </div>
