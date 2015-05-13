@@ -23,7 +23,7 @@ IndexController = Ember.Controller.extend
 		prev: ->
 			@decrementProperty 'currentProjectIndex'
 		showActiveProject: ->
-			projectId = $('#carousel-projects .item.active').data('id')
+			projectId = @get('currentProject.id')
 			@transitionToRoute 'projectinfo', projectId
 		showProjects: ->
 			@transitionToRoute 'projects'
