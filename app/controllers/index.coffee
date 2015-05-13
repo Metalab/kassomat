@@ -12,7 +12,8 @@ IndexController = Ember.Controller.extend
 		if value != undefined
 			if value < 0
 				value = @get('model.length') - 1
-			@set '_currentProjectIndex', (value % @get('model.length'))
+			if (value % @get('model.length')) != @get('_currentProjectIndex')
+				@set '_currentProjectIndex', (value % @get('model.length'))
 		@get '_currentProjectIndex'
 	currentProject: Ember.computed 'model.[]', 'currentProjectIndex', ->
 		@get('model').objectAt @get('currentProjectIndex')
