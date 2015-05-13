@@ -325,45 +325,47 @@ $mainbackground: white;
 .projectinfo {
   margin: 5px;
   width: 100%;
-  overflow: auto;
-  h1 {
-    font-size: 2.5rem;
-    margin: 20px 0 0 0;
-    font-weight: bold;
-  }
-  h3 {
-    font-size: 1.5rem;
-    margin: 0 0 20px 0;
-    font-weight: normal;
-  }
-  h1, h3 {
+
+  .content {
     text-align: center;
-  }
-  .overview {
-    width: 100%;
-    .teaser {
-      width: 546px;
-      margin: 0 20px;
-      text-align: center;
-      p {
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0 0 0;
+      font-weight: bold;
+    }
+    h3 {
+      font-size: 1.5rem;
+      margin: 0 0 20px 0;
+      font-weight: normal;
+    }
+    .overview {
+      width: 100%;
+      .teaser {
+        width: 546px;
+        margin: 0 20px;
+        p {
+          text-align: left;
+          font-size: 14pt;
+        }
+      }
+      .stats {
+        float: right;
         text-align: left;
-        font-size: 14pt;
+        padding: 10px;
+        font-size: 12pt;
+        .backercount, .pledged {
+          display: block;
+          font-weight: bold;
+          font-size: 30pt;
+          margin: 0;
+          padding: 0;
+        }
       }
     }
-    .stats {
-      float: right;
-      padding: 10px;
-      font-size: 12pt;
-      .backercount, .pledged {
-        display: block;
-        font-weight: bold;
-        font-size: 30pt;
-        margin: 0;
-        padding: 0;
-      }
+    .details {
+      width: 650px;
+      margin: 20px auto;
+      text-align: left;
     }
-  }
-  .details {
-    width: 810px;
   }
 }
