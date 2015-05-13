@@ -189,7 +189,7 @@ subscriptions.on "message", (channel, message) ->
 						client.send JSON.stringify
 							command: 'pushData'
 							type: parts[1]
-							payload: payload
+							payload: [ payload ]
 	else if channel == "__keyevent@0__:del"
 		if message.slice(0, "entity:".length) == "entity:"
 			parts = message.split(":")
