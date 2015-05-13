@@ -7,6 +7,7 @@ initialize = (container, app) ->
   app.inject 'adapter', 'socket', 'socket:main'
   app.inject 'route', 'socket', 'socket:main'
   app.inject 'application', 'socket', 'socket:main'
+  app.inject 'component', 'socket', 'socket:main'
 
 SocketInitializer =
   name: 'socket'
