@@ -1,1 +1,17 @@
-<img src={{model.imageURL}} alt={{model.name}}>
+{{#link-to 'projects' class="ui button basic black"}}<i class="chevron left icon"></i> Projects{{/link-to}}
+
+<h1>{{model.name}}</h1>
+<h3>by {{model.owner}}</h3>
+
+<div class="overview">
+	<div class="stats">
+		<p><span class="backercount">{{model.backercount}}</span>backers</p>
+		<p><span class="pledged">{{money model.pledged}}</span>pledged of {{money model.goal}} goal</p>
+		<p><button class="ui button green huge" {{action 'backProject'}}>Back this project</button></p>
+	</div>
+	<div class="teaser">
+		<img src={{model.imageURL}} alt={{model.name}}>
+		<p>{{model.teaser}}</p>
+	</div>
+</div>
+{{markdown-to-html class="details" markdown=model.details}}

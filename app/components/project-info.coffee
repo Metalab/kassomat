@@ -1,6 +1,6 @@
 `import Ember from 'ember'`
 
 ProjectInfoComponent = Ember.Component.extend
-	className: ['projectinfo']
+	classNames: ['projectinfo']
 
 `export default ProjectInfoComponent`

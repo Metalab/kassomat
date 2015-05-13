@@ -87,6 +87,7 @@ $mainbackground: white;
   flex-grow: 1;
   position: relative;
   background-color: $mainbackground;
+  overflow-y: scroll;
 
   &> div {
   	display: flex;
@@ -320,4 +321,49 @@ $mainbackground: white;
 			margin-right: 40px;
 		}
 	}
+}
+.projectinfo {
+  margin: 5px;
+  width: 100%;
+  overflow: auto;
+  h1 {
+    font-size: 2.5rem;
+    margin: 20px 0 0 0;
+    font-weight: bold;
+  }
+  h3 {
+    font-size: 1.5rem;
+    margin: 0 0 20px 0;
+    font-weight: normal;
+  }
+  h1, h3 {
+    text-align: center;
+  }
+  .overview {
+    width: 100%;
+    .teaser {
+      width: 546px;
+      margin: 0 20px;
+      text-align: center;
+      p {
+        text-align: left;
+        font-size: 14pt;
+      }
+    }
+    .stats {
+      float: right;
+      padding: 10px;
+      font-size: 12pt;
+      .backercount, .pledged {
+        display: block;
+        font-weight: bold;
+        font-size: 30pt;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  .details {
+    width: 810px;
+  }
 }

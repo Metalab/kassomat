@@ -1,7 +1,5 @@
 `import DS from 'ember-data'`
 
-ProjectSerializer = DS.RESTSerializer.extend
-	attrs:
-		active: { exclude: true }
+ProjectSerializer = DS.RESTSerializer.extend()
 
 `export default ProjectSerializer`
