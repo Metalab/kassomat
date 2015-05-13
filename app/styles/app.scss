@@ -366,6 +366,9 @@ $mainbackground: white;
       width: 650px;
       margin: 20px auto;
       text-align: left;
+      a {
+        display: none;
+      }
     }
   }
 }
