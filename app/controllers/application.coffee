@@ -47,8 +47,6 @@ ApplicationController = Ember.Controller.extend
         username: record.username
         credits: record.credits
     pushData: (data) ->
-      payload = Ember.copy data.payload
-      payload.forEach (obj) -> Object.keys(obj).forEach (key) -> if obj.hasOwnProperty(key) then obj[key] = decodeURI(obj[key])
       @store.pushMany data.type, data.payload
     delete: (data) ->
       data.ids.forEach (id) =>
