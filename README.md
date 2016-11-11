@@ -1,3 +1,3 @@
 # THE STUFF IN HERE IS OUTDATED!
 
-We moved to [https://github.com/metalab-kassomat/ Metalab-Kassomat].
+We moved to [Metalab-Kassomat](https://github.com/metalab-kassomat/).
