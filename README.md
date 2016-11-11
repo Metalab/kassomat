@@ -1,4 +1,3 @@
-kassomat
-========
+# THE STUFF IN HERE IS OUTDATED!
 
-kassomat firmware
+We moved to [https://github.com/metalab-kassomat/ Metalab-Kassomat].
